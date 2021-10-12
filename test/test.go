@@ -1,1 +1,1 @@
-map[string]float32
+'\x0f'

@@ -114,18 +114,20 @@ extern int yydebug;
       know about them.  */
    enum yytokentype {
      BOOL = 258,
-     UINT = 259,
-     INT = 260,
-     FLOAT32 = 261,
-     COMPLEX64 = 262,
-     BYTE = 263,
-     RUNE = 264,
-     STRING = 265,
-     STRUCT = 266,
-     FUNC = 267,
-     MAP = 268,
-     IDENTIFIER = 269,
-     INT_LITERAL = 270
+     INT = 259,
+     FLOAT32 = 260,
+     COMPLEX64 = 261,
+     BYTE = 262,
+     RUNE = 263,
+     STRING = 264,
+     STRUCT = 265,
+     FUNC = 266,
+     MAP = 267,
+     IDENTIFIER = 268,
+     INT_LITERAL = 269,
+     FLOAT_LITERAL = 270,
+     BOOL_LITERAL = 271,
+     RUNE_LITERAL = 272
    };
 #endif
 
@@ -137,15 +139,18 @@ typedef union YYSTYPE
 #line 21 "src/parsing/parser.y"
 
     int integer;
-    double floating;
+    float floating;
+    bool boolean;
+    char rune;
     char* id;
     AST::Type *type;
+    AST::Expression *expression;
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
 
 
 /* Line 387 of yacc.c  */
-#line 149 "src/parsing/parser.cpp"
+#line 154 "src/parsing/parser.cpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -186,7 +191,7 @@ int yyparse ();
 /* Copy the second part of user declarations.  */
 
 /* Line 390 of yacc.c  */
-#line 190 "src/parsing/parser.cpp"
+#line 195 "src/parsing/parser.cpp"
 /* Unqualified %code blocks.  */
 /* Line 391 of yacc.c  */
 #line 4 "src/parsing/parser.y"
@@ -194,13 +199,13 @@ int yyparse ();
     #include <iostream>
     #include <string>
     #include "lexing/lexer.hpp"
-    AST::Type *tree;
+    AST::Node *tree;
 
     void yyerror(char *s);
 
 
 /* Line 391 of yacc.c  */
-#line 204 "src/parsing/parser.cpp"
+#line 209 "src/parsing/parser.cpp"
 
 #ifdef short
 # undef short
@@ -429,22 +434,22 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  27
+#define YYFINAL  7
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   132
+#define YYLAST   4
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  25
+#define YYNTOKENS  27
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  9
+#define YYNNTS  3
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  33
+#define YYNRULES  6
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  62
+#define YYNSTATES  8
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   270
+#define YYMAXUTOK   272
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -456,15 +461,15 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      16,    17,    22,     2,    23,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    24,
+      18,    19,    24,     2,    25,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    26,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    18,     2,    19,     2,     2,     2,     2,     2,     2,
+       2,    20,     2,    21,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    20,     2,    21,     2,     2,     2,     2,
+       2,     2,     2,    22,     2,    23,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -479,7 +484,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15
+      15,    16,    17
 };
 
 #if YYDEBUG
@@ -487,35 +492,20 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     5,     7,    11,    13,    15,    17,    19,
-      21,    23,    25,    27,    32,    36,    41,    44,    48,    54,
-      56,    57,    59,    61,    64,    68,    73,    75,    78,    82,
-      87,    91,    96,    98
+       0,     0,     3,     5,     7,     9,    11
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      26,     0,    -1,    27,    -1,    14,    -1,    16,    27,    17,
-      -1,     3,    -1,     4,    -1,     5,    -1,     6,    -1,     7,
-      -1,     8,    -1,     9,    -1,    10,    -1,    18,    28,    19,
-      27,    -1,    18,    19,    27,    -1,    11,    20,    32,    21,
-      -1,    22,    27,    -1,    12,    30,    29,    -1,    13,    18,
-      27,    19,    27,    -1,    15,    -1,    -1,    30,    -1,    27,
-      -1,    16,    17,    -1,    16,    31,    17,    -1,    16,    31,
-      23,    17,    -1,    27,    -1,    33,    27,    -1,    27,    23,
-      31,    -1,    33,    27,    23,    31,    -1,    33,    27,    24,
-      -1,    33,    27,    24,    32,    -1,    14,    -1,    14,    23,
-      33,    -1
+      28,     0,    -1,    29,    -1,    16,    -1,    14,    -1,    15,
+      -1,    17,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    57,    57,    60,    61,    62,    63,    64,    65,    66,
-      67,    68,    69,    70,    71,    72,    73,    74,    76,    79,
-      82,    83,    84,    92,    93,    95,    99,   105,   116,   123,
-     136,   147,   160,   165
+       0,    64,    64,    67,    68,    69,    70
 };
 #endif
 
@@ -524,12 +514,11 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "BOOL", "UINT", "INT", "FLOAT32",
-  "COMPLEX64", "BYTE", "RUNE", "STRING", "STRUCT", "FUNC", "MAP",
-  "IDENTIFIER", "INT_LITERAL", "'('", "')'", "'['", "']'", "'{'", "'}'",
-  "'*'", "','", "';'", "$accept", "start", "type", "array_length",
-  "function_result", "function_parameters", "function_parameter_list",
-  "struct_field_decls", "identifier_list", YY_NULL
+  "$end", "error", "$undefined", "BOOL", "INT", "FLOAT32", "COMPLEX64",
+  "BYTE", "RUNE", "STRING", "STRUCT", "FUNC", "MAP", "IDENTIFIER",
+  "INT_LITERAL", "FLOAT_LITERAL", "BOOL_LITERAL", "RUNE_LITERAL", "'('",
+  "')'", "'['", "']'", "'{'", "'}'", "'*'", "','", "';'", "$accept",
+  "start", "expression", YY_NULL
 };
 #endif
 
@@ -539,27 +528,21 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270,    40,    41,    91,    93,
-     123,   125,    42,    44,    59
+     265,   266,   267,   268,   269,   270,   271,   272,    40,    41,
+      91,    93,   123,   125,    42,    44,    59
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    25,    26,    27,    27,    27,    27,    27,    27,    27,
-      27,    27,    27,    27,    27,    27,    27,    27,    27,    28,
-      29,    29,    29,    30,    30,    30,    31,    31,    31,    31,
-      32,    32,    33,    33
+       0,    27,    28,    29,    29,    29,    29
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     1,     1,     3,     1,     1,     1,     1,     1,
-       1,     1,     1,     4,     3,     4,     2,     3,     5,     1,
-       0,     1,     1,     2,     3,     4,     1,     2,     3,     4,
-       3,     4,     1,     3
+       0,     2,     1,     1,     1,     1,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default reduction number in state STATE-NUM.
@@ -567,98 +550,54 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     5,     6,     7,     8,     9,    10,    11,    12,     0,
-       0,     0,     3,     0,     0,     0,     0,     2,     0,     0,
-      20,     0,     0,    19,     0,     0,    16,     1,    32,     0,
-       0,    32,    23,    26,     0,     0,     0,    22,    17,    21,
-       0,     4,    14,     0,     0,    15,     0,     0,    24,     0,
-      27,     0,     0,    13,    33,    30,    28,    25,     0,    18,
-      31,    29
+       0,     4,     5,     3,     6,     0,     2,     1
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,    16,    33,    25,    38,    20,    34,    29,    35
+      -1,     5,     6
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -45
+#define YYPACT_NINF -15
 static const yytype_int8 yypact[] =
 {
-      70,   -45,   -45,   -45,   -45,   -45,   -45,   -45,   -45,   -14,
-      -9,    -1,   -45,    70,    -3,    70,     9,   -45,     4,    50,
-      90,    70,     2,   -45,    70,     3,   -45,   -45,     5,     8,
-      70,   -15,   -45,    10,   -13,    70,    50,   -45,   -45,   -45,
-       6,   -45,   -45,    70,     4,   -45,     7,   110,   -45,    15,
-      11,   -12,    70,   -45,   -45,     4,   -45,   -45,   110,   -45,
-     -45,   -45
+     -14,   -15,   -15,   -15,   -15,     4,   -15,   -15
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -45,   -45,     0,   -45,   -45,    17,   -44,   -32,   -17
+     -15,   -15,   -15
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
    positive, shift that token.  If negative, reduce the rule which
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
-#define YYTABLE_NINF -4
-static const yytype_int8 yytable[] =
+#define YYTABLE_NINF -1
+static const yytype_uint8 yytable[] =
 {
-      17,    30,    -3,    56,    48,    41,    18,    19,    44,    27,
-      49,    47,    23,    22,    61,    26,    24,    21,    28,    41,
-      37,    40,    43,    60,    42,    52,     0,    54,    44,    45,
-      46,    55,    57,    47,    58,    50,    51,    39,    30,     0,
-       0,     0,     0,    53,     0,     0,     0,     0,     0,     0,
-       0,     0,    59,     1,     2,     3,     4,     5,     6,     7,
-       8,     9,    10,    11,    31,     0,    13,    32,    14,     0,
-       0,     0,    15,     1,     2,     3,     4,     5,     6,     7,
-       8,     9,    10,    11,    12,     0,    13,     0,    14,     0,
-       0,     0,    15,     1,     2,     3,     4,     5,     6,     7,
-       8,     9,    10,    11,    12,     0,    36,     0,    14,     0,
-       0,     0,    15,     1,     2,     3,     4,     5,     6,     7,
-       8,     9,    10,    11,    31,     0,    13,     0,    14,     0,
-       0,     0,    15
+       1,     2,     3,     4,     7
 };
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-45)))
+  (!!((Yystate) == (-15)))
 
 #define yytable_value_is_error(Yytable_value) \
   YYID (0)
 
-static const yytype_int8 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-       0,    18,    17,    47,    17,    17,    20,    16,    23,     0,
-      23,    23,    15,    13,    58,    15,    19,    18,    14,    17,
-      20,    21,    19,    55,    24,    19,    -1,    44,    23,    21,
-      30,    24,    17,    23,    23,    35,    36,    20,    55,    -1,
-      -1,    -1,    -1,    43,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    52,     3,     4,     5,     6,     7,     8,     9,
-      10,    11,    12,    13,    14,    -1,    16,    17,    18,    -1,
-      -1,    -1,    22,     3,     4,     5,     6,     7,     8,     9,
-      10,    11,    12,    13,    14,    -1,    16,    -1,    18,    -1,
-      -1,    -1,    22,     3,     4,     5,     6,     7,     8,     9,
-      10,    11,    12,    13,    14,    -1,    16,    -1,    18,    -1,
-      -1,    -1,    22,     3,     4,     5,     6,     7,     8,     9,
-      10,    11,    12,    13,    14,    -1,    16,    -1,    18,    -1,
-      -1,    -1,    22
+      14,    15,    16,    17,     0
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     4,     5,     6,     7,     8,     9,    10,    11,
-      12,    13,    14,    16,    18,    22,    26,    27,    20,    16,
-      30,    18,    27,    15,    19,    28,    27,     0,    14,    32,
-      33,    14,    17,    27,    31,    33,    16,    27,    29,    30,
-      27,    17,    27,    19,    23,    21,    27,    23,    17,    23,
-      27,    27,    19,    27,    33,    24,    31,    17,    23,    27,
-      32,    31
+       0,    14,    15,    16,    17,    28,    29,     0
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1558,258 +1497,37 @@ yyreduce:
     {
         case 2:
 /* Line 1802 of yacc.c  */
-#line 57 "src/parsing/parser.y"
-    { tree = (yyvsp[(1) - (1)].type); }
+#line 64 "src/parsing/parser.y"
+    { tree = (yyvsp[(1) - (1)].expression); }
     break;
 
   case 3:
 /* Line 1802 of yacc.c  */
-#line 60 "src/parsing/parser.y"
-    { (yyval.type) = new AST::CustomType{(yyvsp[(1) - (1)].id)}; }
+#line 67 "src/parsing/parser.y"
+    { (yyval.expression) = new AST::BoolExpression{(yyvsp[(1) - (1)].boolean)}; }
     break;
 
   case 4:
 /* Line 1802 of yacc.c  */
-#line 61 "src/parsing/parser.y"
-    { (yyval.type) = (yyvsp[(2) - (3)].type); }
+#line 68 "src/parsing/parser.y"
+    { (yyval.expression) = new AST::IntExpression{(yyvsp[(1) - (1)].integer)}; }
     break;
 
   case 5:
 /* Line 1802 of yacc.c  */
-#line 62 "src/parsing/parser.y"
-    { (yyval.type) = new AST::BoolType{}; }
+#line 69 "src/parsing/parser.y"
+    { (yyval.expression) = new AST::Float32Expression{(yyvsp[(1) - (1)].floating)}; }
     break;
 
   case 6:
 /* Line 1802 of yacc.c  */
-#line 63 "src/parsing/parser.y"
-    { (yyval.type) = new AST::UIntType{}; }
-    break;
-
-  case 7:
-/* Line 1802 of yacc.c  */
-#line 64 "src/parsing/parser.y"
-    { (yyval.type) = new AST::IntType{}; }
-    break;
-
-  case 8:
-/* Line 1802 of yacc.c  */
-#line 65 "src/parsing/parser.y"
-    { (yyval.type) = new AST::Float32Type{}; }
-    break;
-
-  case 9:
-/* Line 1802 of yacc.c  */
-#line 66 "src/parsing/parser.y"
-    { (yyval.type) = new AST::Complex64Type{}; }
-    break;
-
-  case 10:
-/* Line 1802 of yacc.c  */
-#line 67 "src/parsing/parser.y"
-    { (yyval.type) = new AST::ByteType{}; }
-    break;
-
-  case 11:
-/* Line 1802 of yacc.c  */
-#line 68 "src/parsing/parser.y"
-    { (yyval.type) = new AST::RuneType{}; }
-    break;
-
-  case 12:
-/* Line 1802 of yacc.c  */
-#line 69 "src/parsing/parser.y"
-    { (yyval.type) = new AST::StringType{}; }
-    break;
-
-  case 13:
-/* Line 1802 of yacc.c  */
 #line 70 "src/parsing/parser.y"
-    { (yyval.type) = new AST::ArrayType{(yyvsp[(2) - (4)].integer), (yyvsp[(4) - (4)].type)}; }
-    break;
-
-  case 14:
-/* Line 1802 of yacc.c  */
-#line 71 "src/parsing/parser.y"
-    { (yyval.type) = new AST::SliceType{(yyvsp[(3) - (3)].type)}; }
-    break;
-
-  case 15:
-/* Line 1802 of yacc.c  */
-#line 72 "src/parsing/parser.y"
-    { (yyval.type) = new AST::StructType{(yyvsp[(3) - (4)].fields)->toStdVector()}; delete (yyvsp[(3) - (4)].fields); }
-    break;
-
-  case 16:
-/* Line 1802 of yacc.c  */
-#line 73 "src/parsing/parser.y"
-    { (yyval.type) = new AST::PointerType{(yyvsp[(2) - (2)].type)}; }
-    break;
-
-  case 17:
-/* Line 1802 of yacc.c  */
-#line 75 "src/parsing/parser.y"
-    { (yyval.type) = new AST::FunctionType{(yyvsp[(2) - (3)].fields)->toStdVector(), (yyvsp[(3) - (3)].fields)->toStdVector()}; delete (yyvsp[(2) - (3)].fields); delete (yyvsp[(3) - (3)].fields); }
-    break;
-
-  case 18:
-/* Line 1802 of yacc.c  */
-#line 76 "src/parsing/parser.y"
-    { (yyval.type) = new AST::MapType{(yyvsp[(3) - (5)].type), (yyvsp[(5) - (5)].type)}; }
-    break;
-
-  case 19:
-/* Line 1802 of yacc.c  */
-#line 79 "src/parsing/parser.y"
-    { (yyval.integer) = yylval.integer; }
-    break;
-
-  case 20:
-/* Line 1802 of yacc.c  */
-#line 82 "src/parsing/parser.y"
-    { (yyval.fields) = new LinkedList<std::pair<std::string, AST::Type *>>; }
-    break;
-
-  case 21:
-/* Line 1802 of yacc.c  */
-#line 83 "src/parsing/parser.y"
-    { (yyval.fields) = (yyvsp[(1) - (1)].fields); }
-    break;
-
-  case 22:
-/* Line 1802 of yacc.c  */
-#line 84 "src/parsing/parser.y"
-    { 
-                                                auto type = (yyvsp[(1) - (1)].type);
-                                                auto list = new LinkedList<std::pair<std::string, AST::Type *>>;
-                                                list->insert(0, std::make_pair("", type));
-                                                (yyval.fields) = list;
-                                            }
-    break;
-
-  case 23:
-/* Line 1802 of yacc.c  */
-#line 92 "src/parsing/parser.y"
-    { (yyval.fields) = new LinkedList<std::pair<std::string, AST::Type *>>; }
-    break;
-
-  case 24:
-/* Line 1802 of yacc.c  */
-#line 94 "src/parsing/parser.y"
-    { (yyval.fields) = (yyvsp[(2) - (3)].fields); }
-    break;
-
-  case 25:
-/* Line 1802 of yacc.c  */
-#line 96 "src/parsing/parser.y"
-    { (yyval.fields) = (yyvsp[(2) - (4)].fields); }
-    break;
-
-  case 26:
-/* Line 1802 of yacc.c  */
-#line 99 "src/parsing/parser.y"
-    { 
-                                                auto type = (yyvsp[(1) - (1)].type);
-                                                auto list = new LinkedList<std::pair<std::string, AST::Type *>>;
-                                                list->insert(0, std::make_pair("", type));
-                                                (yyval.fields) = list;
-                                            }
-    break;
-
-  case 27:
-/* Line 1802 of yacc.c  */
-#line 106 "src/parsing/parser.y"
-    {
-                                                auto ids = (yyvsp[(1) - (2)].id_list)->toStdVector();
-                                                delete (yyvsp[(1) - (2)].id_list);
-                                                auto type = (yyvsp[(2) - (2)].type);
-                                                auto list = new LinkedList<std::pair<std::string, AST::Type *>>;
-                                                for (int i = 0; i < ids.size(); i++) {
-                                                    list->insert(i, std::make_pair(ids[i], type));
-                                                }
-                                                (yyval.fields) = list;
-                                            }
-    break;
-
-  case 28:
-/* Line 1802 of yacc.c  */
-#line 117 "src/parsing/parser.y"
-    { 
-                                                auto type = (yyvsp[(1) - (3)].type);
-                                                auto list = (yyvsp[(3) - (3)].fields);
-                                                list->insert(0, std::make_pair("", type));
-                                                (yyval.fields) = list;
-                                            }
-    break;
-
-  case 29:
-/* Line 1802 of yacc.c  */
-#line 124 "src/parsing/parser.y"
-    {
-                                                auto ids = (yyvsp[(1) - (4)].id_list)->toStdVector();
-                                                delete (yyvsp[(1) - (4)].id_list);
-                                                auto type = (yyvsp[(2) - (4)].type);
-                                                auto list = (yyvsp[(4) - (4)].fields);
-                                                for (int i = 0; i < ids.size(); i++) {
-                                                    list->insert(i, std::make_pair(ids[i], type));
-                                                }
-                                                (yyval.fields) = list;
-                                            }
-    break;
-
-  case 30:
-/* Line 1802 of yacc.c  */
-#line 137 "src/parsing/parser.y"
-    {
-                                                auto ids = (yyvsp[(1) - (3)].id_list)->toStdVector();
-                                                delete (yyvsp[(1) - (3)].id_list);
-                                                auto type = (yyvsp[(2) - (3)].type);
-                                                auto list = new LinkedList<std::pair<std::string, AST::Type *>>;
-                                                for (int i = 0; i < ids.size(); i++) {
-                                                    list->insert(i, std::make_pair(ids[i], type));
-                                                }
-                                                (yyval.fields) = list;
-                                            }
-    break;
-
-  case 31:
-/* Line 1802 of yacc.c  */
-#line 148 "src/parsing/parser.y"
-    {
-                                                auto ids = (yyvsp[(1) - (4)].id_list)->toStdVector();
-                                                delete (yyvsp[(1) - (4)].id_list);
-                                                auto type = (yyvsp[(2) - (4)].type);
-                                                auto list = (yyvsp[(4) - (4)].fields);
-                                                for (int i = 0; i < ids.size(); i++) {
-                                                    list->insert(i, std::make_pair(ids[i], type));
-                                                }
-                                                (yyval.fields) = list;
-                                            }
-    break;
-
-  case 32:
-/* Line 1802 of yacc.c  */
-#line 160 "src/parsing/parser.y"
-    { 
-                                                auto list = new LinkedList<std::string>{}; 
-                                                list->insert(0, (yyvsp[(1) - (1)].id));
-                                                (yyval.id_list) = list;
-                                            }
-    break;
-
-  case 33:
-/* Line 1802 of yacc.c  */
-#line 166 "src/parsing/parser.y"
-    {
-                                                auto list = (yyvsp[(3) - (3)].id_list);
-                                                list->insert(0, (yyvsp[(1) - (3)].id));
-                                                (yyval.id_list) = list;
-                                            }
+    { (yyval.expression) = new AST::RuneExpression{(yyvsp[(1) - (1)].rune)}; }
     break;
 
 
 /* Line 1802 of yacc.c  */
-#line 1813 "src/parsing/parser.cpp"
+#line 1531 "src/parsing/parser.cpp"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2048,7 +1766,7 @@ yyreturn:
 
 
 /* Line 2050 of yacc.c  */
-#line 173 "src/parsing/parser.y"
+#line 183 "src/parsing/parser.y"
 
 
 void yyerror(char *s)

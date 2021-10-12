@@ -60,18 +60,20 @@ extern int yydebug;
       know about them.  */
    enum yytokentype {
      BOOL = 258,
-     UINT = 259,
-     INT = 260,
-     FLOAT32 = 261,
-     COMPLEX64 = 262,
-     BYTE = 263,
-     RUNE = 264,
-     STRING = 265,
-     STRUCT = 266,
-     FUNC = 267,
-     MAP = 268,
-     IDENTIFIER = 269,
-     INT_LITERAL = 270
+     INT = 259,
+     FLOAT32 = 260,
+     COMPLEX64 = 261,
+     BYTE = 262,
+     RUNE = 263,
+     STRING = 264,
+     STRUCT = 265,
+     FUNC = 266,
+     MAP = 267,
+     IDENTIFIER = 268,
+     INT_LITERAL = 269,
+     FLOAT_LITERAL = 270,
+     BOOL_LITERAL = 271,
+     RUNE_LITERAL = 272
    };
 #endif
 
@@ -83,15 +85,18 @@ typedef union YYSTYPE
 #line 21 "src/parsing/parser.y"
 
     int integer;
-    double floating;
+    float floating;
+    bool boolean;
+    char rune;
     char* id;
     AST::Type *type;
+    AST::Expression *expression;
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
 
 
 /* Line 2060 of yacc.c  */
-#line 95 "include/parsing/parser.hpp"
+#line 100 "include/parsing/parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

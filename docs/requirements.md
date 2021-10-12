@@ -20,9 +20,9 @@
 - [p] pointers
 
 # literals
-- [ ] bool `true` and `false`
+- [p] bool `true` and `false`
 - [p] integers
-- [ ] floats
+- [p] floats
 - [ ] runes (eg. `'c'` and including escaped chars `'\n'` etc.)
 - [ ] strings (interpreted)
 - [ ] arrays

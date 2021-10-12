@@ -1,6 +1,8 @@
 #ifndef GOINTERPRETER_AST_BASE_HPP
 #define GOINTERPRETER_AST_BASE_HPP
 
+#include <string>
+
 namespace AST { 
 
     /** 
@@ -25,6 +27,18 @@ namespace AST {
 
     public:
         virtual ~Type() = default;
+        virtual auto print() -> std::string = 0;
+    };
+
+    /**
+     * Base class for expression nodes
+     */
+    class Expression : public Node {
+    protected:
+        Expression() = default;
+        
+    public:
+        virtual ~Expression() = default;
         virtual auto print() -> std::string = 0;
     };
     

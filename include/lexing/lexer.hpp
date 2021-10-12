@@ -469,7 +469,7 @@ extern int yylex (void);
 #undef yyTABLES_NAME
 #endif
 
-#line 58 "src/lexing/lexer.l"
+#line 76 "src/lexing/lexer.l"
 
 
 #line 475 "include/lexing/lexer.hpp"

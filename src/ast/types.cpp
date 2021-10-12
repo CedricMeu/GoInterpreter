@@ -5,11 +5,6 @@ auto AST::BoolType::print() -> std::string
     return "BoolType";
 }
 
-auto AST::UIntType::print() -> std::string 
-{
-    return "UIntType";
-}
-
 auto AST::IntType::print() -> std::string 
 {
     return "IntType";
@@ -18,21 +13,6 @@ auto AST::IntType::print() -> std::string
 auto AST::Float32Type::print() -> std::string 
 {
     return "Float32Type";
-}
-
-auto AST::Float64Type::print() -> std::string 
-{
-    return "Float64Type";
-}
-
-auto AST::Complex64Type::print() -> std::string 
-{
-    return "Complex64Type";
-}
-
-auto AST::ByteType::print() -> std::string 
-{
-    return "ByteType";
 }
 
 auto AST::RuneType::print() -> std::string 

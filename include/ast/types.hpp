@@ -16,14 +16,6 @@ namespace AST {
         virtual auto print() -> std::string;
     };
 
-    class UIntType : public Type
-    {
-    public:
-        UIntType() = default;
-        virtual ~UIntType() = default;
-        virtual auto print() -> std::string;
-    };
-
     class IntType : public Type
     {
     public:
@@ -37,30 +29,6 @@ namespace AST {
     public:
         Float32Type() = default;
         virtual ~Float32Type() = default;
-        virtual auto print() -> std::string;
-    };
-
-    class Float64Type : public Type
-    {
-    public:
-        Float64Type() = default;
-        virtual ~Float64Type() = default;
-        virtual auto print() -> std::string;
-    };
-
-    class Complex64Type : public Type
-    {
-    public:
-        Complex64Type() = default;
-        virtual ~Complex64Type() = default;
-        virtual auto print() -> std::string;
-    };
-
-    class ByteType : public Type
-    {
-    public:
-        ByteType() = default;
-        virtual ~ByteType() = default;
         virtual auto print() -> std::string;
     };
 

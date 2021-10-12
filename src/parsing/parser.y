@@ -5,7 +5,7 @@
     #include <iostream>
     #include <string>
     #include "lexing/lexer.hpp"
-    AST::Type *tree;
+    AST::Node *tree;
 
     void yyerror(char *s);
 }
@@ -20,9 +20,12 @@
 
 %union {
     int integer;
-    double floating;
+    float floating;
+    bool boolean;
+    char rune;
     char* id;
     AST::Type *type;
+    AST::Expression *expression;
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
 }
@@ -30,7 +33,6 @@
 %start start // entry point of parsing
 
 %token BOOL
-%token UINT
 %token INT
 %token FLOAT32
 %token COMPLEX64
@@ -43,6 +45,11 @@
 
 %token<id> IDENTIFIER
 %token<integer> INT_LITERAL
+%token<floating> FLOAT_LITERAL
+%token<boolean> BOOL_LITERAL
+%token<rune> RUNE_LITERAL
+
+%type<expression> expression
 
 %type<type> type
 %type<integer> array_length
@@ -54,17 +61,20 @@
 
 %%
 
-start: type                                 { tree = $1; }
+start: expression                           { tree = $1; }
      ;
+
+expression: BOOL_LITERAL                    { $$ = new AST::BoolExpression{$1}; }
+          | INT_LITERAL                     { $$ = new AST::IntExpression{$1}; }
+          | FLOAT_LITERAL                   { $$ = new AST::Float32Expression{$1}; }
+          | RUNE_LITERAL                    { $$ = new AST::RuneExpression{$1}; }
+          ;
 
 type: IDENTIFIER                            { $$ = new AST::CustomType{$1}; }
     | '(' type ')'                          { $$ = $2; }
     | BOOL                                  { $$ = new AST::BoolType{}; }
-    | UINT                                  { $$ = new AST::UIntType{}; }
     | INT                                   { $$ = new AST::IntType{}; }
     | FLOAT32                               { $$ = new AST::Float32Type{}; }
-    | COMPLEX64                             { $$ = new AST::Complex64Type{}; }
-    | BYTE                                  { $$ = new AST::ByteType{}; }
     | RUNE                                  { $$ = new AST::RuneType{}; }
     | STRING                                { $$ = new AST::StringType{}; }
     | '[' array_length ']' type             { $$ = new AST::ArrayType{$2, $4}; }
