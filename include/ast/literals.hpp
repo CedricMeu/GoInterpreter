@@ -51,6 +51,18 @@ namespace AST {
         ~RuneExpression() = default;
         virtual auto print() -> std::string;
     };
+
+    class StringExpression : public Expression 
+    {
+    private:
+        char *value;
+        int length;
+
+    public:
+        StringExpression(char *value, int lenght);
+        ~StringExpression();
+        virtual auto print() -> std::string;
+    };
     
 };
 

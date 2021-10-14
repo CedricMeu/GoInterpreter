@@ -35,40 +35,40 @@ Terminals unused in grammar
 
 Rules useless in grammar
 
-    6 type: IDENTIFIER
-    7     | '(' type ')'
-    8     | BOOL
-    9     | INT
-   10     | FLOAT32
-   11     | RUNE
-   12     | STRING
-   13     | '[' array_length ']' type
-   14     | '[' ']' type
-   15     | STRUCT '{' struct_field_decls '}'
-   16     | '*' type
-   17     | FUNC function_parameters function_result
-   18     | MAP '[' type ']' type
+    7 type: IDENTIFIER
+    8     | '(' type ')'
+    9     | BOOL
+   10     | INT
+   11     | FLOAT32
+   12     | RUNE
+   13     | STRING
+   14     | '[' array_length ']' type
+   15     | '[' ']' type
+   16     | STRUCT '{' struct_field_decls '}'
+   17     | '*' type
+   18     | FUNC function_parameters function_result
+   19     | MAP '[' type ']' type
 
-   19 array_length: INT_LITERAL
+   20 array_length: INT_LITERAL
 
-   20 function_result: /* empty */
-   21                | function_parameters
-   22                | type
+   21 function_result: /* empty */
+   22                | function_parameters
+   23                | type
 
-   23 function_parameters: '(' ')'
-   24                    | '(' function_parameter_list ')'
-   25                    | '(' function_parameter_list ',' ')'
+   24 function_parameters: '(' ')'
+   25                    | '(' function_parameter_list ')'
+   26                    | '(' function_parameter_list ',' ')'
 
-   26 function_parameter_list: type
-   27                        | identifier_list type
-   28                        | type ',' function_parameter_list
-   29                        | identifier_list type ',' function_parameter_list
+   27 function_parameter_list: type
+   28                        | identifier_list type
+   29                        | type ',' function_parameter_list
+   30                        | identifier_list type ',' function_parameter_list
 
-   30 struct_field_decls: identifier_list type ';'
-   31                   | identifier_list type ';' struct_field_decls
+   31 struct_field_decls: identifier_list type ';'
+   32                   | identifier_list type ';' struct_field_decls
 
-   32 identifier_list: IDENTIFIER
-   33                | IDENTIFIER ',' identifier_list
+   33 identifier_list: IDENTIFIER
+   34                | IDENTIFIER ',' identifier_list
 
 
 Grammar
@@ -81,6 +81,7 @@ Grammar
     3           | INT_LITERAL
     4           | FLOAT_LITERAL
     5           | RUNE_LITERAL
+    6           | STRING_LITERAL
 
 
 Terminals, with rules where they appear
@@ -111,29 +112,31 @@ INT_LITERAL (269) 3
 FLOAT_LITERAL (270) 4
 BOOL_LITERAL (271) 2
 RUNE_LITERAL (272) 5
+STRING_LITERAL (273) 6
 
 
 Nonterminals, with rules where they appear
 
-$accept (27)
+$accept (28)
     on left: 0
-start (28)
+start (29)
     on left: 1, on right: 0
-expression (29)
-    on left: 2 3 4 5, on right: 1
+expression (30)
+    on left: 2 3 4 5 6, on right: 1
 
 
 State 0
 
     0 $accept: . start $end
 
-    INT_LITERAL    shift, and go to state 1
-    FLOAT_LITERAL  shift, and go to state 2
-    BOOL_LITERAL   shift, and go to state 3
-    RUNE_LITERAL   shift, and go to state 4
+    INT_LITERAL     shift, and go to state 1
+    FLOAT_LITERAL   shift, and go to state 2
+    BOOL_LITERAL    shift, and go to state 3
+    RUNE_LITERAL    shift, and go to state 4
+    STRING_LITERAL  shift, and go to state 5
 
-    start       go to state 5
-    expression  go to state 6
+    start       go to state 6
+    expression  go to state 7
 
 
 State 1
@@ -166,19 +169,26 @@ State 4
 
 State 5
 
-    0 $accept: start . $end
+    6 expression: STRING_LITERAL .
 
-    $end  shift, and go to state 7
+    $default  reduce using rule 6 (expression)
 
 
 State 6
+
+    0 $accept: start . $end
+
+    $end  shift, and go to state 8
+
+
+State 7
 
     1 start: expression .
 
     $default  reduce using rule 1 (start)
 
 
-State 7
+State 8
 
     0 $accept: start $end .
 

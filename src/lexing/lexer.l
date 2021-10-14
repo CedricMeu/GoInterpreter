@@ -18,12 +18,21 @@
         } \
     }
 
+typedef struct convert_char_result {
+    int length;
+    char value;
+} convert_char_result;
+
 long binarytoint(char *string);
 long octaltoint(char *string);
 long dectoint(char * string);
 long hextoint(char *string);
 float convertfloat(char *string);
-char convertchar(char *string);
+char *removeQuotes(char *string);
+convert_char_result convertchar(char *string);
+char convertCharLiteral(char *string);
+str convertStringLiteral(char *string);
+char *copyString(char *string); // basically strdup but with new instead of malloc
 %}
 
 bin_lit 0(b|B)((_)?[0-1]+)+
@@ -33,12 +42,14 @@ hex_lit 0(x|X)((_)?[0-9a-fA-F]+)+
 
 dec_float_lit [0-9]((_)?[0-9]+)*\.([0-9]((_)?[0-9]+)*)?
 
-rune_lit_esc \'\\(a|b|f|n|r|t|v|\\|\'|\")\'
-rune_lit_oct \'\\[0-7]{3}\'
-rune_lit_hex \'\\(x)[0-9a-fA-F]{2}\'
-rune_lit_uns \'\\u[0-9a-fA-F]{4}\'
-rune_lit_unb \'\\U[0-9a-fA-F]{8}\'
-rune_lit_all \'[^\a\b\f\n\r\t\v\\\'"]\'
+rune_lit_esc \\(a|b|f|n|r|t|v|\\|\'|\")
+rune_lit_oct \\[0-7]{3}
+rune_lit_hex \\(x)[0-9a-fA-F]{2}
+rune_lit_uns \\u[0-9a-fA-F]{4}
+rune_lit_unb \\U[0-9a-fA-F]{8}
+rune_lit_all [^\a\b\f\n\r\t\v\\\'"]
+
+rune_lit ({rune_lit_esc}|{rune_lit_oct}|{rune_lit_hex}|{rune_lit_all})
 
 identifier [_a-zA-Z]([_a-zA-Z0-9])*
 
@@ -65,12 +76,10 @@ false                       { yylval.boolean = false; return BOOL_LITERAL; }
 
 {dec_float_lit}             { yylval.floating = convertfloat(yytext); return FLOAT_LITERAL; }
 
-{rune_lit_esc}              { yylval.rune = convertchar(yytext); return RUNE_LITERAL; }
-{rune_lit_oct}              { yylval.rune = convertchar(yytext); return RUNE_LITERAL; }
-{rune_lit_hex}              { yylval.rune = convertchar(yytext); return RUNE_LITERAL; }
-{rune_lit_all}              { yylval.rune = convertchar(yytext); return RUNE_LITERAL; }
+\'{rune_lit}\'              { yylval.rune = convertCharLiteral(yytext); return RUNE_LITERAL; }
+\"{rune_lit}*\"             { yylval.string = convertStringLiteral(yytext); return STRING_LITERAL; }
 
-{identifier}                { yylval.id = strdup(yytext); return IDENTIFIER; }
+{identifier}                { yylval.identifier = copyString(yytext); return IDENTIFIER; }
  
 .                           { return *yytext; }
 %%
@@ -125,43 +134,110 @@ float convertfloat(char *string)
     return strtof(filtered, NULL);
 }
 
-char convertchar(char *string)
+char *removeQuotes(char *string)
 {
-    // remove ' '
-    auto length = strlen(string);
-    string[length-1] = '\0';
-    string = string + 1;
+    // remove ' ' or " "
+    auto copy = copyString(string+1);
+    auto length = strlen(copy);
+    copy[length-1] = '\0';
+    return copy;
+}
 
-    length = strlen(string);
-    if (length == 1) {
-        return *string;
+convert_char_result convertchar(char *string)
+{
+    convert_char_result result;
+
+    if (*string == '\\') {
+        string = string + 1; // skip the /
+
+        // octal representation
+        if (string[0] >= '0' && string[0] <= '7') {
+            // copy the value to a buffer for strtol()
+            char rep[4];
+            rep[0] = string[0];
+            rep[1] = string[1];
+            rep[2] = string[2];
+            rep[3] = '\0';
+
+            // create result
+            result.length = 4;  // length of used string is '\' + 3 numbers
+            result.value = (char)strtol(rep, NULL, 8);
+
+            return result;
+        }
+
+        // hex representation
+        if (*string == 'x') {
+            // copy the value to a buffer for strtol()
+            char rep[3];
+            rep[0] = string[1];
+            rep[1] = string[2];
+            rep[2] = '\0';
+
+            // create result
+            result.length = 4;  // length of used string is '\' + 'x' + 2 numbers
+            result.value = (char)strtol(rep, NULL, 16);
+
+            return result;
+        }
+
+        result.length = 2; // '\' + symbol
+        switch (*string) {
+            case 'a': result.value = '\a'; break;
+            case 'b': result.value = '\b'; break;
+            case 'f': result.value = '\f'; break;
+            case 'n': result.value = '\n'; break;
+            case 'r': result.value = '\r'; break;
+            case 't': result.value = '\t'; break;
+            case 'v': result.value = '\v'; break;
+            case '\\': result.value = '\\'; break;
+            case '\'': result.value = '\''; break;
+            case '\"': result.value = '\"'; break;
+        }
+
+        return result;
     }
 
-    string = string + 1; // skip the /
+    result.length = 1;
+    result.value = *string;
 
-    // octal representation
-    if (*string >= '0' && *string <= '7') {
-        return (char)strtol(string, NULL, 8);
+    return result;
+}
+
+char convertCharLiteral(char *string)
+{
+    auto quoteless = removeQuotes(string);
+    auto result = convertchar(quoteless);
+    delete quoteless;
+    return result.value;
+}
+
+str convertStringLiteral(char *string)
+{
+    auto quoteless = removeQuotes(string);
+    auto length = strlen(quoteless);
+    auto offset = 0;
+
+    auto converted = new char[length];
+
+    int i = 0;
+
+    while (offset < length) {
+        auto result = convertchar(quoteless + offset);
+        converted[i++] = result.value;
+        offset += result.length;
     }
 
-    // hex representation
-    if (*string == 'x') {
-        string = string + 1; // skip the x
-        return (char)strtol(string, NULL, 16);
-    }
+    converted[i] = '\0';
 
-    switch (*string) {
-        case 'a': return '\a';
-        case 'b': return '\b';
-        case 'f': return '\f';
-        case 'n': return '\n';
-        case 'r': return '\r';
-        case 't': return '\t';
-        case 'v': return '\v';
-        case '\\': return '\\';
-        case '\'': return '\'';
-        case '\"': return '\"';
-    }
+    delete quoteless;
 
-    return 0;
+    return {converted, i};
+}
+
+char *copyString(char *string)
+{
+    auto result = new char[strlen(string)];
+    strcpy(result, string);
+    return result;
 }

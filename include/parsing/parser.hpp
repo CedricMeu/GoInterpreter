@@ -49,9 +49,14 @@ extern int yydebug;
     #include "ast/ast.hpp"
     #include "utils/linked_list.hpp"
 
+    typedef struct str {
+        char *string;
+        int length;
+    } str;
+
 
 /* Line 2060 of yacc.c  */
-#line 55 "include/parsing/parser.hpp"
+#line 60 "include/parsing/parser.hpp"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -73,7 +78,8 @@ extern int yydebug;
      INT_LITERAL = 269,
      FLOAT_LITERAL = 270,
      BOOL_LITERAL = 271,
-     RUNE_LITERAL = 272
+     RUNE_LITERAL = 272,
+     STRING_LITERAL = 273
    };
 #endif
 
@@ -82,13 +88,14 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 2060 of yacc.c  */
-#line 21 "src/parsing/parser.y"
+#line 26 "src/parsing/parser.y"
 
     int integer;
     float floating;
     bool boolean;
     char rune;
-    char* id;
+    char *identifier;
+    str string;
     AST::Type *type;
     AST::Expression *expression;
     LinkedList<std::string> *id_list;
@@ -96,7 +103,7 @@ typedef union YYSTYPE
 
 
 /* Line 2060 of yacc.c  */
-#line 100 "include/parsing/parser.hpp"
+#line 107 "include/parsing/parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

@@ -16,6 +16,11 @@
     #include <vector>
     #include "ast/ast.hpp"
     #include "utils/linked_list.hpp"
+
+    typedef struct str {
+        char *string;
+        int length;
+    } str;
 }
 
 %union {
@@ -23,7 +28,8 @@
     float floating;
     bool boolean;
     char rune;
-    char* id;
+    char *identifier;
+    str string;
     AST::Type *type;
     AST::Expression *expression;
     LinkedList<std::string> *id_list;
@@ -43,11 +49,12 @@
 %token FUNC
 %token MAP
 
-%token<id> IDENTIFIER
+%token<identifier> IDENTIFIER
 %token<integer> INT_LITERAL
 %token<floating> FLOAT_LITERAL
 %token<boolean> BOOL_LITERAL
 %token<rune> RUNE_LITERAL
+%token<string> STRING_LITERAL
 
 %type<expression> expression
 
@@ -68,9 +75,10 @@ expression: BOOL_LITERAL                    { $$ = new AST::BoolExpression{$1}; 
           | INT_LITERAL                     { $$ = new AST::IntExpression{$1}; }
           | FLOAT_LITERAL                   { $$ = new AST::Float32Expression{$1}; }
           | RUNE_LITERAL                    { $$ = new AST::RuneExpression{$1}; }
+          | STRING_LITERAL                  { $$ = new AST::StringExpression{$1.string, $1.length}; delete $1.string; }
           ;
 
-type: IDENTIFIER                            { $$ = new AST::CustomType{$1}; }
+type: IDENTIFIER                            { $$ = new AST::CustomType{$1}; delete $1; }
     | '(' type ')'                          { $$ = $2; }
     | BOOL                                  { $$ = new AST::BoolType{}; }
     | INT                                   { $$ = new AST::IntType{}; }
@@ -171,12 +179,14 @@ identifier_list: IDENTIFIER                 {
                                                 auto list = new LinkedList<std::string>{}; 
                                                 list->insert(0, $1);
                                                 $$ = list;
+                                                delete $1;
                                             }
                | IDENTIFIER ',' identifier_list    
                                             {
                                                 auto list = $3;
                                                 list->insert(0, $1);
                                                 $$ = list;
+                                                delete $1;
                                             }
                ;
 

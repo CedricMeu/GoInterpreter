@@ -31,3 +31,23 @@ auto AST::RuneExpression::print() -> std::string
 {
     return "Rune(" + std::to_string(this->value) + ")";
 }
+
+AST::StringExpression::StringExpression(char *value, int length): value{value}, length{length}
+{}
+
+AST::StringExpression::~StringExpression()
+{
+    delete value;
+}
+
+auto AST::StringExpression::print() -> std::string
+{
+    std::string result = "String(";
+
+    for (int i = 0; i < this->length; ++i)
+    {
+        result += std::to_string(this->value[i]) + ", ";
+    }
+
+    return result + ")";
+}
