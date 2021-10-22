@@ -1,31 +1,32 @@
 #include "ast/types.hpp"
 
-auto AST::BoolType::print() -> std::string 
+void AST::BoolType::accept(Visitor *visitor)
 {
-    return "BoolType";
+    visitor->visitBoolType();
 }
 
-auto AST::IntType::print() -> std::string 
+void AST::IntType::accept(Visitor *visitor)
 {
-    return "IntType";
+    visitor->visitIntType();
 }
 
-auto AST::Float32Type::print() -> std::string 
+void AST::Float32Type::accept(Visitor *visitor)
 {
-    return "Float32Type";
+    visitor->visitFloat32Type();
 }
 
-auto AST::RuneType::print() -> std::string 
+void AST::RuneType::accept(Visitor *visitor)
 {
-    return "RuneType";
+    visitor->visitRuneType();
 }
 
-auto AST::StringType::print() -> std::string 
+void AST::StringType::accept(Visitor *visitor)
 {
-    return "StringType";
+visitor->visitStringType();
 }
 
-AST::ArrayType::ArrayType(long size, Type *type): type{type}, size{size} 
+AST::ArrayType::ArrayType(long size, Type *type)
+    :type{type}, size{size} 
 {}
 
 AST::ArrayType::~ArrayType()
@@ -33,12 +34,14 @@ AST::ArrayType::~ArrayType()
     delete this->type;
 }
 
-auto AST::ArrayType::print() -> std::string 
+void AST::ArrayType::accept(Visitor *visitor)
 {
-    return "ArrayType[" + std::to_string(this->size) + "]<" + this->type->print() + ">";
+    this->type->accept(visitor);
+    visitor->visitArrayType(this->size);
 }
 
-AST::SliceType::SliceType(Type *type): type{type}
+AST::SliceType::SliceType(Type *type)
+    :type{type}
 {}
 
 AST::SliceType::~SliceType()
@@ -46,12 +49,14 @@ AST::SliceType::~SliceType()
     delete this->type;
 }
 
-auto AST::SliceType::print() -> std::string 
+void AST::SliceType::accept(Visitor *visitor)
 {
-    return "SliceType[]<" + this->type->print() + ">";
+    this->type->accept(visitor);
+    visitor->visitSliceType();
 }
 
-AST::StructType::StructType(std::vector<std::pair<std::string, Type *>> fields): fields{fields}
+AST::StructType::StructType(std::vector<std::pair<std::string, Type *>> fields)
+    :fields{fields}
 {}
 
 AST::StructType::~StructType()
@@ -61,18 +66,20 @@ AST::StructType::~StructType()
     }
 }
 
-auto AST::StructType::print() -> std::string
+void AST::StructType::accept(Visitor *visitor)
 {
-    std::string result = "struct<";
+    std::vector<std::string> field_names;
 
     for (const auto pair : this->fields) {
-        result += pair.first + ":" + pair.second->print()+", ";
+        field_names.push_back(pair.first);
+        pair.second->accept(visitor);
     }
 
-    return result + ">";
+    visitor->visitStructType(field_names);
 }
 
-AST::PointerType::PointerType(Type *type): type{type}
+AST::PointerType::PointerType(Type *type)
+    :type{type}
 {}
 
 AST::PointerType::~PointerType()
@@ -80,14 +87,16 @@ AST::PointerType::~PointerType()
     delete this->type;
 }
 
-auto AST::PointerType::print() -> std::string 
+void AST::PointerType::accept(Visitor *visitor)
 {
-    return "PointerType<" + this->type->print() + ">";
+    this->type->accept(visitor);
+    visitor->visitPointerType();
 }
 
 AST::FunctionType::FunctionType(
     std::vector<std::pair<std::string, Type *>> parameters, 
-    std::vector<std::pair<std::string, Type *>> returns): parameters{parameters}, returns{returns}
+    std::vector<std::pair<std::string, Type *>> returns)
+    :parameters{parameters}, returns{returns}
 {}
 
 AST::FunctionType::~FunctionType()
@@ -101,24 +110,26 @@ AST::FunctionType::~FunctionType()
     }
 }
 
-auto AST::FunctionType::print() -> std::string
+void AST::FunctionType::accept(Visitor *visitor)
 {
-    std::string result = "func<";
+    std::vector<std::string> parameter_names;
+    std::vector<std::string> return_names;
 
     for (const auto ppair : this->parameters) {
-        result += ppair.first + ":" + ppair.second->print()+", ";
+        parameter_names.push_back(ppair.first);
+        ppair.second->accept(visitor);
     }
-
-    result += "-> ";
 
     for (const auto rpair : this->returns) {
-        result += rpair.first + ":" + rpair.second->print()+", ";
+        return_names.push_back(rpair.first);
+        rpair.second->accept(visitor);
     }
 
-    return result + ">";
+    visitor->visitFunctionType(parameter_names, return_names);
 }
 
-AST::MapType::MapType(Type *keyType, Type *elementType): keyType{keyType}, elementType{elementType}
+AST::MapType::MapType(Type *keyType, Type *elementType)
+    :keyType{keyType}, elementType{elementType}
 {}
 
 AST::MapType::~MapType()
@@ -127,15 +138,18 @@ AST::MapType::~MapType()
     delete elementType;
 }
 
-auto AST::MapType::print() -> std::string
+void AST::MapType::accept(Visitor *visitor)
 {
-    return "MapType[<" + keyType->print() + ">]<" + elementType->print() + ">";
+    this->keyType->accept(visitor);
+    this->elementType->accept(visitor);
+    visitor->visitMapType();
 }
 
-AST::CustomType::CustomType(const char *id): id{std::string{id}} 
+AST::CustomType::CustomType(const char *id)
+    :id{std::string{id}} 
 {}
 
-auto AST::CustomType::print() -> std::string 
+void AST::CustomType::accept(Visitor *visitor)
 {
-    return "Custom(" + this->id + ")";
+    visitor->visitCustomType(this->id);
 }

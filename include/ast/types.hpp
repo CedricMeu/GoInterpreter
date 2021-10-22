@@ -13,7 +13,7 @@ namespace AST {
     public:
         BoolType() = default;
         virtual ~BoolType() = default;
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
 
     class IntType : public Type
@@ -21,7 +21,7 @@ namespace AST {
     public:
         IntType() = default;
         virtual ~IntType() = default;
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
 
     class Float32Type : public Type
@@ -29,7 +29,7 @@ namespace AST {
     public:
         Float32Type() = default;
         virtual ~Float32Type() = default;
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
 
     class RuneType : public Type
@@ -37,7 +37,7 @@ namespace AST {
     public:
         RuneType() = default;
         virtual ~RuneType() = default;
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
 
     class StringType : public Type
@@ -45,7 +45,7 @@ namespace AST {
     public:
         StringType() = default;
         virtual ~StringType() = default;
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
 
     class ArrayType : public Type
@@ -56,7 +56,7 @@ namespace AST {
     public:
         ArrayType(long size, Type *type);
         virtual ~ArrayType();
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
 
     class SliceType : public Type
@@ -66,7 +66,7 @@ namespace AST {
     public:
         SliceType(Type *type);
         virtual ~SliceType();
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
     
     class StructType : public Type
@@ -77,7 +77,7 @@ namespace AST {
     public:
         explicit StructType(std::vector<std::pair<std::string, Type *>> fields);
         virtual ~StructType();
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
     
     class PointerType : public Type
@@ -88,7 +88,7 @@ namespace AST {
     public:
         explicit PointerType(Type *type);
         virtual ~PointerType();
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
     
     class FunctionType : public Type
@@ -102,7 +102,7 @@ namespace AST {
             std::vector<std::pair<std::string, Type *>> parameters, 
             std::vector<std::pair<std::string, Type *>> returns);
         virtual ~FunctionType();
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
     
     class MapType : public Type
@@ -114,7 +114,7 @@ namespace AST {
     public:
         MapType(Type* keyType, Type* elementType);
         virtual ~MapType();
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
     
     class CustomType : public Type
@@ -125,9 +125,9 @@ namespace AST {
     public:
         explicit CustomType(const char *id);
         virtual ~CustomType() = default;
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
 
-} // namespace AST
+}; // namespace AST
 
 #endif // GOINTERPRETER_AST_TYPES_HPP

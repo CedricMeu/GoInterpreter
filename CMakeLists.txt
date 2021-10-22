@@ -10,7 +10,6 @@ set(FLEX_INCLUDE "/user/local/opt/flex/include")
 set(BISON_LIB "/user/local/opt/bison@2.7/lib/liby.a")
 set(BISON_INCLUDE "/user/local/opt/bison@2.7/include")
 
-
 add_custom_command(
         OUTPUT src/lexing/lexer.cpp
         COMMAND flex -o src/lexing/lexer.cpp src/lexing/lexer.l

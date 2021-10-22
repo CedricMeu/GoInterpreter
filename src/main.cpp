@@ -12,7 +12,5 @@ int main() {
 
     yyparse();
 
-    std::cout << tree->print() << std::endl;
-
     return EXIT_SUCCESS;
 }

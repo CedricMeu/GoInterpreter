@@ -30,8 +30,13 @@
     char rune;
     char *identifier;
     str string;
+
+    AST::Block *block;
     AST::Type *type;
     AST::Expression *expression;
+    LinkedList<AST::Statement *> *statements;
+    AST::TypeSpecStatement *type_spec;
+
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
 }
@@ -48,6 +53,7 @@
 %token STRUCT
 %token FUNC
 %token MAP
+%token TYPE
 
 %token<identifier> IDENTIFIER
 %token<integer> INT_LITERAL
@@ -55,8 +61,6 @@
 %token<boolean> BOOL_LITERAL
 %token<rune> RUNE_LITERAL
 %token<string> STRING_LITERAL
-
-%type<expression> expression
 
 %type<type> type
 %type<integer> array_length
@@ -66,18 +70,21 @@
 %type<fields> function_parameter_list
 %type<fields> struct_field_decls
 
+%type<block> block
+
+%type<statements> statement
+%type<statements> statement_list
+%type<statements> type_decl
+%type<type_spec> type_spec
+%type<statements> type_spec_list
+
+%type<expression> expression
 %%
 
-start: expression                           { tree = $1; }
+start: block                                { tree = $1; }
      ;
 
-expression: BOOL_LITERAL                    { $$ = new AST::BoolExpression{$1}; }
-          | INT_LITERAL                     { $$ = new AST::IntExpression{$1}; }
-          | FLOAT_LITERAL                   { $$ = new AST::Float32Expression{$1}; }
-          | RUNE_LITERAL                    { $$ = new AST::RuneExpression{$1}; }
-          | STRING_LITERAL                  { $$ = new AST::StringExpression{$1.string, $1.length}; delete $1.string; }
-          ;
-
+// Types
 type: IDENTIFIER                            { $$ = new AST::CustomType{$1}; delete $1; }
     | '(' type ')'                          { $$ = $2; }
     | BOOL                                  { $$ = new AST::BoolType{}; }
@@ -175,6 +182,64 @@ struct_field_decls: identifier_list type ';'
                                             }
                   ;
 
+// Block
+block: '{' statement_list '}'               { $$ = new AST::Block{$2->toStdVector()}; delete $2; }
+     ;
+
+// Statements
+statement: type_decl                        { $$ = $1; }
+         ;
+
+statement_list: statement ';'               { $$ = $1; }
+              | statement ';' statement_list
+                                            {
+                                                auto statements = $1->toStdVector();
+                                                delete $1;
+                                                auto list = $3;
+                                                for (int i = 0; i < statements.size(); i++) {
+                                                    list->insert(i, statements[i]);
+                                                }
+                                                $$ = list;
+                                            }
+              ;
+
+type_decl: TYPE type_spec                   { 
+                                                auto typeSpec = $2;
+                                                auto list = new LinkedList<AST::Statement*>;
+                                                list->insert(0, typeSpec);
+                                                $$ = list;
+                                            }
+         | TYPE '(' type_spec_list ')'      { $$ = $3; }
+         ;
+
+type_spec: IDENTIFIER '=' type              { $$ = new AST::TypeAliasStatement{$1, $3}; delete $1; }
+         | IDENTIFIER type                  { $$ = new AST::TypeDefinitionStatement{$1, $2}; delete $1; }
+         ;
+
+type_spec_list: type_spec ';'               { 
+                                                auto typeSpec = $1;
+                                                auto list = new LinkedList<AST::Statement *>; 
+                                                list->insert(0, typeSpec);
+                                                $$ = list;
+                                            }
+              | type_spec ';' type_spec_list
+                                            { 
+                                                auto typeSpec = $1;
+                                                auto list = $3; 
+                                                list->insert(0, typeSpec);
+                                                $$ = list;
+                                            }
+              ;
+
+// Expressions
+expression: BOOL_LITERAL                    { $$ = new AST::BoolExpression{$1}; }
+          | INT_LITERAL                     { $$ = new AST::IntExpression{$1}; }
+          | FLOAT_LITERAL                   { $$ = new AST::Float32Expression{$1}; }
+          | RUNE_LITERAL                    { $$ = new AST::RuneExpression{$1}; }
+          | STRING_LITERAL                  { $$ = new AST::StringExpression{$1.string, $1.length}; delete $1.string; }
+          ;
+
+// Miscellaneous
 identifier_list: IDENTIFIER                 { 
                                                 auto list = new LinkedList<std::string>{}; 
                                                 list->insert(0, $1);
@@ -194,5 +259,5 @@ identifier_list: IDENTIFIER                 {
 
 void yyerror(char *s)
 {
-    std::cerr << s << " on line " << yylloc.first_line << ", column " << yylloc.first_column+1 << std::endl;
+    std::cerr << s << " on line " << yylloc.first_line << ", column " << yylloc.first_column+1 << "\n\t\"" << yytext << "\"" << std::endl;
 }

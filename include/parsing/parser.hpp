@@ -74,12 +74,13 @@ extern int yydebug;
      STRUCT = 265,
      FUNC = 266,
      MAP = 267,
-     IDENTIFIER = 268,
-     INT_LITERAL = 269,
-     FLOAT_LITERAL = 270,
-     BOOL_LITERAL = 271,
-     RUNE_LITERAL = 272,
-     STRING_LITERAL = 273
+     TYPE = 268,
+     IDENTIFIER = 269,
+     INT_LITERAL = 270,
+     FLOAT_LITERAL = 271,
+     BOOL_LITERAL = 272,
+     RUNE_LITERAL = 273,
+     STRING_LITERAL = 274
    };
 #endif
 
@@ -96,14 +97,19 @@ typedef union YYSTYPE
     char rune;
     char *identifier;
     str string;
+
+    AST::Block *block;
     AST::Type *type;
     AST::Expression *expression;
+    LinkedList<AST::Statement *> *statements;
+    AST::TypeSpecStatement *type_spec;
+
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
 
 
 /* Line 2060 of yacc.c  */
-#line 107 "include/parsing/parser.hpp"
+#line 113 "include/parsing/parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

@@ -1,38 +1,43 @@
 #include "ast/literals.hpp"
 
-AST::BoolExpression::BoolExpression(bool value): value{value}
+AST::BoolExpression::BoolExpression(bool value)
+    :value{value}
 {}
 
-auto AST::BoolExpression::print() -> std::string
+void AST::BoolExpression::accept(Visitor *visitor)
 {
-    return "Bool(" + std::string{this->value ? "true" : "false"} + ")";
+    visitor->visitBoolExpression(this->value);
 }
 
-AST::IntExpression::IntExpression(int value): value{value}
+AST::IntExpression::IntExpression(int value)
+    :value{value}
 {}
 
-auto AST::IntExpression::print() -> std::string
+void AST::IntExpression::accept(Visitor *visitor)
 {
-    return "Int(" + std::to_string(this->value) + ")";
+    visitor->visitIntExpression(this->value);
 }
 
-AST::Float32Expression::Float32Expression(float value): value{value}
+AST::Float32Expression::Float32Expression(float value)
+    :value{value}
 {}
 
-auto AST::Float32Expression::print() -> std::string
+void AST::Float32Expression::accept(Visitor *visitor)
 {
-    return "Float32(" + std::to_string(this->value) + ")";
+    visitor->visitFloat32Expression(this->value);
 }
 
-AST::RuneExpression::RuneExpression(char value): value{value}
+AST::RuneExpression::RuneExpression(char value)
+    :value{value}
 {}
 
-auto AST::RuneExpression::print() -> std::string
+void AST::RuneExpression::accept(Visitor *visitor)
 {
-    return "Rune(" + std::to_string(this->value) + ")";
+    visitor->visitRuneExpression(this->value);
 }
 
-AST::StringExpression::StringExpression(char *value, int length): value{value}, length{length}
+AST::StringExpression::StringExpression(char *value, long length)
+    :value{value}, length{length}
 {}
 
 AST::StringExpression::~StringExpression()
@@ -40,14 +45,7 @@ AST::StringExpression::~StringExpression()
     delete value;
 }
 
-auto AST::StringExpression::print() -> std::string
+void AST::StringExpression::accept(Visitor *visitor)
 {
-    std::string result = "String(";
-
-    for (int i = 0; i < this->length; ++i)
-    {
-        result += std::to_string(this->value[i]) + ", ";
-    }
-
-    return result + ")";
+    visitor->visitStringExpression(this->value, this->length);
 }

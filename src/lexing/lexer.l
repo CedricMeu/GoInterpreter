@@ -23,6 +23,8 @@ typedef struct convert_char_result {
     char value;
 } convert_char_result;
 
+bool insertSemicolon = false;
+
 long binarytoint(char *string);
 long octaltoint(char *string);
 long dectoint(char * string);
@@ -54,34 +56,44 @@ rune_lit ({rune_lit_esc}|{rune_lit_oct}|{rune_lit_hex}|{rune_lit_all})
 identifier [_a-zA-Z]([_a-zA-Z0-9])*
 
 %%
-"//".*                      ;
-[ \t\t\n]                   ;
+"//".*                      {}
+[ \t]                       {}
+\n                          { 
+                                if (insertSemicolon) {
+                                    return ';'; 
+                                    insertSemicolon = false; 
+                                }
+                            }
 
-bool                        { return BOOL; }
-int                         { return INT; }
-float32                     { return FLOAT32; }
-rune                        { return RUNE; }
-string                      { return STRING; }
-struct                      { return STRUCT; }
-func                        { return FUNC; }
-map                         { return MAP; }
+bool                        { insertSemicolon = true; return BOOL; }
+int                         { insertSemicolon = true; return INT; }
+float32                     { insertSemicolon = true; return FLOAT32; }
+rune                        { insertSemicolon = true; return RUNE; }
+string                      { insertSemicolon = true; return STRING; }
+struct                      { insertSemicolon = true; return STRUCT; }
+func                        { insertSemicolon = true; return FUNC; }
+map                         { insertSemicolon = true; return MAP; }
+type                        { insertSemicolon = true; return TYPE; }
 
-true                        { yylval.boolean = true; return BOOL_LITERAL; }
-false                       { yylval.boolean = false; return BOOL_LITERAL; }
+true                        { insertSemicolon = true; yylval.boolean = true; return BOOL_LITERAL; }
+false                       { insertSemicolon = true; yylval.boolean = false; return BOOL_LITERAL; }
 
-{bin_lit}                   { yylval.integer = binarytoint(yytext); return INT_LITERAL; }
-{oct_lit}                   { yylval.integer = octaltoint(yytext); return INT_LITERAL; }
-{dec_lit}                   { yylval.integer = dectoint(yytext); return INT_LITERAL; }
-{hex_lit}                   { yylval.integer = hextoint(yytext); return INT_LITERAL; }
+{bin_lit}                   { insertSemicolon = true; yylval.integer = binarytoint(yytext); return INT_LITERAL; }
+{oct_lit}                   { insertSemicolon = true; yylval.integer = octaltoint(yytext); return INT_LITERAL; }
+{dec_lit}                   { insertSemicolon = true; yylval.integer = dectoint(yytext); return INT_LITERAL; }
+{hex_lit}                   { insertSemicolon = true; yylval.integer = hextoint(yytext); return INT_LITERAL; }
 
-{dec_float_lit}             { yylval.floating = convertfloat(yytext); return FLOAT_LITERAL; }
+{dec_float_lit}             { insertSemicolon = true; yylval.floating = convertfloat(yytext); return FLOAT_LITERAL; }
 
-\'{rune_lit}\'              { yylval.rune = convertCharLiteral(yytext); return RUNE_LITERAL; }
-\"{rune_lit}*\"             { yylval.string = convertStringLiteral(yytext); return STRING_LITERAL; }
+\'{rune_lit}\'              { insertSemicolon = true; yylval.rune = convertCharLiteral(yytext); return RUNE_LITERAL; }
+\"{rune_lit}*\"             { insertSemicolon = true; yylval.string = convertStringLiteral(yytext); return STRING_LITERAL; }
 
-{identifier}                { yylval.identifier = copyString(yytext); return IDENTIFIER; }
+{identifier}                { insertSemicolon = true; yylval.identifier = copyString(yytext); return IDENTIFIER; }
  
-.                           { return *yytext; }
+.                           { 
+                                insertSemicolon = *yytext == ')' || *yytext == '}' ; 
+                                return *yytext; 
+                            }
 %%
 
 char *filterintrep(char *string)
@@ -237,7 +249,8 @@ str convertStringLiteral(char *string)
 
 char *copyString(char *string)
 {
-    auto result = new char[strlen(string)];
+    auto result = new char[strlen(string) + 1];
     strcpy(result, string);
+
     return result;
 }

@@ -2,6 +2,8 @@
 #define GOINTERPRETER_AST_BASE_HPP
 
 #include <string>
+#include <vector>
+#include "ast/visitor.hpp"
 
 namespace AST { 
 
@@ -15,7 +17,7 @@ namespace AST {
 
     public:
         virtual ~Node() = default;
-        virtual auto print() -> std::string = 0;
+        virtual void accept(Visitor *visitor) = 0;
     };
 
     /**
@@ -27,7 +29,7 @@ namespace AST {
 
     public:
         virtual ~Type() = default;
-        virtual auto print() -> std::string = 0;
+        virtual void accept(Visitor *visitor) = 0;
     };
 
     /**
@@ -39,9 +41,34 @@ namespace AST {
         
     public:
         virtual ~Expression() = default;
-        virtual auto print() -> std::string = 0;
+        virtual void accept(Visitor *visitor) = 0;
+    };
+
+    /**
+     * Base class for expression nodes
+     */
+    class Statement : public Node {
+    protected:
+        Statement() = default;
+        
+    public:
+        virtual ~Statement() = default;
+        virtual void accept(Visitor *visitor) = 0;
+    };
+
+    /**
+     * Class for blocks
+     */
+    class Block : public Node {
+    protected:
+        std::vector<Statement *> statements;
+        
+    public:
+        Block(std::vector<Statement *> statements);
+        virtual ~Block();
+        virtual void accept(Visitor *visitor);
     };
     
-} // namespace AST
+}; // namespace AST
 
 #endif // GOINTERPRETER_AST_BASE_HPP

@@ -23,8 +23,8 @@
 - [p] bool `true` and `false`
 - [p] integers
 - [p] floats
-- [ ] runes (eg. `'c'` and including escaped chars `'\n'` etc.)
-- [ ] strings (interpreted)
+- [p] runes (eg. `'c'` and including escaped chars `'\n'` etc.)
+- [p] strings (interpreted)
 - [ ] arrays
 - [ ] structs
 - [ ] function literals
@@ -72,3 +72,6 @@
 - [ ] if last token in specific subset of tokentypes, return `";"` on recognising a `"\n"`
 - [ ] type declarations
 - [ ] garbage collector
+
+# Notes
+Go strings are not null terminated but by length of the array, `"t\000est"` prints `test` and has length `5`.

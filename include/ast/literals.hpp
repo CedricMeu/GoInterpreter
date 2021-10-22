@@ -16,7 +16,7 @@ namespace AST {
     public:
         BoolExpression(bool value);
         ~BoolExpression() = default;
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
 
     class IntExpression : public Expression
@@ -27,7 +27,7 @@ namespace AST {
     public:
         IntExpression(int value);
         ~IntExpression() = default;
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
 
     class Float32Expression : public Expression
@@ -38,7 +38,7 @@ namespace AST {
     public:
         Float32Expression(float value);
         ~Float32Expression() = default;
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
 
     class RuneExpression : public Expression
@@ -49,19 +49,19 @@ namespace AST {
     public:
         RuneExpression(char value);
         ~RuneExpression() = default;
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
 
     class StringExpression : public Expression 
     {
     private:
         char *value;
-        int length;
+        long length;
 
     public:
-        StringExpression(char *value, int lenght);
+        StringExpression(char *value, long lenght);
         ~StringExpression();
-        virtual auto print() -> std::string;
+        virtual void accept(Visitor *visitor);
     };
     
 };
