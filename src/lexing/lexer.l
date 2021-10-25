@@ -79,6 +79,8 @@ var                         { insertSemicolon = true; return VAR; }
 true                        { insertSemicolon = true; yylval.boolean = true; return BOOL_LITERAL; }
 false                       { insertSemicolon = true; yylval.boolean = false; return BOOL_LITERAL; }
 
+:=                          { insertSemicolon = false; return SHORT_VAR_DECL; }
+
 {bin_lit}                   { insertSemicolon = true; yylval.integer = binarytoint(yytext); return INT_LITERAL; }
 {oct_lit}                   { insertSemicolon = true; yylval.integer = octaltoint(yytext); return INT_LITERAL; }
 {dec_lit}                   { insertSemicolon = true; yylval.integer = dectoint(yytext); return INT_LITERAL; }

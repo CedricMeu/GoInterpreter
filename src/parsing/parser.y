@@ -56,6 +56,7 @@
 %token MAP
 %token TYPE
 %token VAR
+%token SHORT_VAR_DECL
 
 %token<identifier> IDENTIFIER
 %token<integer> INT_LITERAL
@@ -65,6 +66,7 @@
 %token<string> STRING_LITERAL
 
 %type<type> type
+%type<type> function_signature
 %type<integer> array_length
 %type<id_list> identifier_list
 %type<fields> function_result
@@ -102,13 +104,20 @@ type: IDENTIFIER                            { $$ = new AST::CustomType{$1}; dele
     | '[' ']' type                          { $$ = new AST::SliceType{$3}; }
     | STRUCT '{' struct_field_decls '}'     { $$ = new AST::StructType{$3->toStdVector()}; delete $3; }
     | '*' type                              { $$ = new AST::PointerType{$2}; }
-    | FUNC function_parameters function_result
-                                            { $$ = new AST::FunctionType{$2->toStdVector(), $3->toStdVector()}; delete $2; delete $3; }
+    | FUNC function_signature               { $$ = $2; }
     | MAP '[' type ']' type                 { $$ = new AST::MapType{$3, $5}; }
     ;
 
 array_length: INT_LITERAL                   { $$ = yylval.integer; }
             ;
+
+function_signature: function_parameters function_result
+                                            { 
+                                                $$ = new AST::FunctionType{$1->toStdVector(), $2->toStdVector()}; 
+                                                delete $1;
+                                                delete $2;
+                                            }
+                  ;
 
 function_result:                            { $$ = new LinkedList<std::pair<std::string, AST::Type *>>; }
                | function_parameters        { $$ = $1; }
@@ -245,6 +254,13 @@ var_decl: VAR var_spec                      {
                                                 $$ = list;
                                             }
         | VAR '(' var_spec_list ')'         { $$ = $3; }
+        | identifier_list SHORT_VAR_DECL expression_list
+                                            { 
+                                                auto varSpec = new AST::VariableDeclarationStatement{$1->toStdVector(), nullptr, $3->toStdVector()};
+                                                auto list = new LinkedList<AST::Statement*>;
+                                                list->insert(0, varSpec);
+                                                $$ = list;
+                                            }
         ;
 
 var_spec: identifier_list type              { $$ = new AST::VariableDeclarationStatement{$1->toStdVector(), $2, {}}; }

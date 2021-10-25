@@ -2,6 +2,7 @@
 # legend
 - p : implemented in lexer and parser
 - v : p and implemented in validation
+- t : v and implemented in typechecking
 - x : v and implemented in interpreter (done)
 
 # Types
@@ -42,8 +43,8 @@
 - [ ] adres operators
 
 # statements
-- [ ] variable declarations
-- [ ] short variable declarations
+- [p] variable declarations
+- [p] short variable declarations
 - [ ] return
 - [ ] if
 - [ ] for (itterative and range)
