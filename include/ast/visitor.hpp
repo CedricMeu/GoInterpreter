@@ -6,7 +6,8 @@
 
 namespace AST {
 
-    class Visitor {
+    class Visitor 
+    {
     protected:
         Visitor() = default;
 
@@ -43,7 +44,7 @@ namespace AST {
         // Statements
         virtual void visitTypeAliasStatement(std::string id) = 0;
         virtual void visitTypeDefinitionStatement(std::string id) = 0;
-        virtual void visitVariableDeclarationStatement(std::vector<std::string> ids, bool type_declared) = 0;
+        virtual void visitVariableDeclarationStatement(std::vector<std::string> ids, bool type_declared, long expression_count) = 0;
 
         // Expressions - Literals
         virtual void visitBoolExpression(bool value) = 0;

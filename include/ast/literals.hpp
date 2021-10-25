@@ -16,7 +16,7 @@ namespace AST {
     public:
         BoolExpression(bool value);
         ~BoolExpression() = default;
-        virtual void accept(Visitor *visitor);
+        virtual void accept(Visitor *visitor) override;
     };
 
     class IntExpression : public Expression
@@ -27,7 +27,7 @@ namespace AST {
     public:
         IntExpression(int value);
         ~IntExpression() = default;
-        virtual void accept(Visitor *visitor);
+        virtual void accept(Visitor *visitor) override;
     };
 
     class Float32Expression : public Expression
@@ -38,7 +38,7 @@ namespace AST {
     public:
         Float32Expression(float value);
         ~Float32Expression() = default;
-        virtual void accept(Visitor *visitor);
+        virtual void accept(Visitor *visitor) override;
     };
 
     class RuneExpression : public Expression
@@ -49,7 +49,7 @@ namespace AST {
     public:
         RuneExpression(char value);
         ~RuneExpression() = default;
-        virtual void accept(Visitor *visitor);
+        virtual void accept(Visitor *visitor) override;
     };
 
     class StringExpression : public Expression 
@@ -61,7 +61,7 @@ namespace AST {
     public:
         StringExpression(char *value, long lenght);
         ~StringExpression();
-        virtual void accept(Visitor *visitor);
+        virtual void accept(Visitor *visitor) override;
     };
     
 };

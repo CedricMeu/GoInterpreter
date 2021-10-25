@@ -56,5 +56,5 @@ void AST::VariableDeclarationStatement::accept(Visitor *visitor)
         type->accept(visitor);
     }
 
-    visitor->visitVariableDeclarationStatement(this->ids, type != nullptr);
+    visitor->visitVariableDeclarationStatement(this->ids, type != nullptr, this->expressions.size());
 }

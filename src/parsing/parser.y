@@ -34,8 +34,9 @@
     AST::Block *block;
     AST::Type *type;
     AST::Expression *expression;
+    LinkedList<AST::Expression *> *expressions;
+    AST::Statement *statement;
     LinkedList<AST::Statement *> *statements;
-    AST::TypeSpecStatement *type_spec;
 
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
@@ -54,6 +55,7 @@
 %token FUNC
 %token MAP
 %token TYPE
+%token VAR
 
 %token<identifier> IDENTIFIER
 %token<integer> INT_LITERAL
@@ -75,9 +77,13 @@
 %type<statements> statement
 %type<statements> statement_list
 %type<statements> type_decl
-%type<type_spec> type_spec
 %type<statements> type_spec_list
+%type<statements> var_decl
+%type<statements> var_spec_list
+%type<statement> type_spec
+%type<statement> var_spec
 
+%type<expressions> expression_list
 %type<expression> expression
 %%
 
@@ -188,6 +194,7 @@ block: '{' statement_list '}'               { $$ = new AST::Block{$2->toStdVecto
 
 // Statements
 statement: type_decl                        { $$ = $1; }
+         | var_decl                         { $$ = $1; }
          ;
 
 statement_list: statement ';'               { $$ = $1; }
@@ -231,16 +238,60 @@ type_spec_list: type_spec ';'               {
                                             }
               ;
 
+var_decl: VAR var_spec                      {
+                                                auto varSpec = $2;
+                                                auto list = new LinkedList<AST::Statement*>;
+                                                list->insert(0, varSpec);
+                                                $$ = list;
+                                            }
+        | VAR '(' var_spec_list ')'         { $$ = $3; }
+        ;
+
+var_spec: identifier_list type              { $$ = new AST::VariableDeclarationStatement{$1->toStdVector(), $2, {}}; }
+        | identifier_list type '=' expression_list
+                                            { $$ = new AST::VariableDeclarationStatement{$1->toStdVector(), $2, $4->toStdVector()}; }
+        | identifier_list '=' expression_list
+                                            { $$ = new AST::VariableDeclarationStatement{$1->toStdVector(), nullptr, $3->toStdVector()}; }
+        ;
+
+var_spec_list: var_spec ';'                 {
+                                                auto varSpec = $1;
+                                                auto list = new LinkedList<AST::Statement *>;
+                                                list->insert(0, varSpec);
+                                                $$ = list;
+                                            }
+             | var_spec ';' var_spec_list   { 
+                                                auto varSpec = $1;
+                                                auto list = $3; 
+                                                list->insert(0, varSpec);
+                                                $$ = list;
+                                            }
+             ;
+
 // Expressions
 expression: BOOL_LITERAL                    { $$ = new AST::BoolExpression{$1}; }
           | INT_LITERAL                     { $$ = new AST::IntExpression{$1}; }
           | FLOAT_LITERAL                   { $$ = new AST::Float32Expression{$1}; }
           | RUNE_LITERAL                    { $$ = new AST::RuneExpression{$1}; }
-          | STRING_LITERAL                  { $$ = new AST::StringExpression{$1.string, $1.length}; delete $1.string; }
+          | STRING_LITERAL                  { $$ = new AST::StringExpression{$1.string, $1.length}; }
           ;
 
+expression_list: expression                 {
+                                                auto list = new LinkedList<AST::Expression *>{}; 
+                                                list->insert(0, $1);
+                                                $$ = list;
+                                                
+                                            }
+               | expression ',' expression_list
+                                            {
+                                                auto list = $3;
+                                                list->insert(0, $1);
+                                                $$ = list;
+                                            }
+               ;
+
 // Miscellaneous
-identifier_list: IDENTIFIER                 { 
+identifier_list: IDENTIFIER                 {
                                                 auto list = new LinkedList<std::string>{}; 
                                                 list->insert(0, $1);
                                                 $$ = list;
@@ -259,5 +310,10 @@ identifier_list: IDENTIFIER                 {
 
 void yyerror(char *s)
 {
-    std::cerr << s << " on line " << yylloc.first_line << ", column " << yylloc.first_column+1 << "\n\t\"" << yytext << "\"" << std::endl;
+    std::cerr << s << " on line " << yylloc.first_line << ", column " << yylloc.first_column+1 << std::endl;
+    if (*yytext == '\n') {
+        std::cerr  << "unexpected newline (implicit semicolon)." << std::endl;
+    } else {
+        std::cerr  << "unexpected \'" << yytext << "\'." << std::endl;
+    }
 }

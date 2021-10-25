@@ -14,7 +14,7 @@ namespace AST
 
     public:
         virtual ~TypeSpecStatement() = default;
-        virtual void accept(Visitor *visitor) = 0;
+        virtual void accept(Visitor *visitor) override = 0;
     };
 
     class TypeAliasStatement : public TypeSpecStatement
@@ -26,7 +26,7 @@ namespace AST
     public:
         TypeAliasStatement(std::string id, Type *underlyingType);
         ~TypeAliasStatement();
-        virtual void accept(Visitor *visitor);
+        virtual void accept(Visitor *visitor) override;
     };
 
     class TypeDefinitionStatement : public TypeSpecStatement
@@ -38,7 +38,7 @@ namespace AST
     public:
         TypeDefinitionStatement(std::string id, Type *underlyingType);
         ~TypeDefinitionStatement();
-        virtual void accept(Visitor *visitor);
+        virtual void accept(Visitor *visitor) override;
     };
 
     class VariableDeclarationStatement : public Statement 
@@ -51,7 +51,7 @@ namespace AST
     public:
         VariableDeclarationStatement(std::vector<std::string> ids, Type *type, std::vector<Expression *> expressions);
         ~VariableDeclarationStatement();
-        virtual void accept(Visitor *visitor);
+        virtual void accept(Visitor *visitor) override;
     };
 
 };

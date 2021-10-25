@@ -57,11 +57,11 @@ identifier [_a-zA-Z]([_a-zA-Z0-9])*
 
 %%
 "//".*                      {}
-[ \t]                       {}
+[ \t\r]                     {}
 \n                          { 
                                 if (insertSemicolon) {
+                                    insertSemicolon = false;
                                     return ';'; 
-                                    insertSemicolon = false; 
                                 }
                             }
 
@@ -74,6 +74,7 @@ struct                      { insertSemicolon = true; return STRUCT; }
 func                        { insertSemicolon = true; return FUNC; }
 map                         { insertSemicolon = true; return MAP; }
 type                        { insertSemicolon = true; return TYPE; }
+var                         { insertSemicolon = true; return VAR; }
 
 true                        { insertSemicolon = true; yylval.boolean = true; return BOOL_LITERAL; }
 false                       { insertSemicolon = true; yylval.boolean = false; return BOOL_LITERAL; }

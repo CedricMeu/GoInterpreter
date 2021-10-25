@@ -12,5 +12,9 @@ int main() {
 
     yyparse();
 
+    Logger::Logger logger;
+    tree->accept(&logger);
+    std::cout << logger.getLogString() << std::endl;
+
     return EXIT_SUCCESS;
 }

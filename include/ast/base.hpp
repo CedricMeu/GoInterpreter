@@ -29,7 +29,7 @@ namespace AST {
 
     public:
         virtual ~Type() = default;
-        virtual void accept(Visitor *visitor) = 0;
+        virtual void accept(Visitor *visitor) override = 0;
     };
 
     /**
@@ -41,7 +41,7 @@ namespace AST {
         
     public:
         virtual ~Expression() = default;
-        virtual void accept(Visitor *visitor) = 0;
+        virtual void accept(Visitor *visitor) override = 0;
     };
 
     /**
@@ -53,7 +53,7 @@ namespace AST {
         
     public:
         virtual ~Statement() = default;
-        virtual void accept(Visitor *visitor) = 0;
+        virtual void accept(Visitor *visitor) override = 0;
     };
 
     /**
@@ -66,7 +66,7 @@ namespace AST {
     public:
         Block(std::vector<Statement *> statements);
         virtual ~Block();
-        virtual void accept(Visitor *visitor);
+        virtual void accept(Visitor *visitor) override;
     };
     
 }; // namespace AST

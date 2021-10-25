@@ -1,31 +1,13 @@
-Nonterminals useless in grammar
-
-   expression
-
-
 Terminals unused in grammar
 
    COMPLEX64
    BYTE
-   FLOAT_LITERAL
-   BOOL_LITERAL
-   RUNE_LITERAL
-   STRING_LITERAL
 
 
-Rules useless in grammar
-
-   40 expression: BOOL_LITERAL
-   41           | INT_LITERAL
-   42           | FLOAT_LITERAL
-   43           | RUNE_LITERAL
-   44           | STRING_LITERAL
-
-
-State 46 conflicts: 1 shift/reduce
-State 48 conflicts: 1 shift/reduce
-State 66 conflicts: 1 shift/reduce
-State 67 conflicts: 2 shift/reduce
+State 67 conflicts: 1 shift/reduce
+State 69 conflicts: 1 shift/reduce
+State 89 conflicts: 1 shift/reduce
+State 90 conflicts: 2 shift/reduce
 
 
 Grammar
@@ -69,32 +51,52 @@ Grammar
    28 block: '{' statement_list '}'
 
    29 statement: type_decl
+   30          | var_decl
 
-   30 statement_list: statement ';'
-   31               | statement ';' statement_list
+   31 statement_list: statement ';'
+   32               | statement ';' statement_list
 
-   32 type_decl: TYPE type_spec
-   33          | TYPE '(' type_spec_list ')'
+   33 type_decl: TYPE type_spec
+   34          | TYPE '(' type_spec_list ')'
 
-   34 type_spec: IDENTIFIER '=' type
-   35          | IDENTIFIER type
+   35 type_spec: IDENTIFIER '=' type
+   36          | IDENTIFIER type
 
-   36 type_spec_list: type_spec ';'
-   37               | type_spec ';' type_spec_list
+   37 type_spec_list: type_spec ';'
+   38               | type_spec ';' type_spec_list
 
-   38 identifier_list: IDENTIFIER
-   39                | IDENTIFIER ',' identifier_list
+   39 var_decl: VAR var_spec
+   40         | VAR '(' var_spec_list ')'
+
+   41 var_spec: identifier_list type
+   42         | identifier_list type '=' expression_list
+   43         | identifier_list '=' expression_list
+
+   44 var_spec_list: var_spec ';'
+   45              | var_spec ';' var_spec_list
+
+   46 expression: BOOL_LITERAL
+   47           | INT_LITERAL
+   48           | FLOAT_LITERAL
+   49           | RUNE_LITERAL
+   50           | STRING_LITERAL
+
+   51 expression_list: expression
+   52                | expression ',' expression_list
+
+   53 identifier_list: IDENTIFIER
+   54                | IDENTIFIER ',' identifier_list
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'(' (40) 3 19 20 21 33
-')' (41) 3 19 20 21 33
+'(' (40) 3 19 20 21 34 40
+')' (41) 3 19 20 21 34 40
 '*' (42) 12
-',' (44) 21 24 25 39
-';' (59) 26 27 30 31 36 37
-'=' (61) 34
+',' (44) 21 24 25 52 54
+';' (59) 26 27 31 32 37 38 44 45
+'=' (61) 35 42 43
 '[' (91) 9 10 14
 ']' (93) 9 10 14
 '{' (123) 11 28
@@ -110,48 +112,59 @@ STRING (264) 8
 STRUCT (265) 11
 FUNC (266) 13
 MAP (267) 14
-TYPE (268) 32 33
-IDENTIFIER (269) 2 34 35 38 39
-INT_LITERAL (270) 15
-FLOAT_LITERAL (271)
-BOOL_LITERAL (272)
-RUNE_LITERAL (273)
-STRING_LITERAL (274)
+TYPE (268) 33 34
+VAR (269) 39 40
+IDENTIFIER (270) 2 35 36 53 54
+INT_LITERAL (271) 15 47
+FLOAT_LITERAL (272) 48
+BOOL_LITERAL (273) 46
+RUNE_LITERAL (274) 49
+STRING_LITERAL (275) 50
 
 
 Nonterminals, with rules where they appear
 
-$accept (30)
+$accept (31)
     on left: 0
-start (31)
+start (32)
     on left: 1, on right: 0
-type (32)
+type (33)
     on left: 2 3 4 5 6 7 8 9 10 11 12 13 14, on right: 3 9 10 12 14
-    18 22 23 24 25 26 27 34 35
-array_length (33)
+    18 22 23 24 25 26 27 35 36 41 42
+array_length (34)
     on left: 15, on right: 9
-function_result (34)
+function_result (35)
     on left: 16 17 18, on right: 13
-function_parameters (35)
+function_parameters (36)
     on left: 19 20 21, on right: 13 17
-function_parameter_list (36)
+function_parameter_list (37)
     on left: 22 23 24 25, on right: 20 21 24 25
-struct_field_decls (37)
+struct_field_decls (38)
     on left: 26 27, on right: 11 27
-block (38)
+block (39)
     on left: 28, on right: 1
-statement (39)
-    on left: 29, on right: 30 31
-statement_list (40)
-    on left: 30 31, on right: 28 31
-type_decl (41)
-    on left: 32 33, on right: 29
-type_spec (42)
-    on left: 34 35, on right: 32 36 37
-type_spec_list (43)
-    on left: 36 37, on right: 33 37
-identifier_list (44)
-    on left: 38 39, on right: 23 25 26 27 39
+statement (40)
+    on left: 29 30, on right: 31 32
+statement_list (41)
+    on left: 31 32, on right: 28 32
+type_decl (42)
+    on left: 33 34, on right: 29
+type_spec (43)
+    on left: 35 36, on right: 33 37 38
+type_spec_list (44)
+    on left: 37 38, on right: 34 38
+var_decl (45)
+    on left: 39 40, on right: 30
+var_spec (46)
+    on left: 41 42 43, on right: 39 44 45
+var_spec_list (47)
+    on left: 44 45, on right: 40 45
+expression (48)
+    on left: 46 47 48 49 50, on right: 51 52
+expression_list (49)
+    on left: 51 52, on right: 42 43 52
+identifier_list (50)
+    on left: 53 54, on right: 23 25 26 27 41 42 43 54
 
 
 State 0
@@ -169,17 +182,19 @@ State 1
    28 block: '{' . statement_list '}'
 
     TYPE  shift, and go to state 4
+    VAR   shift, and go to state 5
 
-    statement       go to state 5
-    statement_list  go to state 6
-    type_decl       go to state 7
+    statement       go to state 6
+    statement_list  go to state 7
+    type_decl       go to state 8
+    var_decl        go to state 9
 
 
 State 2
 
     0 $accept: start . $end
 
-    $end  shift, and go to state 8
+    $end  shift, and go to state 10
 
 
 State 3
@@ -191,799 +206,1022 @@ State 3
 
 State 4
 
-   32 type_decl: TYPE . type_spec
-   33          | TYPE . '(' type_spec_list ')'
+   33 type_decl: TYPE . type_spec
+   34          | TYPE . '(' type_spec_list ')'
 
-    IDENTIFIER  shift, and go to state 9
-    '('         shift, and go to state 10
+    IDENTIFIER  shift, and go to state 11
+    '('         shift, and go to state 12
 
-    type_spec  go to state 11
+    type_spec  go to state 13
 
 
 State 5
 
-   30 statement_list: statement . ';'
-   31               | statement . ';' statement_list
+   39 var_decl: VAR . var_spec
+   40         | VAR . '(' var_spec_list ')'
 
-    ';'  shift, and go to state 12
+    IDENTIFIER  shift, and go to state 14
+    '('         shift, and go to state 15
+
+    var_spec         go to state 16
+    identifier_list  go to state 17
 
 
 State 6
 
-   28 block: '{' statement_list . '}'
+   31 statement_list: statement . ';'
+   32               | statement . ';' statement_list
 
-    '}'  shift, and go to state 13
+    ';'  shift, and go to state 18
 
 
 State 7
+
+   28 block: '{' statement_list . '}'
+
+    '}'  shift, and go to state 19
+
+
+State 8
 
    29 statement: type_decl .
 
     $default  reduce using rule 29 (statement)
 
 
-State 8
+State 9
+
+   30 statement: var_decl .
+
+    $default  reduce using rule 30 (statement)
+
+
+State 10
 
     0 $accept: start $end .
 
     $default  accept
 
 
-State 9
-
-   34 type_spec: IDENTIFIER . '=' type
-   35          | IDENTIFIER . type
-
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 22
-    '('         shift, and go to state 23
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
-    '='         shift, and go to state 26
-
-    type  go to state 27
-
-
-State 10
-
-   33 type_decl: TYPE '(' . type_spec_list ')'
-
-    IDENTIFIER  shift, and go to state 9
-
-    type_spec       go to state 28
-    type_spec_list  go to state 29
-
-
 State 11
 
-   32 type_decl: TYPE type_spec .
+   35 type_spec: IDENTIFIER . '=' type
+   36          | IDENTIFIER . type
 
-    $default  reduce using rule 32 (type_decl)
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 28
+    '('         shift, and go to state 29
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
+    '='         shift, and go to state 32
+
+    type  go to state 33
 
 
 State 12
 
-   30 statement_list: statement ';' .
-   31               | statement ';' . statement_list
+   34 type_decl: TYPE '(' . type_spec_list ')'
 
-    TYPE  shift, and go to state 4
+    IDENTIFIER  shift, and go to state 11
 
-    $default  reduce using rule 30 (statement_list)
-
-    statement       go to state 5
-    statement_list  go to state 30
-    type_decl       go to state 7
+    type_spec       go to state 34
+    type_spec_list  go to state 35
 
 
 State 13
+
+   33 type_decl: TYPE type_spec .
+
+    $default  reduce using rule 33 (type_decl)
+
+
+State 14
+
+   53 identifier_list: IDENTIFIER .
+   54                | IDENTIFIER . ',' identifier_list
+
+    ','  shift, and go to state 36
+
+    $default  reduce using rule 53 (identifier_list)
+
+
+State 15
+
+   40 var_decl: VAR '(' . var_spec_list ')'
+
+    IDENTIFIER  shift, and go to state 14
+
+    var_spec         go to state 37
+    var_spec_list    go to state 38
+    identifier_list  go to state 17
+
+
+State 16
+
+   39 var_decl: VAR var_spec .
+
+    $default  reduce using rule 39 (var_decl)
+
+
+State 17
+
+   41 var_spec: identifier_list . type
+   42         | identifier_list . type '=' expression_list
+   43         | identifier_list . '=' expression_list
+
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 28
+    '('         shift, and go to state 29
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
+    '='         shift, and go to state 39
+
+    type  go to state 40
+
+
+State 18
+
+   31 statement_list: statement ';' .
+   32               | statement ';' . statement_list
+
+    TYPE  shift, and go to state 4
+    VAR   shift, and go to state 5
+
+    $default  reduce using rule 31 (statement_list)
+
+    statement       go to state 6
+    statement_list  go to state 41
+    type_decl       go to state 8
+    var_decl        go to state 9
+
+
+State 19
 
    28 block: '{' statement_list '}' .
 
     $default  reduce using rule 28 (block)
 
 
-State 14
+State 20
 
     4 type: BOOL .
 
     $default  reduce using rule 4 (type)
 
 
-State 15
+State 21
 
     5 type: INT .
 
     $default  reduce using rule 5 (type)
 
 
-State 16
+State 22
 
     6 type: FLOAT32 .
 
     $default  reduce using rule 6 (type)
 
 
-State 17
+State 23
 
     7 type: RUNE .
 
     $default  reduce using rule 7 (type)
 
 
-State 18
+State 24
 
     8 type: STRING .
 
     $default  reduce using rule 8 (type)
 
 
-State 19
+State 25
 
    11 type: STRUCT . '{' struct_field_decls '}'
 
-    '{'  shift, and go to state 31
+    '{'  shift, and go to state 42
 
 
-State 20
+State 26
 
    13 type: FUNC . function_parameters function_result
 
-    '('  shift, and go to state 32
+    '('  shift, and go to state 43
 
-    function_parameters  go to state 33
+    function_parameters  go to state 44
 
 
-State 21
+State 27
 
    14 type: MAP . '[' type ']' type
 
-    '['  shift, and go to state 34
+    '['  shift, and go to state 45
 
 
-State 22
+State 28
 
     2 type: IDENTIFIER .
 
     $default  reduce using rule 2 (type)
 
 
-State 23
+State 29
 
     3 type: '(' . type ')'
 
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 22
-    '('         shift, and go to state 23
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 28
+    '('         shift, and go to state 29
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
 
-    type  go to state 35
-
-
-State 24
-
-    9 type: '[' . array_length ']' type
-   10     | '[' . ']' type
-
-    INT_LITERAL  shift, and go to state 36
-    ']'          shift, and go to state 37
-
-    array_length  go to state 38
-
-
-State 25
-
-   12 type: '*' . type
-
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 22
-    '('         shift, and go to state 23
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
-
-    type  go to state 39
-
-
-State 26
-
-   34 type_spec: IDENTIFIER '=' . type
-
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 22
-    '('         shift, and go to state 23
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
-
-    type  go to state 40
-
-
-State 27
-
-   35 type_spec: IDENTIFIER type .
-
-    $default  reduce using rule 35 (type_spec)
-
-
-State 28
-
-   36 type_spec_list: type_spec . ';'
-   37               | type_spec . ';' type_spec_list
-
-    ';'  shift, and go to state 41
-
-
-State 29
-
-   33 type_decl: TYPE '(' type_spec_list . ')'
-
-    ')'  shift, and go to state 42
+    type  go to state 46
 
 
 State 30
 
-   31 statement_list: statement ';' statement_list .
+    9 type: '[' . array_length ']' type
+   10     | '[' . ']' type
 
-    $default  reduce using rule 31 (statement_list)
+    INT_LITERAL  shift, and go to state 47
+    ']'          shift, and go to state 48
+
+    array_length  go to state 49
 
 
 State 31
 
-   11 type: STRUCT '{' . struct_field_decls '}'
+   12 type: '*' . type
 
-    IDENTIFIER  shift, and go to state 43
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 28
+    '('         shift, and go to state 29
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
 
-    struct_field_decls  go to state 44
-    identifier_list     go to state 45
+    type  go to state 50
 
 
 State 32
+
+   35 type_spec: IDENTIFIER '=' . type
+
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 28
+    '('         shift, and go to state 29
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
+
+    type  go to state 51
+
+
+State 33
+
+   36 type_spec: IDENTIFIER type .
+
+    $default  reduce using rule 36 (type_spec)
+
+
+State 34
+
+   37 type_spec_list: type_spec . ';'
+   38               | type_spec . ';' type_spec_list
+
+    ';'  shift, and go to state 52
+
+
+State 35
+
+   34 type_decl: TYPE '(' type_spec_list . ')'
+
+    ')'  shift, and go to state 53
+
+
+State 36
+
+   54 identifier_list: IDENTIFIER ',' . identifier_list
+
+    IDENTIFIER  shift, and go to state 14
+
+    identifier_list  go to state 54
+
+
+State 37
+
+   44 var_spec_list: var_spec . ';'
+   45              | var_spec . ';' var_spec_list
+
+    ';'  shift, and go to state 55
+
+
+State 38
+
+   40 var_decl: VAR '(' var_spec_list . ')'
+
+    ')'  shift, and go to state 56
+
+
+State 39
+
+   43 var_spec: identifier_list '=' . expression_list
+
+    INT_LITERAL     shift, and go to state 57
+    FLOAT_LITERAL   shift, and go to state 58
+    BOOL_LITERAL    shift, and go to state 59
+    RUNE_LITERAL    shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+
+    expression       go to state 62
+    expression_list  go to state 63
+
+
+State 40
+
+   41 var_spec: identifier_list type .
+   42         | identifier_list type . '=' expression_list
+
+    '='  shift, and go to state 64
+
+    $default  reduce using rule 41 (var_spec)
+
+
+State 41
+
+   32 statement_list: statement ';' statement_list .
+
+    $default  reduce using rule 32 (statement_list)
+
+
+State 42
+
+   11 type: STRUCT '{' . struct_field_decls '}'
+
+    IDENTIFIER  shift, and go to state 14
+
+    struct_field_decls  go to state 65
+    identifier_list     go to state 66
+
+
+State 43
 
    19 function_parameters: '(' . ')'
    20                    | '(' . function_parameter_list ')'
    21                    | '(' . function_parameter_list ',' ')'
 
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 46
-    '('         shift, and go to state 23
-    ')'         shift, and go to state 47
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 67
+    '('         shift, and go to state 29
+    ')'         shift, and go to state 68
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
 
-    type                     go to state 48
-    function_parameter_list  go to state 49
-    identifier_list          go to state 50
+    type                     go to state 69
+    function_parameter_list  go to state 70
+    identifier_list          go to state 71
 
 
-State 33
+State 44
 
    13 type: FUNC function_parameters . function_result
 
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 22
-    '('         shift, and go to state 51
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 28
+    '('         shift, and go to state 72
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
 
     $default  reduce using rule 16 (function_result)
 
-    type                 go to state 52
-    function_result      go to state 53
-    function_parameters  go to state 54
+    type                 go to state 73
+    function_result      go to state 74
+    function_parameters  go to state 75
 
 
-State 34
+State 45
 
    14 type: MAP '[' . type ']' type
 
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 22
-    '('         shift, and go to state 23
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 28
+    '('         shift, and go to state 29
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
 
-    type  go to state 55
+    type  go to state 76
 
 
-State 35
+State 46
 
     3 type: '(' type . ')'
 
-    ')'  shift, and go to state 56
+    ')'  shift, and go to state 77
 
 
-State 36
+State 47
 
    15 array_length: INT_LITERAL .
 
     $default  reduce using rule 15 (array_length)
 
 
-State 37
+State 48
 
    10 type: '[' ']' . type
 
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 22
-    '('         shift, and go to state 23
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 28
+    '('         shift, and go to state 29
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
 
-    type  go to state 57
+    type  go to state 78
 
 
-State 38
+State 49
 
     9 type: '[' array_length . ']' type
 
-    ']'  shift, and go to state 58
+    ']'  shift, and go to state 79
 
 
-State 39
+State 50
 
    12 type: '*' type .
 
     $default  reduce using rule 12 (type)
 
 
-State 40
+State 51
 
-   34 type_spec: IDENTIFIER '=' type .
+   35 type_spec: IDENTIFIER '=' type .
 
-    $default  reduce using rule 34 (type_spec)
-
-
-State 41
-
-   36 type_spec_list: type_spec ';' .
-   37               | type_spec ';' . type_spec_list
-
-    IDENTIFIER  shift, and go to state 9
-
-    $default  reduce using rule 36 (type_spec_list)
-
-    type_spec       go to state 28
-    type_spec_list  go to state 59
+    $default  reduce using rule 35 (type_spec)
 
 
-State 42
+State 52
 
-   33 type_decl: TYPE '(' type_spec_list ')' .
+   37 type_spec_list: type_spec ';' .
+   38               | type_spec ';' . type_spec_list
 
-    $default  reduce using rule 33 (type_decl)
+    IDENTIFIER  shift, and go to state 11
 
+    $default  reduce using rule 37 (type_spec_list)
 
-State 43
-
-   38 identifier_list: IDENTIFIER .
-   39                | IDENTIFIER . ',' identifier_list
-
-    ','  shift, and go to state 60
-
-    $default  reduce using rule 38 (identifier_list)
+    type_spec       go to state 34
+    type_spec_list  go to state 80
 
 
-State 44
+State 53
+
+   34 type_decl: TYPE '(' type_spec_list ')' .
+
+    $default  reduce using rule 34 (type_decl)
+
+
+State 54
+
+   54 identifier_list: IDENTIFIER ',' identifier_list .
+
+    $default  reduce using rule 54 (identifier_list)
+
+
+State 55
+
+   44 var_spec_list: var_spec ';' .
+   45              | var_spec ';' . var_spec_list
+
+    IDENTIFIER  shift, and go to state 14
+
+    $default  reduce using rule 44 (var_spec_list)
+
+    var_spec         go to state 37
+    var_spec_list    go to state 81
+    identifier_list  go to state 17
+
+
+State 56
+
+   40 var_decl: VAR '(' var_spec_list ')' .
+
+    $default  reduce using rule 40 (var_decl)
+
+
+State 57
+
+   47 expression: INT_LITERAL .
+
+    $default  reduce using rule 47 (expression)
+
+
+State 58
+
+   48 expression: FLOAT_LITERAL .
+
+    $default  reduce using rule 48 (expression)
+
+
+State 59
+
+   46 expression: BOOL_LITERAL .
+
+    $default  reduce using rule 46 (expression)
+
+
+State 60
+
+   49 expression: RUNE_LITERAL .
+
+    $default  reduce using rule 49 (expression)
+
+
+State 61
+
+   50 expression: STRING_LITERAL .
+
+    $default  reduce using rule 50 (expression)
+
+
+State 62
+
+   51 expression_list: expression .
+   52                | expression . ',' expression_list
+
+    ','  shift, and go to state 82
+
+    $default  reduce using rule 51 (expression_list)
+
+
+State 63
+
+   43 var_spec: identifier_list '=' expression_list .
+
+    $default  reduce using rule 43 (var_spec)
+
+
+State 64
+
+   42 var_spec: identifier_list type '=' . expression_list
+
+    INT_LITERAL     shift, and go to state 57
+    FLOAT_LITERAL   shift, and go to state 58
+    BOOL_LITERAL    shift, and go to state 59
+    RUNE_LITERAL    shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+
+    expression       go to state 62
+    expression_list  go to state 83
+
+
+State 65
 
    11 type: STRUCT '{' struct_field_decls . '}'
 
-    '}'  shift, and go to state 61
+    '}'  shift, and go to state 84
 
 
-State 45
+State 66
 
    26 struct_field_decls: identifier_list . type ';'
    27                   | identifier_list . type ';' struct_field_decls
 
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 22
-    '('         shift, and go to state 23
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 28
+    '('         shift, and go to state 29
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
 
-    type  go to state 62
+    type  go to state 85
 
 
-State 46
+State 67
 
     2 type: IDENTIFIER .
-   38 identifier_list: IDENTIFIER .
-   39                | IDENTIFIER . ',' identifier_list
+   53 identifier_list: IDENTIFIER .
+   54                | IDENTIFIER . ',' identifier_list
 
-    ','  shift, and go to state 60
+    ','  shift, and go to state 36
 
     ')'       reduce using rule 2 (type)
     ','       [reduce using rule 2 (type)]
-    $default  reduce using rule 38 (identifier_list)
+    $default  reduce using rule 53 (identifier_list)
 
 
-State 47
+State 68
 
    19 function_parameters: '(' ')' .
 
     $default  reduce using rule 19 (function_parameters)
 
 
-State 48
+State 69
 
    22 function_parameter_list: type .
    24                        | type . ',' function_parameter_list
 
-    ','  shift, and go to state 63
+    ','  shift, and go to state 86
 
     ','       [reduce using rule 22 (function_parameter_list)]
     $default  reduce using rule 22 (function_parameter_list)
 
 
-State 49
+State 70
 
    20 function_parameters: '(' function_parameter_list . ')'
    21                    | '(' function_parameter_list . ',' ')'
 
-    ')'  shift, and go to state 64
-    ','  shift, and go to state 65
+    ')'  shift, and go to state 87
+    ','  shift, and go to state 88
 
 
-State 50
+State 71
 
    23 function_parameter_list: identifier_list . type
    25                        | identifier_list . type ',' function_parameter_list
 
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 22
-    '('         shift, and go to state 23
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 28
+    '('         shift, and go to state 29
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
 
-    type  go to state 66
+    type  go to state 89
 
 
-State 51
+State 72
 
     3 type: '(' . type ')'
    19 function_parameters: '(' . ')'
    20                    | '(' . function_parameter_list ')'
    21                    | '(' . function_parameter_list ',' ')'
 
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 46
-    '('         shift, and go to state 23
-    ')'         shift, and go to state 47
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 67
+    '('         shift, and go to state 29
+    ')'         shift, and go to state 68
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
 
-    type                     go to state 67
-    function_parameter_list  go to state 49
-    identifier_list          go to state 50
+    type                     go to state 90
+    function_parameter_list  go to state 70
+    identifier_list          go to state 71
 
 
-State 52
+State 73
 
    18 function_result: type .
 
     $default  reduce using rule 18 (function_result)
 
 
-State 53
+State 74
 
    13 type: FUNC function_parameters function_result .
 
     $default  reduce using rule 13 (type)
 
 
-State 54
+State 75
 
    17 function_result: function_parameters .
 
     $default  reduce using rule 17 (function_result)
 
 
-State 55
+State 76
 
    14 type: MAP '[' type . ']' type
 
-    ']'  shift, and go to state 68
+    ']'  shift, and go to state 91
 
 
-State 56
+State 77
 
     3 type: '(' type ')' .
 
     $default  reduce using rule 3 (type)
 
 
-State 57
+State 78
 
    10 type: '[' ']' type .
 
     $default  reduce using rule 10 (type)
 
 
-State 58
+State 79
 
     9 type: '[' array_length ']' . type
 
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 22
-    '('         shift, and go to state 23
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 28
+    '('         shift, and go to state 29
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
 
-    type  go to state 69
-
-
-State 59
-
-   37 type_spec_list: type_spec ';' type_spec_list .
-
-    $default  reduce using rule 37 (type_spec_list)
+    type  go to state 92
 
 
-State 60
+State 80
 
-   39 identifier_list: IDENTIFIER ',' . identifier_list
+   38 type_spec_list: type_spec ';' type_spec_list .
 
-    IDENTIFIER  shift, and go to state 43
-
-    identifier_list  go to state 70
+    $default  reduce using rule 38 (type_spec_list)
 
 
-State 61
+State 81
+
+   45 var_spec_list: var_spec ';' var_spec_list .
+
+    $default  reduce using rule 45 (var_spec_list)
+
+
+State 82
+
+   52 expression_list: expression ',' . expression_list
+
+    INT_LITERAL     shift, and go to state 57
+    FLOAT_LITERAL   shift, and go to state 58
+    BOOL_LITERAL    shift, and go to state 59
+    RUNE_LITERAL    shift, and go to state 60
+    STRING_LITERAL  shift, and go to state 61
+
+    expression       go to state 62
+    expression_list  go to state 93
+
+
+State 83
+
+   42 var_spec: identifier_list type '=' expression_list .
+
+    $default  reduce using rule 42 (var_spec)
+
+
+State 84
 
    11 type: STRUCT '{' struct_field_decls '}' .
 
     $default  reduce using rule 11 (type)
 
 
-State 62
+State 85
 
    26 struct_field_decls: identifier_list type . ';'
    27                   | identifier_list type . ';' struct_field_decls
 
-    ';'  shift, and go to state 71
+    ';'  shift, and go to state 94
 
 
-State 63
+State 86
 
    24 function_parameter_list: type ',' . function_parameter_list
 
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 46
-    '('         shift, and go to state 23
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 67
+    '('         shift, and go to state 29
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
 
-    type                     go to state 48
-    function_parameter_list  go to state 72
-    identifier_list          go to state 50
+    type                     go to state 69
+    function_parameter_list  go to state 95
+    identifier_list          go to state 71
 
 
-State 64
+State 87
 
    20 function_parameters: '(' function_parameter_list ')' .
 
     $default  reduce using rule 20 (function_parameters)
 
 
-State 65
+State 88
 
    21 function_parameters: '(' function_parameter_list ',' . ')'
 
-    ')'  shift, and go to state 73
+    ')'  shift, and go to state 96
 
 
-State 66
+State 89
 
    23 function_parameter_list: identifier_list type .
    25                        | identifier_list type . ',' function_parameter_list
 
-    ','  shift, and go to state 74
+    ','  shift, and go to state 97
 
     ','       [reduce using rule 23 (function_parameter_list)]
     $default  reduce using rule 23 (function_parameter_list)
 
 
-State 67
+State 90
 
     3 type: '(' type . ')'
    22 function_parameter_list: type .
    24                        | type . ',' function_parameter_list
 
-    ')'  shift, and go to state 56
-    ','  shift, and go to state 63
+    ')'  shift, and go to state 77
+    ','  shift, and go to state 86
 
     ')'  [reduce using rule 22 (function_parameter_list)]
     ','  [reduce using rule 22 (function_parameter_list)]
 
 
-State 68
+State 91
 
    14 type: MAP '[' type ']' . type
 
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 22
-    '('         shift, and go to state 23
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 28
+    '('         shift, and go to state 29
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
 
-    type  go to state 75
+    type  go to state 98
 
 
-State 69
+State 92
 
     9 type: '[' array_length ']' type .
 
     $default  reduce using rule 9 (type)
 
 
-State 70
+State 93
 
-   39 identifier_list: IDENTIFIER ',' identifier_list .
+   52 expression_list: expression ',' expression_list .
 
-    $default  reduce using rule 39 (identifier_list)
+    $default  reduce using rule 52 (expression_list)
 
 
-State 71
+State 94
 
    26 struct_field_decls: identifier_list type ';' .
    27                   | identifier_list type ';' . struct_field_decls
 
-    IDENTIFIER  shift, and go to state 43
+    IDENTIFIER  shift, and go to state 14
 
     $default  reduce using rule 26 (struct_field_decls)
 
-    struct_field_decls  go to state 76
-    identifier_list     go to state 45
+    struct_field_decls  go to state 99
+    identifier_list     go to state 66
 
 
-State 72
+State 95
 
    24 function_parameter_list: type ',' function_parameter_list .
 
     $default  reduce using rule 24 (function_parameter_list)
 
 
-State 73
+State 96
 
    21 function_parameters: '(' function_parameter_list ',' ')' .
 
     $default  reduce using rule 21 (function_parameters)
 
 
-State 74
+State 97
 
    25 function_parameter_list: identifier_list type ',' . function_parameter_list
 
-    BOOL        shift, and go to state 14
-    INT         shift, and go to state 15
-    FLOAT32     shift, and go to state 16
-    RUNE        shift, and go to state 17
-    STRING      shift, and go to state 18
-    STRUCT      shift, and go to state 19
-    FUNC        shift, and go to state 20
-    MAP         shift, and go to state 21
-    IDENTIFIER  shift, and go to state 46
-    '('         shift, and go to state 23
-    '['         shift, and go to state 24
-    '*'         shift, and go to state 25
+    BOOL        shift, and go to state 20
+    INT         shift, and go to state 21
+    FLOAT32     shift, and go to state 22
+    RUNE        shift, and go to state 23
+    STRING      shift, and go to state 24
+    STRUCT      shift, and go to state 25
+    FUNC        shift, and go to state 26
+    MAP         shift, and go to state 27
+    IDENTIFIER  shift, and go to state 67
+    '('         shift, and go to state 29
+    '['         shift, and go to state 30
+    '*'         shift, and go to state 31
 
-    type                     go to state 48
-    function_parameter_list  go to state 77
-    identifier_list          go to state 50
+    type                     go to state 69
+    function_parameter_list  go to state 100
+    identifier_list          go to state 71
 
 
-State 75
+State 98
 
    14 type: MAP '[' type ']' type .
 
     $default  reduce using rule 14 (type)
 
 
-State 76
+State 99
 
    27 struct_field_decls: identifier_list type ';' struct_field_decls .
 
     $default  reduce using rule 27 (struct_field_decls)
 
 
-State 77
+State 100
 
    25 function_parameter_list: identifier_list type ',' function_parameter_list .
 

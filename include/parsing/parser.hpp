@@ -75,12 +75,13 @@ extern int yydebug;
      FUNC = 266,
      MAP = 267,
      TYPE = 268,
-     IDENTIFIER = 269,
-     INT_LITERAL = 270,
-     FLOAT_LITERAL = 271,
-     BOOL_LITERAL = 272,
-     RUNE_LITERAL = 273,
-     STRING_LITERAL = 274
+     VAR = 269,
+     IDENTIFIER = 270,
+     INT_LITERAL = 271,
+     FLOAT_LITERAL = 272,
+     BOOL_LITERAL = 273,
+     RUNE_LITERAL = 274,
+     STRING_LITERAL = 275
    };
 #endif
 
@@ -101,15 +102,16 @@ typedef union YYSTYPE
     AST::Block *block;
     AST::Type *type;
     AST::Expression *expression;
+    LinkedList<AST::Expression *> *expressions;
+    AST::Statement *statement;
     LinkedList<AST::Statement *> *statements;
-    AST::TypeSpecStatement *type_spec;
 
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
 
 
 /* Line 2060 of yacc.c  */
-#line 113 "include/parsing/parser.hpp"
+#line 115 "include/parsing/parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
