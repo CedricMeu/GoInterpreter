@@ -77,12 +77,14 @@ extern int yydebug;
      TYPE = 268,
      VAR = 269,
      SHORT_VAR_DECL = 270,
-     IDENTIFIER = 271,
-     INT_LITERAL = 272,
-     FLOAT_LITERAL = 273,
-     BOOL_LITERAL = 274,
-     RUNE_LITERAL = 275,
-     STRING_LITERAL = 276
+     IF = 271,
+     ELSE = 272,
+     IDENTIFIER = 273,
+     INT_LITERAL = 274,
+     FLOAT_LITERAL = 275,
+     BOOL_LITERAL = 276,
+     RUNE_LITERAL = 277,
+     STRING_LITERAL = 278
    };
 #endif
 
@@ -116,7 +118,7 @@ typedef union YYSTYPE
 
 
 /* Line 2060 of yacc.c  */
-#line 120 "include/parsing/parser.hpp"
+#line 122 "include/parsing/parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

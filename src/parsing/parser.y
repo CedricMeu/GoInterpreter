@@ -61,6 +61,8 @@
 %token TYPE
 %token VAR
 %token SHORT_VAR_DECL
+%token IF
+%token ELSE
 
 %token<identifier> IDENTIFIER
 %token<integer> INT_LITERAL
@@ -82,6 +84,7 @@
 
 %type<statements> statement
 %type<statements> statement_list
+%type<statement> if_statement
 
 %type<top_level_declarations> top_level_declaration
 %type<top_level_declarations> top_level_declaration_list
@@ -207,7 +210,8 @@ struct_field_decls: identifier_list type ';'
                   ;
 
 // Block
-block: '{' statement_list '}'               { $$ = new AST::Block{$2->toStdVector()}; delete $2; }
+block: '{' '}'                              { $$ = new AST::Block{{}}; }
+     | '{' statement_list '}'               { $$ = new AST::Block{$2->toStdVector()}; delete $2; }
      ;
 
 // declarations
@@ -287,13 +291,6 @@ var_decl: VAR var_spec                      {
                                                 $$ = list;
                                             }
         | VAR '(' var_spec_list ')'         { $$ = $3; }
-        | identifier_list SHORT_VAR_DECL expression_list
-                                            { 
-                                                auto varSpec = new AST::VariableDeclaration{$1->toStdVector(), nullptr, $3->toStdVector()};
-                                                auto list = new LinkedList<AST::Declaration *>;
-                                                list->insert(0, varSpec);
-                                                $$ = list;
-                                            }
         ;
 
 var_spec: identifier_list type              { $$ = new AST::VariableDeclaration{$1->toStdVector(), $2, {}}; }
@@ -318,7 +315,27 @@ var_spec_list: var_spec ';'                 {
              ;
 
 // Statements
-statement: declaration                      { 
+statement: expression                       {
+                                                auto expression = $1;
+                                                auto list = new LinkedList<AST::Statement *>;
+                                                list->insert(0, new AST::ExpressionStatement{expression});
+                                                $$ = list;
+                                            }
+         | expression_list '=' expression_list
+                                            {
+                                                auto lhs = $1->toStdVector();
+                                                auto rhs = $3->toStdVector();
+                                                auto list = new LinkedList<AST::Statement *>;
+                                                list->insert(0, new AST::AssignmentStatement{lhs, rhs});
+                                                $$ = list;
+                                            }
+         | if_statement                     {
+                                                auto if_statement = $1;
+                                                auto list = new LinkedList<AST::Statement *>;
+                                                list->insert(0, if_statement);
+                                                $$ = list;
+                                            }
+         | declaration                      { 
                                                 auto declarations = $1->toStdVector(); 
                                                 delete $1;
                                                 auto list = new LinkedList<AST::Statement *>;
@@ -340,7 +357,14 @@ statement_list: statement ';'               { $$ = $1; }
                                                 }
                                                 $$ = list;
                                             }
+
               ;
+if_statement: IF expression block           { $$ = new AST::IfStatement{$2, $3, new AST::Block{{}}}; }
+            | IF expression block ELSE if_statement 
+                                            { $$ = new AST::IfStatement{$2, $3, new AST::Block{{$5}}}; }
+            | IF expression block ELSE block        
+                                            { $$ = new AST::IfStatement{$2, $3, $5}; }
+    ;
 
 // Expressions
 expression: BOOL_LITERAL                    { $$ = new AST::BoolExpression{$1}; }
@@ -348,6 +372,7 @@ expression: BOOL_LITERAL                    { $$ = new AST::BoolExpression{$1}; 
           | FLOAT_LITERAL                   { $$ = new AST::Float32Expression{$1}; }
           | RUNE_LITERAL                    { $$ = new AST::RuneExpression{$1}; }
           | STRING_LITERAL                  { $$ = new AST::StringExpression{$1.string, $1.length}; }
+          | IDENTIFIER                      { $$ = new AST::IdentifierExpression{$1}; }
           ;
 
 expression_list: expression                 {

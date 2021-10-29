@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <functional> 
 
 namespace AST {
 
@@ -44,13 +45,16 @@ namespace AST {
         virtual void visitInitBlock(long size) = 0;
         virtual void visitDeinitBlock(long size) = 0;
 
-        // Statements
-
         // Declarations
         virtual void visitFunctionDeclaration(std::string id) = 0;
         virtual void visitTypeAliasDeclaration(std::string id) = 0;
         virtual void visitTypeDefinitionDeclaration(std::string id) = 0;
-        virtual void visitVariableDeclaration(std::vector<std::string> ids, bool type_declared, long expression_count) = 0;
+        virtual void visitVariableDeclaration(std::vector<std::string> ids, bool typeDeclared, long expression_count) = 0;
+
+        // Statements
+        virtual void visitExpressionStatement() = 0;
+        virtual void visitAssignmentStatement(long lhsSize, long rhsSize) = 0;
+        virtual void visitIfStatement(const std::function <void ()>& visitTrue, const std::function <void ()>& visitFalse) = 0;
 
         // Expressions - Literals
         virtual void visitBoolExpression(bool value) = 0;
@@ -60,6 +64,7 @@ namespace AST {
         virtual void visitStringExpression(char *value, long length) = 0;
 
         // Expressions - Rest
+        virtual void visitIdentifierExpression(std::string id) = 0;
 
     };
 

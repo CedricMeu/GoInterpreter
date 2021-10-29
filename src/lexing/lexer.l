@@ -70,11 +70,13 @@ int                         { insertSemicolon = true; return INT; }
 float32                     { insertSemicolon = true; return FLOAT32; }
 rune                        { insertSemicolon = true; return RUNE; }
 string                      { insertSemicolon = true; return STRING; }
-struct                      { insertSemicolon = true; return STRUCT; }
-func                        { insertSemicolon = true; return FUNC; }
-map                         { insertSemicolon = true; return MAP; }
-type                        { insertSemicolon = true; return TYPE; }
-var                         { insertSemicolon = true; return VAR; }
+struct                      { insertSemicolon = false; return STRUCT; }
+func                        { insertSemicolon = false; return FUNC; }
+map                         { insertSemicolon = false; return MAP; }
+type                        { insertSemicolon = false; return TYPE; }
+var                         { insertSemicolon = false; return VAR; }
+if                          { insertSemicolon = false; return IF; }
+else                        { insertSemicolon = false; return ELSE; }
 
 true                        { insertSemicolon = true; yylval.boolean = true; return BOOL_LITERAL; }
 false                       { insertSemicolon = true; yylval.boolean = false; return BOOL_LITERAL; }
@@ -94,7 +96,7 @@ false                       { insertSemicolon = true; yylval.boolean = false; re
 {identifier}                { insertSemicolon = true; yylval.identifier = copyString(yytext); return IDENTIFIER; }
  
 .                           { 
-                                insertSemicolon = *yytext == ')' || *yytext == '}' ; 
+                                insertSemicolon = *yytext == ')' || *yytext == ']' || *yytext == '}' ; 
                                 return *yytext; 
                             }
 %%

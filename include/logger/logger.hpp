@@ -41,13 +41,16 @@ namespace Logger {
         virtual void visitInitBlock(long size) override;
         virtual void visitDeinitBlock(long size) override;
 
-        // Statements
-
         // Declarations
         virtual void visitFunctionDeclaration(std::string id) override;
         virtual void visitTypeAliasDeclaration(std::string id) override;
         virtual void visitTypeDefinitionDeclaration(std::string id) override;
-        virtual void visitVariableDeclaration(std::vector<std::string> ids, bool type_declared, long expression_count) override;
+        virtual void visitVariableDeclaration(std::vector<std::string> ids, bool typeDeclared, long expression_count) override;
+
+        // Statements
+        virtual void visitExpressionStatement() override;
+        virtual void visitAssignmentStatement(long lhsSize, long rhsSize) override;
+        virtual void visitIfStatement(const std::function <void ()>& visitTrue, const std::function <void ()>& visitFalse) override;
 
         // Expressions - Literals
         virtual void visitBoolExpression(bool value) override;
@@ -57,6 +60,9 @@ namespace Logger {
         virtual void visitStringExpression(char *value, long length) override;
 
         // Expressions - Rest
+
+        // Expressions - Rest
+        virtual void visitIdentifierExpression(std::string id) override;
 
     };
 

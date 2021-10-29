@@ -6,6 +6,16 @@
 
 namespace AST {
 
+    class IdentifierExpression : public Expression
+    {
+    private:
+        std::string id;
+
+    public:
+        IdentifierExpression(std::string id);
+        ~IdentifierExpression() = default;
+        virtual void accept(Visitor *visitor) override;
+    };
 };
 
 #endif // GOINTERPRETER_AST_EXPRESSIONS_HPP

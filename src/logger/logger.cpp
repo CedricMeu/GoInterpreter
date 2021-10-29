@@ -273,11 +273,11 @@ void Logger::Logger::visitTypeDefinitionDeclaration(std::string id)
     this->infoBlockStack.push_back(result);
 }
 
-void Logger::Logger::visitVariableDeclaration(std::vector<std::string> ids, bool type_declared, long expression_count)
+void Logger::Logger::visitVariableDeclaration(std::vector<std::string> ids, bool typeDeclared, long expression_count)
 {
     Logger::Logger::InfoBlock result = {"VariableDeclaration"};
 
-    if (type_declared)
+    if (typeDeclared)
     {
         result.push_back("- type: ");
 
@@ -303,6 +303,85 @@ void Logger::Logger::visitVariableDeclaration(std::vector<std::string> ids, bool
             this->infoBlockStack.pop_back();
         }
     }
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitExpressionStatement()
+{
+    Logger::Logger::InfoBlock result = {"ExpressionStatement"};
+
+    result.push_back("- expression: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitAssignmentStatement(long lhsSize, long rhsSize)
+{
+    Logger::Logger::InfoBlock result = {"AssignmentStatement"};
+
+    result.push_back("- lhs: ");
+
+    for (int i = 0; i < lhsSize; i++)
+    {
+        for (const auto &line : this->infoBlockStack.back())
+        {
+            result.push_back(this->tab(line));
+        }
+        this->infoBlockStack.pop_back();
+    }
+
+    result.push_back("- rhs: ");
+
+    for (int i = 0; i < rhsSize; i++)
+    {
+        for (const auto &line : this->infoBlockStack.back())
+        {
+            result.push_back(this->tab(line));
+        }
+        this->infoBlockStack.pop_back();
+    }
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitIfStatement(const std::function <void ()>& visitTrue, const std::function <void ()>& visitFalse)
+{
+    Logger::Logger::InfoBlock result = {"IfStatement"};
+
+    result.push_back("- condition: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    visitTrue();
+
+    result.push_back("- true: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    visitFalse();
+
+    result.push_back("- false: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
 
     this->infoBlockStack.push_back(result);
 }
@@ -349,6 +428,15 @@ void Logger::Logger::visitStringExpression(char *value, long length)
     Logger::Logger::InfoBlock result = {"StringLiteral: " + str};
 
     result.push_back("- length: " + std::to_string(length));
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitIdentifierExpression(std::string id)
+{
+    Logger::Logger::InfoBlock result = {"IdentifierExpression"};
+
+    result.push_back("- id: " + id);
 
     this->infoBlockStack.push_back(result);
 }

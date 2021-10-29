@@ -34,7 +34,6 @@
 # expressions
 - [ ] function calls
 - [ ] arithemtic
-- [ ] assignment
 - [ ] logical operations
 - [ ] string concatenation
 - [ ] indexing (string, array, map)
@@ -44,11 +43,12 @@
 
 # statements
 - [p] variable declarations
-- [p] short variable declarations
+- [fixme] short variable declarations
+- [p] assignment
 - [ ] return
-- [ ] if
+- [p] if
 - [ ] for (itterative and range)
-- [ ] single expression
+- [p] single expression
 - [ ] switch statement
 - [ ] break
 - [ ] continue
