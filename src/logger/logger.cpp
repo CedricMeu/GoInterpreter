@@ -196,10 +196,12 @@ void Logger::Logger::visitDeinitBlock(long size)
     this->infoBlockStack.push_back(result);
 }
 
-void Logger::Logger::visitTypeAliasStatement(std::string id)
+void Logger::Logger::visitTypeAliasDeclaration(std::string id)
 {
     Logger::Logger::InfoBlock result = {"TypeAlias"};
 
+    result.push_back("- id: " + id);
+
     result.push_back("- type: ");
 
     for (const auto &line : this->infoBlockStack.back())
@@ -211,10 +213,12 @@ void Logger::Logger::visitTypeAliasStatement(std::string id)
     this->infoBlockStack.push_back(result);
 }
 
-void Logger::Logger::visitTypeDefinitionStatement(std::string id)
+void Logger::Logger::visitTypeDefinitionDeclaration(std::string id)
 {
     Logger::Logger::InfoBlock result = {"TypeDefinition"};
 
+    result.push_back("- id: " + id);
+
     result.push_back("- type: ");
 
     for (const auto &line : this->infoBlockStack.back())
@@ -226,7 +230,7 @@ void Logger::Logger::visitTypeDefinitionStatement(std::string id)
     this->infoBlockStack.push_back(result);
 }
 
-void Logger::Logger::visitVariableDeclarationStatement(std::vector<std::string> ids, bool type_declared, long expression_count)
+void Logger::Logger::visitVariableDeclaration(std::vector<std::string> ids, bool type_declared, long expression_count)
 {
     Logger::Logger::InfoBlock result = {"VariableDeclaration"};
 

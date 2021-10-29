@@ -37,6 +37,8 @@
     LinkedList<AST::Expression *> *expressions;
     AST::Statement *statement;
     LinkedList<AST::Statement *> *statements;
+    AST::Declaration *declaration;
+    LinkedList<AST::Declaration *> *declarations;
 
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
@@ -78,12 +80,15 @@
 
 %type<statements> statement
 %type<statements> statement_list
-%type<statements> type_decl
-%type<statements> type_spec_list
-%type<statements> var_decl
-%type<statements> var_spec_list
-%type<statement> type_spec
-%type<statement> var_spec
+
+%type<declarations> top_level_declaration
+%type<declarations> declaration
+%type<declarations> type_decl
+%type<declarations> type_spec_list
+%type<declarations> var_decl
+%type<declarations> var_spec_list
+%type<declaration> type_spec
+%type<declaration> var_spec
 
 %type<expressions> expression_list
 %type<expression> expression
@@ -202,8 +207,15 @@ block: '{' statement_list '}'               { $$ = new AST::Block{$2->toStdVecto
      ;
 
 // Statements
-statement: type_decl                        { $$ = $1; }
-         | var_decl                         { $$ = $1; }
+statement: declaration                      { 
+                                                auto declarations = $1->toStdVector(); 
+                                                delete $1;
+                                                auto list = new LinkedList<AST::Statement *>;
+                                                for (int i = 0; i < declarations.size(); i++) {
+                                                    list->insert(i, new AST::DeclarationStatement{declarations[i]});
+                                                }
+                                                $$ = list;
+                                            }
          ;
 
 statement_list: statement ';'               { $$ = $1; }
@@ -219,22 +231,30 @@ statement_list: statement ';'               { $$ = $1; }
                                             }
               ;
 
+// declarations
+top_level_declaration: declaration            { $$ = $1; }
+                     ;
+
+declaration: type_decl                        { $$ = $1; }
+           | var_decl                         { $$ = $1; }
+           ;
+
 type_decl: TYPE type_spec                   { 
                                                 auto typeSpec = $2;
-                                                auto list = new LinkedList<AST::Statement*>;
+                                                auto list = new LinkedList<AST::Declaration *>;
                                                 list->insert(0, typeSpec);
                                                 $$ = list;
                                             }
          | TYPE '(' type_spec_list ')'      { $$ = $3; }
          ;
 
-type_spec: IDENTIFIER '=' type              { $$ = new AST::TypeAliasStatement{$1, $3}; delete $1; }
-         | IDENTIFIER type                  { $$ = new AST::TypeDefinitionStatement{$1, $2}; delete $1; }
+type_spec: IDENTIFIER '=' type              { $$ = new AST::TypeAliasDeclaration{$1, $3}; delete $1; }
+         | IDENTIFIER type                  { $$ = new AST::TypeDefinitionDeclaration{$1, $2}; delete $1; }
          ;
 
 type_spec_list: type_spec ';'               { 
                                                 auto typeSpec = $1;
-                                                auto list = new LinkedList<AST::Statement *>; 
+                                                auto list = new LinkedList<AST::Declaration *>; 
                                                 list->insert(0, typeSpec);
                                                 $$ = list;
                                             }
@@ -249,30 +269,30 @@ type_spec_list: type_spec ';'               {
 
 var_decl: VAR var_spec                      {
                                                 auto varSpec = $2;
-                                                auto list = new LinkedList<AST::Statement*>;
+                                                auto list = new LinkedList<AST::Declaration*>;
                                                 list->insert(0, varSpec);
                                                 $$ = list;
                                             }
         | VAR '(' var_spec_list ')'         { $$ = $3; }
         | identifier_list SHORT_VAR_DECL expression_list
                                             { 
-                                                auto varSpec = new AST::VariableDeclarationStatement{$1->toStdVector(), nullptr, $3->toStdVector()};
-                                                auto list = new LinkedList<AST::Statement*>;
+                                                auto varSpec = new AST::VariableDeclaration{$1->toStdVector(), nullptr, $3->toStdVector()};
+                                                auto list = new LinkedList<AST::Declaration *>;
                                                 list->insert(0, varSpec);
                                                 $$ = list;
                                             }
         ;
 
-var_spec: identifier_list type              { $$ = new AST::VariableDeclarationStatement{$1->toStdVector(), $2, {}}; }
+var_spec: identifier_list type              { $$ = new AST::VariableDeclaration{$1->toStdVector(), $2, {}}; }
         | identifier_list type '=' expression_list
-                                            { $$ = new AST::VariableDeclarationStatement{$1->toStdVector(), $2, $4->toStdVector()}; }
+                                            { $$ = new AST::VariableDeclaration{$1->toStdVector(), $2, $4->toStdVector()}; }
         | identifier_list '=' expression_list
-                                            { $$ = new AST::VariableDeclarationStatement{$1->toStdVector(), nullptr, $3->toStdVector()}; }
+                                            { $$ = new AST::VariableDeclaration{$1->toStdVector(), nullptr, $3->toStdVector()}; }
         ;
 
 var_spec_list: var_spec ';'                 {
                                                 auto varSpec = $1;
-                                                auto list = new LinkedList<AST::Statement *>;
+                                                auto list = new LinkedList<AST::Declaration *>;
                                                 list->insert(0, varSpec);
                                                 $$ = list;
                                             }

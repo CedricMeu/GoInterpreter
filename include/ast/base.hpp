@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "ast/visitor.hpp"
 
 namespace AST { 
@@ -53,6 +54,30 @@ namespace AST {
         
     public:
         virtual ~Statement() = default;
+        virtual void accept(Visitor *visitor) override = 0;
+    };
+
+    /**
+     * Base class for expression nodes
+     */
+    class TopLevelDeclaration : public Node {
+    protected:
+        TopLevelDeclaration() = default;
+        
+    public:
+        virtual ~TopLevelDeclaration() = default;
+        virtual void accept(Visitor *visitor) override = 0;
+    };
+
+    /**
+     * Base class for expression nodes
+     */
+    class Declaration : public TopLevelDeclaration {
+    protected:
+        Declaration() = default;
+        
+    public:
+        virtual ~Declaration() = default;
         virtual void accept(Visitor *visitor) override = 0;
     };
 

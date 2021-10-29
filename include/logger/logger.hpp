@@ -39,9 +39,9 @@ namespace Logger {
         virtual void visitDeinitBlock(long size) override;
 
         // Statements
-        virtual void visitTypeAliasStatement(std::string id) override;
-        virtual void visitTypeDefinitionStatement(std::string id) override;
-        virtual void visitVariableDeclarationStatement(std::vector<std::string> ids, bool type_declared, long expression_count) override;
+        virtual void visitTypeAliasDeclaration(std::string id) override;
+        virtual void visitTypeDefinitionDeclaration(std::string id) override;
+        virtual void visitVariableDeclaration(std::vector<std::string> ids, bool type_declared, long expression_count) override;
 
         // Expressions - Literals
         virtual void visitBoolExpression(bool value) override;

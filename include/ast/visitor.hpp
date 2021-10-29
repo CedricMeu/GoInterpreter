@@ -14,14 +14,14 @@ namespace AST {
     public:
         virtual ~Visitor() = default;
 
-        //*********************************//
-        //         Visit functions         //
-        //*********************************//
-        // Rules:                          //
-        // - Nodes are visited depth-first //
-        //      Pre-order                  //
-        // - lists are visited in-order    //
-        //*********************************//
+        //***************************************//
+        //            Visit functions            //
+        //***************************************//
+        // Rules:                                //
+        // - Nodes are visited depth-first       //
+        //      Pre-order (except initblock)     //
+        // - lists are visited in reversed order //
+        //***************************************//
 
         // Types
         virtual void visitBoolType() = 0;
@@ -42,9 +42,9 @@ namespace AST {
         virtual void visitDeinitBlock(long size) = 0;
 
         // Statements
-        virtual void visitTypeAliasStatement(std::string id) = 0;
-        virtual void visitTypeDefinitionStatement(std::string id) = 0;
-        virtual void visitVariableDeclarationStatement(std::vector<std::string> ids, bool type_declared, long expression_count) = 0;
+        virtual void visitTypeAliasDeclaration(std::string id) = 0;
+        virtual void visitTypeDefinitionDeclaration(std::string id) = 0;
+        virtual void visitVariableDeclaration(std::vector<std::string> ids, bool type_declared, long expression_count) = 0;
 
         // Expressions - Literals
         virtual void visitBoolExpression(bool value) = 0;

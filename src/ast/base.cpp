@@ -16,7 +16,10 @@ void AST::Block::accept(Visitor *visitor)
 {
     visitor->visitInitBlock(this->statements.size());
 
-    for (const auto statement : this->statements)
+    auto rev = this->statements;
+    std::reverse(rev.begin(), rev.end());
+
+    for (const auto statement : rev)
     {
         statement->accept(visitor);
     }

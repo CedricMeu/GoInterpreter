@@ -69,10 +69,17 @@ AST::StructType::~StructType()
 void AST::StructType::accept(Visitor *visitor)
 {
     std::vector<std::string> field_names;
+    std::vector<Type *> field_types;
 
     for (const auto pair : this->fields) {
         field_names.push_back(pair.first);
-        pair.second->accept(visitor);
+        field_types.push_back(pair.second);
+    }
+    
+    std::reverse(field_types.begin(), field_types.end());
+
+    for (const auto type : field_types) {
+        type->accept(visitor);
     }
 
     visitor->visitStructType(field_names);
@@ -113,16 +120,30 @@ AST::FunctionType::~FunctionType()
 void AST::FunctionType::accept(Visitor *visitor)
 {
     std::vector<std::string> parameter_names;
+    std::vector<Type *> parameter_types;
     std::vector<std::string> return_names;
+    std::vector<Type *> return_types;
 
     for (const auto ppair : this->parameters) {
         parameter_names.push_back(ppair.first);
-        ppair.second->accept(visitor);
+        parameter_types.push_back(ppair.second);
+    }
+    
+    std::reverse(parameter_types.begin(), parameter_types.end());
+
+    for (const auto type : parameter_types) {
+        type->accept(visitor);
     }
 
     for (const auto rpair : this->returns) {
         return_names.push_back(rpair.first);
-        rpair.second->accept(visitor);
+        return_types.push_back(rpair.second);
+    }
+    
+    std::reverse(return_types.begin(), return_types.end());
+
+    for (const auto type : return_types) {
+        type->accept(visitor);
     }
 
     visitor->visitFunctionType(parameter_names, return_names);
