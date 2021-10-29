@@ -7,7 +7,20 @@
 
 namespace AST {
 
-    class TypeSpecDeclaration : public Declaration {
+    class FunctionDeclaration : public TopLevelDeclaration 
+    {
+    private:
+        std::string id;
+        Type *signature;
+        Block *body;
+    public:
+        FunctionDeclaration(std::string id, Type *signature, Block *body);
+        ~FunctionDeclaration();
+        virtual void accept(Visitor *visitor) override;
+    };
+
+    class TypeSpecDeclaration : public Declaration 
+    {
     protected: 
         TypeSpecDeclaration() = default;
 

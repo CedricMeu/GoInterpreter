@@ -19,6 +19,9 @@ namespace Logger {
         virtual ~Logger() = default;
 
         std::string getLogString() const;
+        
+        // Program
+        virtual void visitProgram(long size) override;
 
         // Types
         virtual void visitBoolType() override;
@@ -39,6 +42,9 @@ namespace Logger {
         virtual void visitDeinitBlock(long size) override;
 
         // Statements
+
+        // Declarations
+        virtual void visitFunctionDeclaration(std::string id) override;
         virtual void visitTypeAliasDeclaration(std::string id) override;
         virtual void visitTypeDefinitionDeclaration(std::string id) override;
         virtual void visitVariableDeclaration(std::vector<std::string> ids, bool type_declared, long expression_count) override;

@@ -23,6 +23,9 @@ namespace AST {
         // - lists are visited in reversed order //
         //***************************************//
 
+        // Program
+        virtual void visitProgram(long size) = 0;
+
         // Types
         virtual void visitBoolType() = 0;
         virtual void visitIntType() = 0;
@@ -42,6 +45,9 @@ namespace AST {
         virtual void visitDeinitBlock(long size) = 0;
 
         // Statements
+
+        // Declarations
+        virtual void visitFunctionDeclaration(std::string id) = 0;
         virtual void visitTypeAliasDeclaration(std::string id) = 0;
         virtual void visitTypeDefinitionDeclaration(std::string id) = 0;
         virtual void visitVariableDeclaration(std::vector<std::string> ids, bool type_declared, long expression_count) = 0;

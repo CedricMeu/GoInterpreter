@@ -20,6 +20,24 @@ std::string Logger::Logger::getLogString() const
     return result;
 }
 
+void Logger::Logger::visitProgram(long size) 
+{
+    Logger::Logger::InfoBlock result = {"Program"};
+
+    result.push_back("- declarations: ");
+
+    for (int i = 0; i < size; ++i)
+    {
+        for (const auto &line : this->infoBlockStack.back())
+        {
+            result.push_back(this->tab(line));
+        }
+        this->infoBlockStack.pop_back();
+    }
+
+    this->infoBlockStack.push_back(result);
+} 
+
 void Logger::Logger::visitBoolType()
 {
     this->infoBlockStack.push_back({"BoolType"});
@@ -145,7 +163,7 @@ void Logger::Logger::visitMapType()
 {
     Logger::Logger::InfoBlock result = {"MapType"};
 
-    result.push_back("- element type: ");
+    result.push_back("- key type: ");
 
     for (const auto &line : this->infoBlockStack.back())
     {
@@ -153,7 +171,7 @@ void Logger::Logger::visitMapType()
     }
     this->infoBlockStack.pop_back();
 
-    result.push_back("- key type: ");
+    result.push_back("- element type: ");
 
     for (const auto &line : this->infoBlockStack.back())
     {
@@ -192,6 +210,31 @@ void Logger::Logger::visitDeinitBlock(long size)
         }
         this->infoBlockStack.pop_back();
     }
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitFunctionDeclaration(std::string id)
+{
+    Logger::Logger::InfoBlock result = {"Function"};
+
+    result.push_back("- id: " + id);
+
+    result.push_back("- signature: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- body: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
 
     this->infoBlockStack.push_back(result);
 }

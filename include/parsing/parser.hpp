@@ -108,13 +108,15 @@ typedef union YYSTYPE
     LinkedList<AST::Statement *> *statements;
     AST::Declaration *declaration;
     LinkedList<AST::Declaration *> *declarations;
+    AST::TopLevelDeclaration *top_level_declaration;
+    LinkedList<AST::TopLevelDeclaration *> *top_level_declarations;
 
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
 
 
 /* Line 2060 of yacc.c  */
-#line 118 "include/parsing/parser.hpp"
+#line 120 "include/parsing/parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

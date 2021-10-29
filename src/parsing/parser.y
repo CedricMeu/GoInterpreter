@@ -5,7 +5,7 @@
     #include <iostream>
     #include <string>
     #include "lexing/lexer.hpp"
-    AST::Node *tree;
+    AST::Program *tree;
 
     void yyerror(char *s);
 }
@@ -39,6 +39,8 @@
     LinkedList<AST::Statement *> *statements;
     AST::Declaration *declaration;
     LinkedList<AST::Declaration *> *declarations;
+    AST::TopLevelDeclaration *top_level_declaration;
+    LinkedList<AST::TopLevelDeclaration *> *top_level_declarations;
 
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
@@ -81,7 +83,9 @@
 %type<statements> statement
 %type<statements> statement_list
 
-%type<declarations> top_level_declaration
+%type<top_level_declarations> top_level_declaration
+%type<top_level_declarations> top_level_declaration_list
+%type<top_level_declaration> function_declaration
 %type<declarations> declaration
 %type<declarations> type_decl
 %type<declarations> type_spec_list
@@ -94,7 +98,7 @@
 %type<expression> expression
 %%
 
-start: block                                { tree = $1; }
+start: top_level_declaration_list           { tree = new AST::Program{$1->toStdVector()}; }
      ;
 
 // Types
@@ -206,34 +210,43 @@ struct_field_decls: identifier_list type ';'
 block: '{' statement_list '}'               { $$ = new AST::Block{$2->toStdVector()}; delete $2; }
      ;
 
-// Statements
-statement: declaration                      { 
+// declarations
+top_level_declaration: declaration          {
                                                 auto declarations = $1->toStdVector(); 
                                                 delete $1;
-                                                auto list = new LinkedList<AST::Statement *>;
+                                                auto list = new LinkedList<AST::TopLevelDeclaration *>;
                                                 for (int i = 0; i < declarations.size(); i++) {
-                                                    list->insert(i, new AST::DeclarationStatement{declarations[i]});
+                                                    list->insert(i, declarations[i]);
                                                 }
                                                 $$ = list;
                                             }
-         ;
+                     | function_declaration {
+                                                auto function = $1;
+                                                auto list = new LinkedList<AST::TopLevelDeclaration *>; 
+                                                list->insert(0, function);
+                                                $$ = list;
+                                            }
+                     ;
 
-statement_list: statement ';'               { $$ = $1; }
-              | statement ';' statement_list
+top_level_declaration_list: top_level_declaration     
+                                            { $$ = $1; }
+                          | top_level_declaration ';' top_level_declaration_list
                                             {
-                                                auto statements = $1->toStdVector();
+                                                auto declarations = $1->toStdVector();
                                                 delete $1;
                                                 auto list = $3;
-                                                for (int i = 0; i < statements.size(); i++) {
-                                                    list->insert(i, statements[i]);
+                                                for (int i = 0; i < declarations.size(); i++) {
+                                                    list->insert(i, declarations[i]);
                                                 }
                                                 $$ = list;
                                             }
-              ;
+                          ;
 
-// declarations
-top_level_declaration: declaration            { $$ = $1; }
-                     ;
+function_declaration: FUNC IDENTIFIER function_signature block
+                                            {
+                                                $$ = new AST::FunctionDeclaration{$2, $3, $4};
+                                            }
+                    ;
 
 declaration: type_decl                        { $$ = $1; }
            | var_decl                         { $$ = $1; }
@@ -303,6 +316,31 @@ var_spec_list: var_spec ';'                 {
                                                 $$ = list;
                                             }
              ;
+
+// Statements
+statement: declaration                      { 
+                                                auto declarations = $1->toStdVector(); 
+                                                delete $1;
+                                                auto list = new LinkedList<AST::Statement *>;
+                                                for (int i = 0; i < declarations.size(); i++) {
+                                                    list->insert(i, new AST::DeclarationStatement{declarations[i]});
+                                                }
+                                                $$ = list;
+                                            }
+         ;
+
+statement_list: statement ';'               { $$ = $1; }
+              | statement ';' statement_list
+                                            {
+                                                auto statements = $1->toStdVector();
+                                                delete $1;
+                                                auto list = $3;
+                                                for (int i = 0; i < statements.size(); i++) {
+                                                    list->insert(i, statements[i]);
+                                                }
+                                                $$ = list;
+                                            }
+              ;
 
 // Expressions
 expression: BOOL_LITERAL                    { $$ = new AST::BoolExpression{$1}; }

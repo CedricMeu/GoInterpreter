@@ -119,21 +119,8 @@ AST::FunctionType::~FunctionType()
 
 void AST::FunctionType::accept(Visitor *visitor)
 {
-    std::vector<std::string> parameter_names;
-    std::vector<Type *> parameter_types;
     std::vector<std::string> return_names;
     std::vector<Type *> return_types;
-
-    for (const auto ppair : this->parameters) {
-        parameter_names.push_back(ppair.first);
-        parameter_types.push_back(ppair.second);
-    }
-    
-    std::reverse(parameter_types.begin(), parameter_types.end());
-
-    for (const auto type : parameter_types) {
-        type->accept(visitor);
-    }
 
     for (const auto rpair : this->returns) {
         return_names.push_back(rpair.first);
@@ -143,6 +130,20 @@ void AST::FunctionType::accept(Visitor *visitor)
     std::reverse(return_types.begin(), return_types.end());
 
     for (const auto type : return_types) {
+        type->accept(visitor);
+    }
+
+    std::vector<std::string> parameter_names;
+    std::vector<Type *> parameter_types;
+
+    for (const auto ppair : this->parameters) {
+        parameter_names.push_back(ppair.first);
+        parameter_types.push_back(ppair.second);
+    }
+    
+    std::reverse(parameter_types.begin(), parameter_types.end());
+
+    for (const auto type : parameter_types) {
         type->accept(visitor);
     }
 
@@ -161,8 +162,8 @@ AST::MapType::~MapType()
 
 void AST::MapType::accept(Visitor *visitor)
 {
-    this->keyType->accept(visitor);
     this->elementType->accept(visitor);
+    this->keyType->accept(visitor);
     visitor->visitMapType();
 }
 

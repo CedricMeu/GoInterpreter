@@ -26,3 +26,28 @@ void AST::Block::accept(Visitor *visitor)
 
     visitor->visitDeinitBlock(this->statements.size());
 }
+
+AST::Program::Program(std::vector<TopLevelDeclaration *> declarations)
+    : declarations{declarations}
+{}
+
+AST::Program::~Program()
+{
+    for (const auto declaration : this->declarations)
+    {
+        delete declaration;
+    }
+}
+
+void AST::Program::accept(Visitor *visitor)
+{
+    auto rev = this->declarations;
+    std::reverse(rev.begin(), rev.end());
+
+    for (const auto declaration : rev)
+    {
+        declaration->accept(visitor);
+    }
+
+    visitor->visitProgram(this->declarations.size());
+}

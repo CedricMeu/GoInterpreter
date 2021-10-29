@@ -1,5 +1,22 @@
 #include "ast/declarations.hpp"
 
+AST::FunctionDeclaration::FunctionDeclaration(std::string id, Type *signature, Block *body)
+    : id{id}, signature{signature}, body{body}
+{}
+
+AST::FunctionDeclaration::~FunctionDeclaration()
+{
+    delete signature;
+    delete body;
+}
+
+void AST::FunctionDeclaration::accept(Visitor *visitor)
+{
+    this->body->accept(visitor);
+    this->signature->accept(visitor);
+    visitor->visitFunctionDeclaration(this->id);
+}
+
 AST::TypeAliasDeclaration::TypeAliasDeclaration(std::string id, Type *underlyingType)
     :id{id}, underlyingType{underlyingType}
 {}

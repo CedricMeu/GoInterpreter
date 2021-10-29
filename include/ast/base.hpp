@@ -93,6 +93,20 @@ namespace AST {
         virtual ~Block();
         virtual void accept(Visitor *visitor) override;
     };
+
+    /**
+     * Base class for a program
+     */
+    class Program : public Node 
+    {
+    private:
+        std::vector<TopLevelDeclaration *> declarations;
+
+    public:
+        Program(std::vector<TopLevelDeclaration *> declarations);
+        ~Program();
+        virtual void accept(Visitor *visitor) override;
+    };
     
 }; // namespace AST
 

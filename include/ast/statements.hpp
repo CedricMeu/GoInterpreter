@@ -5,7 +5,8 @@
 
 namespace AST {
 
-    class DeclarationStatement : public Statement {
+    class DeclarationStatement : public Statement 
+    {
     private:
         Declaration *declaration;
 

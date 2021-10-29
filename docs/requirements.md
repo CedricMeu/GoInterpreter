@@ -54,9 +54,9 @@
 - [ ] continue
 
 # functions
-- [ ] block scopes
-- [ ] function declarations
-- [ ] can have all types as input and output
+- [p] block scopes
+- [p] function declarations
+- [p] can have all types as input and output
 - [ ] varargs (`...`)
 
 # built in
@@ -70,8 +70,8 @@
 # mics
 - [ ] Only support 1 source file with `package main` as begin
 - [ ] main function with no parameters
-- [ ] if last token in specific subset of tokentypes, return `";"` on recognising a `"\n"`
-- [ ] type declarations
+- [-] if last token in specific subset of tokentypes, return `";"` on recognising a `"\n"`
+- [p] type declarations
 - [ ] garbage collector
 
 # Notes
