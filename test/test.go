@@ -1,10 +1,12 @@
 func main() int {
-	var x, y = 1, 2
-
-	if x {
-		x, y = y, x
-	} else {
-		1
+	switch x {
+		case 0:
+			0;
+		case 1:
+			1;
+		case 2:
+			2;
+		default:
+			3;
 	}
-
 }

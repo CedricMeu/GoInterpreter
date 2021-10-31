@@ -52,6 +52,51 @@ namespace AST {
         virtual void accept(Visitor *visitor) override;
     };
 
+    class SwitchStatement : public Statement 
+    {
+    public:
+        class SwitchClause
+        {
+        protected:
+            SwitchClause() = default;
+        
+        public:
+            virtual ~SwitchClause() = default;
+            virtual void accept(Visitor *visitor) = 0;
+        };
+
+        class SwitchCaseClause : public SwitchClause 
+        {
+        private:
+            std::vector<Expression *> expressions;
+            std::vector<Statement *> statements;
+
+        public:
+            SwitchCaseClause(std::vector<Expression *> expressions, std::vector<Statement *> statements);
+            ~SwitchCaseClause() override;
+            virtual void accept(Visitor *visitor) override;
+        };
+
+        class SwitchDefaultClause : public SwitchClause 
+        {
+        private:
+            std::vector<Statement *> statements;
+
+        public:
+            SwitchDefaultClause(std::vector<Statement *> statements);
+            ~SwitchDefaultClause() override;
+            virtual void accept(Visitor *visitor) override;
+        };
+
+        SwitchStatement(Expression *expression, std::vector<SwitchClause *> clauses);
+        ~SwitchStatement() override;
+        virtual void accept(Visitor *visitor) override;
+
+    private:
+        Expression *expression;
+        std::vector<SwitchClause *> clauses;
+    };
+
 };
 
 #endif // GOINTERPRETER_AST_STATEMENTS_HPP

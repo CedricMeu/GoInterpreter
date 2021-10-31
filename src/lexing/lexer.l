@@ -77,6 +77,9 @@ type                        { insertSemicolon = false; return TYPE; }
 var                         { insertSemicolon = false; return VAR; }
 if                          { insertSemicolon = false; return IF; }
 else                        { insertSemicolon = false; return ELSE; }
+switch                      { insertSemicolon = false; return SWITCH; }
+case                        { insertSemicolon = false; return CASE; }
+default                     { insertSemicolon = false; return DEFAULT; }
 
 true                        { insertSemicolon = true; yylval.boolean = true; return BOOL_LITERAL; }
 false                       { insertSemicolon = true; yylval.boolean = false; return BOOL_LITERAL; }

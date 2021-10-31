@@ -48,7 +48,6 @@ AST::AssignmentStatement::~AssignmentStatement()
 
 void AST::AssignmentStatement::accept(Visitor *visitor)
 {
-    
     auto revrhs = this->rhs;
     std::reverse(revrhs.begin(), revrhs.end());
 
@@ -92,4 +91,91 @@ void AST::IfStatement::accept(Visitor *visitor)
     };
 
     visitor->visitIfStatement(visitTrue, visitFalse);
+}
+
+AST::SwitchStatement::SwitchCaseClause::SwitchCaseClause(std::vector<Expression *> expressions, std::vector<Statement *> statements)
+    : expressions{expressions}, statements{statements}
+{}
+
+AST::SwitchStatement::SwitchCaseClause::~SwitchCaseClause()
+{
+    for (const auto expression : this->expressions) {
+        delete expression;
+    }
+
+    for (const auto statement : this->statements) {
+        delete statement;
+    }
+}
+
+void AST::SwitchStatement::SwitchCaseClause::accept(Visitor *visitor)
+{
+    auto revstmt = this->statements;
+    std::reverse(revstmt.begin(), revstmt.end());
+
+    for (const auto statement : revstmt)
+    {
+        statement->accept(visitor);
+    }
+
+    auto revexp = this->expressions;
+    std::reverse(revexp.begin(), revexp.end());
+
+    for (const auto expression : revexp)
+    {
+        expression->accept(visitor);
+    }
+
+    visitor->visitSwitchCaseClause(this->expressions.size(), this->statements.size());
+}
+
+AST::SwitchStatement::SwitchDefaultClause::SwitchDefaultClause(std::vector<Statement *> statements)
+    : statements{statements}
+{}
+
+AST::SwitchStatement::SwitchDefaultClause::~SwitchDefaultClause()
+{
+    for (const auto statement : this->statements) {
+        delete statement;
+    }
+}
+
+void AST::SwitchStatement::SwitchDefaultClause::accept(Visitor *visitor)
+{
+    auto revstmt = this->statements;
+    std::reverse(revstmt.begin(), revstmt.end());
+
+    for (const auto statement : revstmt)
+    {
+        statement->accept(visitor);
+    }
+
+    visitor->visitSwitchDefaultClause(this->statements.size());
+}
+
+AST::SwitchStatement::SwitchStatement::SwitchStatement(Expression *expression, std::vector<SwitchClause *> clauses)
+    : expression{expression}, clauses{clauses}
+{}
+
+AST::SwitchStatement::SwitchStatement::~SwitchStatement()
+{
+    delete expression;
+
+    for (const auto clause : this->clauses) {
+        delete clause;
+    }
+}
+
+void AST::SwitchStatement::SwitchStatement::accept(Visitor *visitor)
+{
+    auto revclauses = this->clauses;
+    std::reverse(revclauses.begin(), revclauses.end());
+
+    for (const auto clause : revclauses) {
+        clause->accept(visitor);
+    }
+
+    this->expression->accept(visitor);
+
+    visitor->visitSwitchStatement(this->clauses.size());
 }

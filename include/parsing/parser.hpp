@@ -79,12 +79,15 @@ extern int yydebug;
      SHORT_VAR_DECL = 270,
      IF = 271,
      ELSE = 272,
-     IDENTIFIER = 273,
-     INT_LITERAL = 274,
-     FLOAT_LITERAL = 275,
-     BOOL_LITERAL = 276,
-     RUNE_LITERAL = 277,
-     STRING_LITERAL = 278
+     SWITCH = 273,
+     CASE = 274,
+     DEFAULT = 275,
+     IDENTIFIER = 276,
+     INT_LITERAL = 277,
+     FLOAT_LITERAL = 278,
+     BOOL_LITERAL = 279,
+     RUNE_LITERAL = 280,
+     STRING_LITERAL = 281
    };
 #endif
 
@@ -103,22 +106,28 @@ typedef union YYSTYPE
     str string;
 
     AST::Block *block;
+
     AST::Type *type;
-    AST::Expression *expression;
-    LinkedList<AST::Expression *> *expressions;
-    AST::Statement *statement;
-    LinkedList<AST::Statement *> *statements;
+
     AST::Declaration *declaration;
     LinkedList<AST::Declaration *> *declarations;
     AST::TopLevelDeclaration *top_level_declaration;
     LinkedList<AST::TopLevelDeclaration *> *top_level_declarations;
+
+    AST::Statement *statement;
+    LinkedList<AST::Statement *> *statements;
+    AST::SwitchStatement::SwitchClause *switch_clause;
+    LinkedList<AST::SwitchStatement::SwitchClause *> *switch_clauses;
+
+    AST::Expression *expression;
+    LinkedList<AST::Expression *> *expressions;
 
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
 
 
 /* Line 2060 of yacc.c  */
-#line 122 "include/parsing/parser.hpp"
+#line 131 "include/parsing/parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

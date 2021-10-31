@@ -32,15 +32,21 @@
     str string;
 
     AST::Block *block;
+
     AST::Type *type;
-    AST::Expression *expression;
-    LinkedList<AST::Expression *> *expressions;
-    AST::Statement *statement;
-    LinkedList<AST::Statement *> *statements;
+
     AST::Declaration *declaration;
     LinkedList<AST::Declaration *> *declarations;
     AST::TopLevelDeclaration *top_level_declaration;
     LinkedList<AST::TopLevelDeclaration *> *top_level_declarations;
+
+    AST::Statement *statement;
+    LinkedList<AST::Statement *> *statements;
+    AST::SwitchStatement::SwitchClause *switch_clause;
+    LinkedList<AST::SwitchStatement::SwitchClause *> *switch_clauses;
+
+    AST::Expression *expression;
+    LinkedList<AST::Expression *> *expressions;
 
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
@@ -63,6 +69,9 @@
 %token SHORT_VAR_DECL
 %token IF
 %token ELSE
+%token SWITCH
+%token CASE
+%token DEFAULT
 
 %token<identifier> IDENTIFIER
 %token<integer> INT_LITERAL
@@ -85,6 +94,9 @@
 %type<statements> statement
 %type<statements> statement_list
 %type<statement> if_statement
+%type<statement> switch_statement
+%type<switch_clause> switch_clause
+%type<switch_clauses> switch_clause_list
 
 %type<top_level_declarations> top_level_declaration
 %type<top_level_declarations> top_level_declaration_list
@@ -210,8 +222,7 @@ struct_field_decls: identifier_list type ';'
                   ;
 
 // Block
-block: '{' '}'                              { $$ = new AST::Block{{}}; }
-     | '{' statement_list '}'               { $$ = new AST::Block{$2->toStdVector()}; delete $2; }
+block: '{' statement_list '}'               { $$ = new AST::Block{$2->toStdVector()}; delete $2; }
      ;
 
 // declarations
@@ -335,6 +346,12 @@ statement: expression                       {
                                                 list->insert(0, if_statement);
                                                 $$ = list;
                                             }
+         | switch_statement                     {
+                                                auto switch_statement = $1;
+                                                auto list = new LinkedList<AST::Statement *>;
+                                                list->insert(0, switch_statement);
+                                                $$ = list;
+                                            }
          | declaration                      { 
                                                 auto declarations = $1->toStdVector(); 
                                                 delete $1;
@@ -346,7 +363,9 @@ statement: expression                       {
                                             }
          ;
 
-statement_list: statement ';'               { $$ = $1; }
+statement_list:                             { 
+                                                $$ = new LinkedList<AST::Statement *>;
+                                            }
               | statement ';' statement_list
                                             {
                                                 auto statements = $1->toStdVector();
@@ -365,6 +384,37 @@ if_statement: IF expression block           { $$ = new AST::IfStatement{$2, $3, 
             | IF expression block ELSE block        
                                             { $$ = new AST::IfStatement{$2, $3, $5}; }
     ;
+
+switch_statement: SWITCH expression '{' switch_clause_list '}'
+                                            {
+                                                $$ = new AST::SwitchStatement{$2, $4->toStdVector()};
+                                                delete $4;
+                                            }
+                ;
+
+switch_clause: CASE expression_list ':' statement_list
+                                            {
+                                                $$ = new AST::SwitchStatement::SwitchCaseClause{$2->toStdVector(), $4->toStdVector()}; 
+                                                delete $2;
+                                                delete $4;
+                                            }
+             | DEFAULT ':' statement_list   {
+                                                $$ = new AST::SwitchStatement::SwitchDefaultClause{$3->toStdVector()}; 
+                                                delete $3;
+                                            }
+             ;
+
+switch_clause_list:                         { 
+                                                $$ = new LinkedList<AST::SwitchStatement::SwitchClause *>;
+                                            }
+                  | switch_clause switch_clause_list
+                                            { 
+                                                auto clause = $1;
+                                                auto list = $2;
+                                                list->insert(0, clause);
+                                                $$ = list;
+                                            }
+                  ;
 
 // Expressions
 expression: BOOL_LITERAL                    { $$ = new AST::BoolExpression{$1}; }

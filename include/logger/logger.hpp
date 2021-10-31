@@ -51,6 +51,9 @@ namespace Logger {
         virtual void visitExpressionStatement() override;
         virtual void visitAssignmentStatement(long lhsSize, long rhsSize) override;
         virtual void visitIfStatement(const std::function <void ()>& visitTrue, const std::function <void ()>& visitFalse) override;
+        virtual void visitSwitchStatement(long size) override;
+        virtual void visitSwitchCaseClause(long expressionsSize, long statementsSize) override;
+        virtual void visitSwitchDefaultClause(long statementsSize) override;
 
         // Expressions - Literals
         virtual void visitBoolExpression(bool value) override;

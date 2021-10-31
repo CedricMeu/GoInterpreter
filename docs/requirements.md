@@ -49,7 +49,7 @@
 - [p] if
 - [ ] for (itterative and range)
 - [p] single expression
-- [ ] switch statement
+- [p] switch statement
 - [ ] break
 - [ ] continue
 

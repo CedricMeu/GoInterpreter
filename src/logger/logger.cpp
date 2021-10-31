@@ -386,6 +386,79 @@ void Logger::Logger::visitIfStatement(const std::function <void ()>& visitTrue, 
     this->infoBlockStack.push_back(result);
 }
 
+void Logger::Logger::visitSwitchStatement(long size)
+{
+    Logger::Logger::InfoBlock result = {"SwitchStatement"};
+
+    result.push_back("- expression");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- cases: ");
+
+    for (int i = 0; i < size; i++)
+    {
+        for (const auto &line : this->infoBlockStack.back())
+        {
+            result.push_back(this->tab(line));
+        }
+        this->infoBlockStack.pop_back();
+    }
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitSwitchCaseClause(long expressionsSize, long statementsSize)
+{
+    Logger::Logger::InfoBlock result = {"CaseClause"};
+
+    result.push_back("- expressions: ");
+
+    for (int i = 0; i < expressionsSize; i++)
+    {
+        for (const auto &line : this->infoBlockStack.back())
+        {
+            result.push_back(this->tab(line));
+        }
+        this->infoBlockStack.pop_back();
+    }
+
+    result.push_back("- statements: ");
+
+    for (int i = 0; i < statementsSize; i++)
+    {
+        for (const auto &line : this->infoBlockStack.back())
+        {
+            result.push_back(this->tab(line));
+        }
+        this->infoBlockStack.pop_back();
+    }
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitSwitchDefaultClause(long statementsSize)
+{
+    Logger::Logger::InfoBlock result = {"DefaultClause"};
+
+    result.push_back("- statements: ");
+
+    for (int i = 0; i < statementsSize; i++)
+    {
+        for (const auto &line : this->infoBlockStack.back())
+        {
+            result.push_back(this->tab(line));
+        }
+        this->infoBlockStack.pop_back();
+    }
+
+    this->infoBlockStack.push_back(result);
+}
+
 void Logger::Logger::visitBoolExpression(bool value)
 {
     Logger::Logger::InfoBlock result = {std::string{"BoolLiteral: "} + (value ? "true" : "false")};

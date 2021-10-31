@@ -4,7 +4,7 @@
 #include "main.hpp"
 
 int main() {
-    yyin = fopen("test/test.go", "r");
+    yyin = fopen("/Users/cedricmeukens/Documents/UHasselt/Compilers/GoInterpreter/test/test.go", "r");
     if (yyin == NULL) {
         std::cerr << "Cant open input file" << std::endl;   
         return EXIT_FAILURE;

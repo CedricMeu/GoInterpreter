@@ -55,6 +55,9 @@ namespace AST {
         virtual void visitExpressionStatement() = 0;
         virtual void visitAssignmentStatement(long lhsSize, long rhsSize) = 0;
         virtual void visitIfStatement(const std::function <void ()>& visitTrue, const std::function <void ()>& visitFalse) = 0;
+        virtual void visitSwitchStatement(long size) = 0;
+        virtual void visitSwitchCaseClause(long expressionsSize, long statementsSize) = 0;
+        virtual void visitSwitchDefaultClause(long statementsSize) = 0;
 
         // Expressions - Literals
         virtual void visitBoolExpression(bool value) = 0;
