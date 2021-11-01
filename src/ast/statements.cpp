@@ -179,3 +179,63 @@ void AST::SwitchStatement::SwitchStatement::accept(Visitor *visitor)
 
     visitor->visitSwitchStatement(this->clauses.size());
 }
+
+AST::ReturnStatement::ReturnStatement(std::vector<Expression *> expressions)
+    : expressions{expressions}
+{}
+
+AST::ReturnStatement::~ReturnStatement()
+{
+    for (const auto expression : this->expressions) {
+        delete expression;
+    }
+}
+
+void AST::ReturnStatement::accept(Visitor* visitor)
+{
+    auto revexp = this->expressions;
+    std::reverse(revexp.begin(), revexp.end());
+
+    for (const auto expression : revexp) {
+        expression->accept(visitor);
+    }
+
+    visitor->visitReturnStatement(this->expressions.size());
+}
+
+void AST::BreakStatement::accept(Visitor* visitor)
+{
+    visitor->visitBreakStatement();
+}
+
+void AST::ContinueStatement::accept(Visitor* visitor)
+{
+    visitor->visitContinueStatement();
+}
+
+void AST::EmptyStatement::accept(Visitor* visitor) 
+{
+    visitor->visitEmptyStatement();
+}
+
+AST::ForConditionStatement::ForConditionStatement(SimpleStatement *init, Expression *condition, SimpleStatement *post, Block *body)
+    : init{init}, condition{condition}, post{post}, body{body}
+{}
+
+AST::ForConditionStatement::~ForConditionStatement()
+{
+    delete this->init;
+    delete this->condition;
+    delete this->post;
+    delete this->body;
+}
+
+void AST::ForConditionStatement::accept(Visitor* visitor)
+{
+    this->body->accept(visitor);
+    this->post->accept(visitor);
+    this->condition->accept(visitor);
+    this->init->accept(visitor);
+
+    visitor->visitForConditionStatement();
+}

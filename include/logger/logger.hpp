@@ -16,7 +16,7 @@ namespace Logger {
 
     public:
         Logger() = default;
-        virtual ~Logger() = default;
+        virtual ~Logger() override = default;
 
         std::string getLogString() const;
         
@@ -54,6 +54,11 @@ namespace Logger {
         virtual void visitSwitchStatement(long size) override;
         virtual void visitSwitchCaseClause(long expressionsSize, long statementsSize) override;
         virtual void visitSwitchDefaultClause(long statementsSize) override;
+        virtual void visitReturnStatement(long size) override;
+        virtual void visitBreakStatement() override;
+        virtual void visitContinueStatement() override;
+        virtual void visitEmptyStatement() override;
+        virtual void visitForConditionStatement() override;
 
         // Expressions - Literals
         virtual void visitBoolExpression(bool value) override;

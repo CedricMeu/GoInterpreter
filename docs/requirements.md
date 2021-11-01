@@ -45,13 +45,14 @@
 - [p] variable declarations
 - [fixme] short variable declarations
 - [p] assignment
-- [ ] return
+- [p] return
 - [p] if
-- [ ] for (itterative and range)
 - [p] single expression
 - [p] switch statement
-- [ ] break
-- [ ] continue
+- [p] break
+- [p] continue
+- [p] for conditional
+- [ ] for range
 
 # functions
 - [p] block scopes

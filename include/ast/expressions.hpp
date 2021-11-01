@@ -8,13 +8,13 @@ namespace AST {
 
     class IdentifierExpression : public Expression
     {
-    private:
-        std::string id;
-
     public:
         IdentifierExpression(std::string id);
-        ~IdentifierExpression() = default;
+        virtual ~IdentifierExpression() override = default;
         virtual void accept(Visitor *visitor) override;
+
+    private:
+        std::string id;
     };
 };
 

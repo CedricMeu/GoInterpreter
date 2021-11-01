@@ -9,61 +9,62 @@ namespace AST {
 
     class FunctionDeclaration : public TopLevelDeclaration 
     {
+    public:
+        FunctionDeclaration(std::string id, Type *signature, Block *body);
+        virtual ~FunctionDeclaration() override;
+        virtual void accept(Visitor *visitor) override;
+
     private:
         std::string id;
         Type *signature;
         Block *body;
-    public:
-        FunctionDeclaration(std::string id, Type *signature, Block *body);
-        ~FunctionDeclaration();
-        virtual void accept(Visitor *visitor) override;
     };
 
     class TypeSpecDeclaration : public Declaration 
     {
+    public:
+        virtual ~TypeSpecDeclaration() override = default;
+        virtual void accept(Visitor *visitor) override = 0;
+
     protected: 
         TypeSpecDeclaration() = default;
-
-    public:
-        virtual ~TypeSpecDeclaration() = default;
-        virtual void accept(Visitor *visitor) override = 0;
     };
 
     class TypeAliasDeclaration : public TypeSpecDeclaration
     {
+    public:
+        TypeAliasDeclaration(std::string id, Type *underlyingType);
+        virtual ~TypeAliasDeclaration() override;
+        virtual void accept(Visitor *visitor) override;
+
     private:
         std::string id;
         Type *underlyingType;
-
-    public:
-        TypeAliasDeclaration(std::string id, Type *underlyingType);
-        ~TypeAliasDeclaration();
-        virtual void accept(Visitor *visitor) override;
     };
 
     class TypeDefinitionDeclaration : public TypeSpecDeclaration
     {
+    public:
+        TypeDefinitionDeclaration(std::string id, Type *underlyingType);
+        virtual ~TypeDefinitionDeclaration() override;
+        virtual void accept(Visitor *visitor) override;
+
     private:
         std::string id;
         Type *underlyingType;
-
-    public:
-        TypeDefinitionDeclaration(std::string id, Type *underlyingType);
-        ~TypeDefinitionDeclaration();
-        virtual void accept(Visitor *visitor) override;
     };
 
     class VariableDeclaration : public Declaration 
     {
+    public:
+        VariableDeclaration(std::vector<std::string> ids, Type *type, std::vector<Expression *> expressions);
+        virtual ~VariableDeclaration() override;
+        virtual void accept(Visitor *visitor) override;
+
     private:
         std::vector<std::string> ids;
         Type *type;
         std::vector<Expression *> expressions;
-
-    public:
-        VariableDeclaration(std::vector<std::string> ids, Type *type, std::vector<Expression *> expressions);
-        ~VariableDeclaration();
-        virtual void accept(Visitor *visitor) override;
     };
 
 }; // namespace AST

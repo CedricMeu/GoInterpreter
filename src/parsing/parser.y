@@ -40,6 +40,7 @@
     AST::TopLevelDeclaration *top_level_declaration;
     LinkedList<AST::TopLevelDeclaration *> *top_level_declarations;
 
+    AST::SimpleStatement *simple_statement;
     AST::Statement *statement;
     LinkedList<AST::Statement *> *statements;
     AST::SwitchStatement::SwitchClause *switch_clause;
@@ -72,6 +73,13 @@
 %token SWITCH
 %token CASE
 %token DEFAULT
+%token RETURN
+%token BREAK
+%token CONTINUE
+%token FALLTHROUGH
+%token FOR
+%token INC
+%token DEC
 
 %token<identifier> IDENTIFIER
 %token<integer> INT_LITERAL
@@ -93,8 +101,12 @@
 
 %type<statements> statement
 %type<statements> statement_list
+%type<simple_statement> simple_statement
 %type<statement> if_statement
 %type<statement> switch_statement
+%type<statement> return_statement
+%type<statement> for_statement
+%type<statement> for_condition_statement
 %type<switch_clause> switch_clause
 %type<switch_clauses> switch_clause_list
 
@@ -326,18 +338,10 @@ var_spec_list: var_spec ';'                 {
              ;
 
 // Statements
-statement: expression                       {
-                                                auto expression = $1;
+statement: simple_statement                 {
+                                                auto stmt = $1;
                                                 auto list = new LinkedList<AST::Statement *>;
-                                                list->insert(0, new AST::ExpressionStatement{expression});
-                                                $$ = list;
-                                            }
-         | expression_list '=' expression_list
-                                            {
-                                                auto lhs = $1->toStdVector();
-                                                auto rhs = $3->toStdVector();
-                                                auto list = new LinkedList<AST::Statement *>;
-                                                list->insert(0, new AST::AssignmentStatement{lhs, rhs});
+                                                list->insert(0, stmt);
                                                 $$ = list;
                                             }
          | if_statement                     {
@@ -346,10 +350,32 @@ statement: expression                       {
                                                 list->insert(0, if_statement);
                                                 $$ = list;
                                             }
-         | switch_statement                     {
+         | switch_statement                 {
                                                 auto switch_statement = $1;
                                                 auto list = new LinkedList<AST::Statement *>;
                                                 list->insert(0, switch_statement);
+                                                $$ = list;
+                                            }
+         | return_statement                 {
+                                                auto return_statement = $1;
+                                                auto list = new LinkedList<AST::Statement *>;
+                                                list->insert(0, return_statement);
+                                                $$ = list;
+                                            }
+         | BREAK                            {
+                                                auto list = new LinkedList<AST::Statement *>;
+                                                list->insert(0, new AST::BreakStatement{});
+                                                $$ = list;
+                                            }
+         | CONTINUE                         {
+                                                auto list = new LinkedList<AST::Statement *>;
+                                                list->insert(0, new AST::ContinueStatement{});
+                                                $$ = list;
+                                            }
+         | for_statement                    {
+                                                auto for_statement = $1;
+                                                auto list = new LinkedList<AST::Statement *>;
+                                                list->insert(0, for_statement);
                                                 $$ = list;
                                             }
          | declaration                      { 
@@ -362,6 +388,18 @@ statement: expression                       {
                                                 $$ = list;
                                             }
          ;
+
+simple_statement:                           { $$ = new AST::EmptyStatement{}; }
+                | expression                { $$ = new AST::ExpressionStatement{$1}; }
+                | expression_list '=' expression_list
+                                            {
+                                                auto lhs = $1->toStdVector();
+                                                auto rhs = $3->toStdVector();
+                                                $$ = new AST::AssignmentStatement{lhs, rhs};
+                                                delete $1;
+                                                delete $3;
+                                            }
+                ;
 
 statement_list:                             { 
                                                 $$ = new LinkedList<AST::Statement *>;
@@ -415,6 +453,37 @@ switch_clause_list:                         {
                                                 $$ = list;
                                             }
                   ;
+
+return_statement: RETURN expression_list    { 
+                                                $$ = new AST::ReturnStatement{$2->toStdVector()}; 
+                                                delete $2;
+                                            }
+                ;
+
+for_statement: for_condition_statement      { $$ = $1; }
+             ;
+
+for_condition_statement: FOR simple_statement ';' expression ';' simple_statement block
+                                            {
+                                                $$ = new AST::ForConditionStatement{$2, $4, $6, $7};
+                                            }
+                       | FOR expression block
+                                            {
+                                                $$ = new AST::ForConditionStatement{
+                                                    new AST::EmptyStatement{}, 
+                                                    $2, 
+                                                    new AST::EmptyStatement{}, 
+                                                    $3};
+                                            }
+                       | FOR block
+                                            {
+                                                $$ = new AST::ForConditionStatement{
+                                                    new AST::EmptyStatement{}, 
+                                                    new AST::BoolExpression{true}, 
+                                                    new AST::EmptyStatement{}, 
+                                                    $2};
+                                            }
+                       ;
 
 // Expressions
 expression: BOOL_LITERAL                    { $$ = new AST::BoolExpression{$1}; }

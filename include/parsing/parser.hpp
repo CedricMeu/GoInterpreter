@@ -82,12 +82,19 @@ extern int yydebug;
      SWITCH = 273,
      CASE = 274,
      DEFAULT = 275,
-     IDENTIFIER = 276,
-     INT_LITERAL = 277,
-     FLOAT_LITERAL = 278,
-     BOOL_LITERAL = 279,
-     RUNE_LITERAL = 280,
-     STRING_LITERAL = 281
+     RETURN = 276,
+     BREAK = 277,
+     CONTINUE = 278,
+     FALLTHROUGH = 279,
+     FOR = 280,
+     INC = 281,
+     DEC = 282,
+     IDENTIFIER = 283,
+     INT_LITERAL = 284,
+     FLOAT_LITERAL = 285,
+     BOOL_LITERAL = 286,
+     RUNE_LITERAL = 287,
+     STRING_LITERAL = 288
    };
 #endif
 
@@ -114,6 +121,7 @@ typedef union YYSTYPE
     AST::TopLevelDeclaration *top_level_declaration;
     LinkedList<AST::TopLevelDeclaration *> *top_level_declarations;
 
+    AST::SimpleStatement *simple_statement;
     AST::Statement *statement;
     LinkedList<AST::Statement *> *statements;
     AST::SwitchStatement::SwitchClause *switch_clause;
@@ -127,7 +135,7 @@ typedef union YYSTYPE
 
 
 /* Line 2060 of yacc.c  */
-#line 131 "include/parsing/parser.hpp"
+#line 139 "include/parsing/parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

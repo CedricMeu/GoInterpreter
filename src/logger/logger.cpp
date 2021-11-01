@@ -459,6 +459,81 @@ void Logger::Logger::visitSwitchDefaultClause(long statementsSize)
     this->infoBlockStack.push_back(result);
 }
 
+void Logger::Logger::visitReturnStatement(long size)
+{
+    Logger::Logger::InfoBlock result = {"ReturnStatement"};
+
+    result.push_back("- expressions: ");
+
+    for (int i = 0; i < size; i++)
+    {
+        for (const auto &line : this->infoBlockStack.back())
+        {
+            result.push_back(this->tab(line));
+        }
+        this->infoBlockStack.pop_back();
+    }
+
+    this->infoBlockStack.push_back(result); 
+}
+
+void Logger::Logger::visitBreakStatement()
+{
+    Logger::Logger::InfoBlock result = {"BreakStatement"};
+    this->infoBlockStack.push_back(result); 
+}
+
+void Logger::Logger::visitContinueStatement()
+{
+    Logger::Logger::InfoBlock result = {"ContinueStatement"};
+    this->infoBlockStack.push_back(result); 
+}
+
+void Logger::Logger::visitEmptyStatement()
+{
+    Logger::Logger::InfoBlock result = {"EmptyStatement"};
+    this->infoBlockStack.push_back(result); 
+}
+
+void Logger::Logger::visitForConditionStatement()
+{
+    Logger::Logger::InfoBlock result = {"ForConditionStatement"};
+
+    result.push_back("- init: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- condition: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- post: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- body: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result); 
+}
+
 void Logger::Logger::visitBoolExpression(bool value)
 {
     Logger::Logger::InfoBlock result = {std::string{"BoolLiteral: "} + (value ? "true" : "false")};

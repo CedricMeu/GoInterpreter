@@ -1,12 +1,7 @@
-func main() int {
-	switch x {
-		case 0:
-			0;
-		case 1:
-			1;
-		case 2:
-			2;
-		default:
-			3;
+func main() (int, int, int) {
+	for i=1 ;false; 10 {
+		continue
 	}
+
+	return 1, 2, 3
 }

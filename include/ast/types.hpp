@@ -12,7 +12,7 @@ namespace AST {
     {
     public:
         BoolType() = default;
-        virtual ~BoolType() = default;
+        virtual ~BoolType() override = default;
         virtual void accept(Visitor *visitor) override;
     };
 
@@ -20,7 +20,7 @@ namespace AST {
     {
     public:
         IntType() = default;
-        virtual ~IntType() = default;
+        virtual ~IntType() override = default;
         virtual void accept(Visitor *visitor) override;
     };
 
@@ -28,7 +28,7 @@ namespace AST {
     {
     public:
         Float32Type() = default;
-        virtual ~Float32Type() = default;
+        virtual ~Float32Type() override= default;
         virtual void accept(Visitor *visitor) override;
     };
 
@@ -36,7 +36,7 @@ namespace AST {
     {
     public:
         RuneType() = default;
-        virtual ~RuneType() = default;
+        virtual ~RuneType() override= default;
         virtual void accept(Visitor *visitor) override;
     };
 
@@ -44,88 +44,90 @@ namespace AST {
     {
     public:
         StringType() = default;
-        virtual ~StringType() = default;
+        virtual ~StringType() override= default;
         virtual void accept(Visitor *visitor) override;
     };
 
     class ArrayType : public Type
     {
+    public:
+        ArrayType(long size, Type *type);
+        virtual ~ArrayType() override;
+        virtual void accept(Visitor *visitor) override;
+
     private:
         Type *type;
         const long size;
-    public:
-        ArrayType(long size, Type *type);
-        virtual ~ArrayType();
-        virtual void accept(Visitor *visitor) override;
     };
 
     class SliceType : public Type
     {
-    private:
-        Type *type;
     public:
         SliceType(Type *type);
-        virtual ~SliceType();
+        virtual ~SliceType() override;
         virtual void accept(Visitor *visitor) override;
+
+    private:
+        Type *type;
     };
     
     class StructType : public Type
     {
-    private:
-        std::vector<std::pair<std::string, Type *>> fields;
-
     public:
         explicit StructType(std::vector<std::pair<std::string, Type *>> fields);
-        virtual ~StructType();
+        virtual ~StructType() override;
         virtual void accept(Visitor *visitor) override;
+
+    private:
+        std::vector<std::pair<std::string, Type *>> fields;
     };
     
     class PointerType : public Type
     {
-    private:
-        Type *type;
-
     public:
         explicit PointerType(Type *type);
-        virtual ~PointerType();
+        virtual ~PointerType() override;
         virtual void accept(Visitor *visitor) override;
+
+    private:
+        Type *type;
     };
     
     class FunctionType : public Type
     {
-    private:
-        std::vector<std::pair<std::string, Type *>> parameters;
-        std::vector<std::pair<std::string, Type *>> returns;
-
     public:
         FunctionType(
             std::vector<std::pair<std::string, Type *>> parameters, 
             std::vector<std::pair<std::string, Type *>> returns);
-        virtual ~FunctionType();
+        virtual ~FunctionType() override;
         virtual void accept(Visitor *visitor) override;
+
+    private:
+        std::vector<std::pair<std::string, Type *>> parameters;
+        std::vector<std::pair<std::string, Type *>> returns;
     };
     
     class MapType : public Type
     {
+    public:
+        MapType(Type* keyType, Type* elementType);
+        virtual ~MapType() override;
+        virtual void accept(Visitor *visitor) override;
+
     private:
         Type *keyType;
         Type *elementType;
-
-    public:
-        MapType(Type* keyType, Type* elementType);
-        virtual ~MapType();
-        virtual void accept(Visitor *visitor) override;
     };
     
     class CustomType : public Type
     {
-    private:
-        const std::string id;
-
     public:
         explicit CustomType(const char *id);
-        virtual ~CustomType() = default;
+        virtual ~CustomType() override= default;
         virtual void accept(Visitor *visitor) override;
+
+    private:
+        const std::string id;
     };
 
 }; // namespace AST

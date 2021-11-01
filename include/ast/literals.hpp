@@ -10,58 +10,57 @@ namespace AST {
 
     class BoolExpression : public Expression
     {
-    private:
-        bool value;
-
     public:
         BoolExpression(bool value);
-        ~BoolExpression() = default;
+        virtual ~BoolExpression() override = default;
         virtual void accept(Visitor *visitor) override;
+    private:
+        bool value;
     };
 
     class IntExpression : public Expression
     {
-    private:
-        int value;
-
     public:
         IntExpression(int value);
-        ~IntExpression() = default;
+        virtual ~IntExpression() override = default;
         virtual void accept(Visitor *visitor) override;
+
+    private:
+        int value;
     };
 
     class Float32Expression : public Expression
     {
-    private:
-        float value;
-
     public:
         Float32Expression(float value);
-        ~Float32Expression() = default;
+        virtual ~Float32Expression() override = default;
         virtual void accept(Visitor *visitor) override;
+
+    private:
+        float value;
     };
 
     class RuneExpression : public Expression
     {
-    private:
-        char value;
-
     public:
         RuneExpression(char value);
-        ~RuneExpression() = default;
+        virtual ~RuneExpression() override = default;
         virtual void accept(Visitor *visitor) override;
+
+    private:
+        char value;
     };
 
     class StringExpression : public Expression 
     {
+    public:
+        StringExpression(char *value, long lenght);
+        virtual ~StringExpression() override;
+        virtual void accept(Visitor *visitor) override;
+
     private:
         char *value;
         long length;
-
-    public:
-        StringExpression(char *value, long lenght);
-        ~StringExpression();
-        virtual void accept(Visitor *visitor) override;
     };
     
 };

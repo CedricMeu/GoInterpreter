@@ -58,6 +58,11 @@ namespace AST {
         virtual void visitSwitchStatement(long size) = 0;
         virtual void visitSwitchCaseClause(long expressionsSize, long statementsSize) = 0;
         virtual void visitSwitchDefaultClause(long statementsSize) = 0;
+        virtual void visitReturnStatement(long size) = 0;
+        virtual void visitBreakStatement() = 0;
+        virtual void visitContinueStatement() = 0;
+        virtual void visitEmptyStatement() = 0;
+        virtual void visitForConditionStatement() = 0;
 
         // Expressions - Literals
         virtual void visitBoolExpression(bool value) = 0;
