@@ -48,6 +48,7 @@
 
     AST::Expression *expression;
     LinkedList<AST::Expression *> *expressions;
+    LinkedList<std::pair<std::string, AST::Expression *>> *keyed_expressions;
 
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
@@ -58,8 +59,6 @@
 %token BOOL
 %token INT
 %token FLOAT32
-%token COMPLEX64
-%token BYTE
 %token RUNE
 %token STRING
 %token STRUCT
@@ -76,10 +75,10 @@
 %token RETURN
 %token BREAK
 %token CONTINUE
-%token FALLTHROUGH
 %token FOR
 %token INC
 %token DEC
+%token ELLIPSIS
 
 %token<identifier> IDENTIFIER
 %token<integer> INT_LITERAL
@@ -89,6 +88,7 @@
 %token<string> STRING_LITERAL
 
 %type<type> type
+%type<type> literal_type
 %type<type> function_signature
 %type<integer> array_length
 %type<id_list> identifier_list
@@ -123,62 +123,76 @@
 
 %type<expressions> expression_list
 %type<expression> expression
+%type<expression> composite_literal
+%type<keyed_expressions> element_list
+%type<keyed_expressions> keyed_element
 %%
 
-start: top_level_declaration_list           { tree = new AST::Program{$1->toStdVector()}; }
-     ;
+start
+    : top_level_declaration_list            { tree = new AST::Program{$1->toStdVector()}; }
+    ;
 
 // Types
-type: IDENTIFIER                            { $$ = new AST::CustomType{$1}; delete $1; }
-    | '(' type ')'                          { $$ = $2; }
+type
+    : '(' type ')'                          { $$ = $2; }
     | BOOL                                  { $$ = new AST::BoolType{}; }
     | INT                                   { $$ = new AST::IntType{}; }
     | FLOAT32                               { $$ = new AST::Float32Type{}; }
     | RUNE                                  { $$ = new AST::RuneType{}; }
     | STRING                                { $$ = new AST::StringType{}; }
+    | '*' type                              { $$ = new AST::PointerType{$2}; }
+    | FUNC function_signature               { $$ = $2; }
+    | literal_type                          { $$ = $1; }
+    ;
+
+literal_type
+    : IDENTIFIER                            { $$ = new AST::CustomType{$1}; delete $1; }
     | '[' array_length ']' type             { $$ = new AST::ArrayType{$2, $4}; }
     | '[' ']' type                          { $$ = new AST::SliceType{$3}; }
     | STRUCT '{' struct_field_decls '}'     { $$ = new AST::StructType{$3->toStdVector()}; delete $3; }
-    | '*' type                              { $$ = new AST::PointerType{$2}; }
-    | FUNC function_signature               { $$ = $2; }
     | MAP '[' type ']' type                 { $$ = new AST::MapType{$3, $5}; }
     ;
 
-array_length: INT_LITERAL                   { $$ = yylval.integer; }
-            ;
+array_length
+    : INT_LITERAL                           { $$ = yylval.integer; }
+    ;
 
-function_signature: function_parameters function_result
+function_signature
+    : function_parameters function_result
                                             { 
                                                 $$ = new AST::FunctionType{$1->toStdVector(), $2->toStdVector()}; 
                                                 delete $1;
                                                 delete $2;
                                             }
-                  ;
+    ;
 
-function_result:                            { $$ = new LinkedList<std::pair<std::string, AST::Type *>>; }
-               | function_parameters        { $$ = $1; }
-               | type                       { 
+function_result
+    :                                       { $$ = new LinkedList<std::pair<std::string, AST::Type *>>; }
+    | function_parameters                   { $$ = $1; }
+    | type                                  { 
                                                 auto type = $1;
                                                 auto list = new LinkedList<std::pair<std::string, AST::Type *>>;
                                                 list->insert(0, std::make_pair("", type));
                                                 $$ = list;
                                             }
-               ;
+    ;
 
-function_parameters: '(' ')'                { $$ = new LinkedList<std::pair<std::string, AST::Type *>>; }
-                   | '(' function_parameter_list ')'
+function_parameters
+    : '(' ')'                               { $$ = new LinkedList<std::pair<std::string, AST::Type *>>; }
+    | '(' function_parameter_list ')'
                                             { $$ = $2; }
-                   | '(' function_parameter_list ',' ')'
+    | '(' function_parameter_list ',' ')'
                                             { $$ = $2; }
-                   ;
+    ;
 
-function_parameter_list: type               { 
+function_parameter_list
+    : type                                  { 
                                                 auto type = $1;
                                                 auto list = new LinkedList<std::pair<std::string, AST::Type *>>;
                                                 list->insert(0, std::make_pair("", type));
                                                 $$ = list;
                                             }
-                       | identifier_list type
+    | identifier_list type
                                             {
                                                 auto ids = $1->toStdVector();
                                                 delete $1;
@@ -189,14 +203,14 @@ function_parameter_list: type               {
                                                 }
                                                 $$ = list;
                                             }
-                       | type ',' function_parameter_list
+    | type ',' function_parameter_list
                                             { 
                                                 auto type = $1;
                                                 auto list = $3;
                                                 list->insert(0, std::make_pair("", type));
                                                 $$ = list;
                                             }
-                       | identifier_list type ',' function_parameter_list
+    | identifier_list type ',' function_parameter_list
                                             {
                                                 auto ids = $1->toStdVector();
                                                 delete $1;
@@ -207,9 +221,10 @@ function_parameter_list: type               {
                                                 }
                                                 $$ = list;
                                             }
-                       ;
+    ;
 
-struct_field_decls: identifier_list type ';'
+struct_field_decls
+    : identifier_list type ';'
                                             {
                                                 auto ids = $1->toStdVector();
                                                 delete $1;
@@ -220,7 +235,7 @@ struct_field_decls: identifier_list type ';'
                                                 }
                                                 $$ = list;
                                             }
-                  | identifier_list type ';' struct_field_decls 
+    | identifier_list type ';' struct_field_decls 
                                             {
                                                 auto ids = $1->toStdVector();
                                                 delete $1;
@@ -231,14 +246,16 @@ struct_field_decls: identifier_list type ';'
                                                 }
                                                 $$ = list;
                                             }
-                  ;
+    ;
 
 // Block
-block: '{' statement_list '}'               { $$ = new AST::Block{$2->toStdVector()}; delete $2; }
-     ;
+block
+    : '{' statement_list '}'                { $$ = new AST::Block{$2->toStdVector()}; delete $2; }
+    ;
 
 // declarations
-top_level_declaration: declaration          {
+top_level_declaration
+    : declaration                           {
                                                 auto declarations = $1->toStdVector(); 
                                                 delete $1;
                                                 auto list = new LinkedList<AST::TopLevelDeclaration *>;
@@ -247,17 +264,18 @@ top_level_declaration: declaration          {
                                                 }
                                                 $$ = list;
                                             }
-                     | function_declaration {
+    | function_declaration                  {
                                                 auto function = $1;
                                                 auto list = new LinkedList<AST::TopLevelDeclaration *>; 
                                                 list->insert(0, function);
                                                 $$ = list;
                                             }
-                     ;
+    ;
 
-top_level_declaration_list: top_level_declaration     
+top_level_declaration_list
+    : top_level_declaration     
                                             { $$ = $1; }
-                          | top_level_declaration ';' top_level_declaration_list
+    | top_level_declaration ';' top_level_declaration_list
                                             {
                                                 auto declarations = $1->toStdVector();
                                                 delete $1;
@@ -267,118 +285,127 @@ top_level_declaration_list: top_level_declaration
                                                 }
                                                 $$ = list;
                                             }
-                          ;
+    ;
 
-function_declaration: FUNC IDENTIFIER function_signature block
+function_declaration
+    : FUNC IDENTIFIER function_signature block
                                             {
                                                 $$ = new AST::FunctionDeclaration{$2, $3, $4};
                                             }
-                    ;
+    ;
 
-declaration: type_decl                        { $$ = $1; }
-           | var_decl                         { $$ = $1; }
-           ;
+declaration
+    : type_decl                             { $$ = $1; }
+    | var_decl                              { $$ = $1; }
+    ;
 
-type_decl: TYPE type_spec                   { 
+type_decl
+    : TYPE type_spec                        { 
                                                 auto typeSpec = $2;
                                                 auto list = new LinkedList<AST::Declaration *>;
                                                 list->insert(0, typeSpec);
                                                 $$ = list;
                                             }
-         | TYPE '(' type_spec_list ')'      { $$ = $3; }
-         ;
+    | TYPE '(' type_spec_list ')'           { $$ = $3; }
+    ;
 
-type_spec: IDENTIFIER '=' type              { $$ = new AST::TypeAliasDeclaration{$1, $3}; delete $1; }
-         | IDENTIFIER type                  { $$ = new AST::TypeDefinitionDeclaration{$1, $2}; delete $1; }
-         ;
+type_spec
+    : IDENTIFIER '=' type                   { $$ = new AST::TypeAliasDeclaration{$1, $3}; delete $1; }
+    | IDENTIFIER type                       { $$ = new AST::TypeDefinitionDeclaration{$1, $2}; delete $1; }
+    ;
 
-type_spec_list: type_spec ';'               { 
+type_spec_list
+    : type_spec ';'                         {  
                                                 auto typeSpec = $1;
                                                 auto list = new LinkedList<AST::Declaration *>; 
                                                 list->insert(0, typeSpec);
                                                 $$ = list;
                                             }
-              | type_spec ';' type_spec_list
+    | type_spec ';' type_spec_list
                                             { 
                                                 auto typeSpec = $1;
                                                 auto list = $3; 
                                                 list->insert(0, typeSpec);
                                                 $$ = list;
                                             }
-              ;
+    ;
 
-var_decl: VAR var_spec                      {
+var_decl
+    : VAR var_spec                          {
                                                 auto varSpec = $2;
                                                 auto list = new LinkedList<AST::Declaration*>;
                                                 list->insert(0, varSpec);
                                                 $$ = list;
                                             }
-        | VAR '(' var_spec_list ')'         { $$ = $3; }
-        ;
+    | VAR '(' var_spec_list ')'             { $$ = $3; }
+    ;
 
-var_spec: identifier_list type              { $$ = new AST::VariableDeclaration{$1->toStdVector(), $2, {}}; }
-        | identifier_list type '=' expression_list
+var_spec
+    : identifier_list type                  { $$ = new AST::VariableDeclaration{$1->toStdVector(), $2, {}}; }
+    | identifier_list type '=' expression_list
                                             { $$ = new AST::VariableDeclaration{$1->toStdVector(), $2, $4->toStdVector()}; }
-        | identifier_list '=' expression_list
+    | identifier_list '=' expression_list
                                             { $$ = new AST::VariableDeclaration{$1->toStdVector(), nullptr, $3->toStdVector()}; }
-        ;
+    ;
 
-var_spec_list: var_spec ';'                 {
+var_spec_list
+    : var_spec ';'                          {
                                                 auto varSpec = $1;
                                                 auto list = new LinkedList<AST::Declaration *>;
                                                 list->insert(0, varSpec);
                                                 $$ = list;
                                             }
-             | var_spec ';' var_spec_list   { 
+    | var_spec ';' var_spec_list            { 
                                                 auto varSpec = $1;
                                                 auto list = $3; 
                                                 list->insert(0, varSpec);
                                                 $$ = list;
                                             }
-             ;
+    ;
 
 // Statements
-statement: simple_statement                 {
+statement
+    : simple_statement                      {
                                                 auto stmt = $1;
                                                 auto list = new LinkedList<AST::Statement *>;
                                                 list->insert(0, stmt);
                                                 $$ = list;
                                             }
-         | if_statement                     {
+    | if_statement                          {
                                                 auto if_statement = $1;
                                                 auto list = new LinkedList<AST::Statement *>;
                                                 list->insert(0, if_statement);
                                                 $$ = list;
                                             }
-         | switch_statement                 {
+    | switch_statement                      {
                                                 auto switch_statement = $1;
                                                 auto list = new LinkedList<AST::Statement *>;
                                                 list->insert(0, switch_statement);
                                                 $$ = list;
                                             }
-         | return_statement                 {
+    | return_statement                      {
                                                 auto return_statement = $1;
                                                 auto list = new LinkedList<AST::Statement *>;
                                                 list->insert(0, return_statement);
                                                 $$ = list;
                                             }
-         | BREAK                            {
+    | BREAK                                 {
                                                 auto list = new LinkedList<AST::Statement *>;
                                                 list->insert(0, new AST::BreakStatement{});
                                                 $$ = list;
                                             }
-         | CONTINUE                         {
+    | CONTINUE                              {
                                                 auto list = new LinkedList<AST::Statement *>;
                                                 list->insert(0, new AST::ContinueStatement{});
                                                 $$ = list;
                                             }
-         | for_statement                    {
+    | for_statement                         {
                                                 auto for_statement = $1;
                                                 auto list = new LinkedList<AST::Statement *>;
                                                 list->insert(0, for_statement);
                                                 $$ = list;
                                             }
-         | declaration                      { 
+    | declaration                           { 
                                                 auto declarations = $1->toStdVector(); 
                                                 delete $1;
                                                 auto list = new LinkedList<AST::Statement *>;
@@ -387,11 +414,12 @@ statement: simple_statement                 {
                                                 }
                                                 $$ = list;
                                             }
-         ;
+    ;
 
-simple_statement:                           { $$ = new AST::EmptyStatement{}; }
-                | expression                { $$ = new AST::ExpressionStatement{$1}; }
-                | expression_list '=' expression_list
+simple_statement
+    :                                       { $$ = new AST::EmptyStatement{}; }
+    | expression                            { $$ = new AST::ExpressionStatement{$1}; }
+    | expression_list '=' expression_list
                                             {
                                                 auto lhs = $1->toStdVector();
                                                 auto rhs = $3->toStdVector();
@@ -399,12 +427,13 @@ simple_statement:                           { $$ = new AST::EmptyStatement{}; }
                                                 delete $1;
                                                 delete $3;
                                             }
-                ;
+    ;
 
-statement_list:                             { 
+statement_list
+    :                                       { 
                                                 $$ = new LinkedList<AST::Statement *>;
                                             }
-              | statement ';' statement_list
+    | statement ';' statement_list
                                             {
                                                 auto statements = $1->toStdVector();
                                                 delete $1;
@@ -415,59 +444,68 @@ statement_list:                             {
                                                 $$ = list;
                                             }
 
-              ;
-if_statement: IF expression block           { $$ = new AST::IfStatement{$2, $3, new AST::Block{{}}}; }
-            | IF expression block ELSE if_statement 
+    ;
+
+if_statement
+    : IF expression block                   { $$ = new AST::IfStatement{$2, $3, new AST::Block{{}}}; }
+    | IF expression block ELSE if_statement 
                                             { $$ = new AST::IfStatement{$2, $3, new AST::Block{{$5}}}; }
-            | IF expression block ELSE block        
+    | IF expression block ELSE block        
                                             { $$ = new AST::IfStatement{$2, $3, $5}; }
     ;
 
-switch_statement: SWITCH expression '{' switch_clause_list '}'
+switch_statement
+    : SWITCH expression '{' switch_clause_list '}'
                                             {
                                                 $$ = new AST::SwitchStatement{$2, $4->toStdVector()};
                                                 delete $4;
                                             }
-                ;
+    ;
 
-switch_clause: CASE expression_list ':' statement_list
+switch_clause
+    : CASE expression_list ':' statement_list
                                             {
                                                 $$ = new AST::SwitchStatement::SwitchCaseClause{$2->toStdVector(), $4->toStdVector()}; 
                                                 delete $2;
                                                 delete $4;
                                             }
-             | DEFAULT ':' statement_list   {
+    | DEFAULT ':' statement_list   
+                                            {
                                                 $$ = new AST::SwitchStatement::SwitchDefaultClause{$3->toStdVector()}; 
                                                 delete $3;
                                             }
-             ;
+    ;
 
-switch_clause_list:                         { 
+switch_clause_list
+    :                                       { 
                                                 $$ = new LinkedList<AST::SwitchStatement::SwitchClause *>;
                                             }
-                  | switch_clause switch_clause_list
+    | switch_clause switch_clause_list
                                             { 
                                                 auto clause = $1;
                                                 auto list = $2;
                                                 list->insert(0, clause);
                                                 $$ = list;
                                             }
-                  ;
+    ;
 
-return_statement: RETURN expression_list    { 
+return_statement
+    : RETURN expression_list                { 
                                                 $$ = new AST::ReturnStatement{$2->toStdVector()}; 
                                                 delete $2;
                                             }
-                ;
+    ;
 
-for_statement: for_condition_statement      { $$ = $1; }
-             ;
+for_statement
+    : for_condition_statement               { $$ = $1; }
+    ;
 
-for_condition_statement: FOR simple_statement ';' expression ';' simple_statement block
+for_condition_statement
+    : FOR simple_statement ';' expression ';' simple_statement block
                                             {
                                                 $$ = new AST::ForConditionStatement{$2, $4, $6, $7};
                                             }
-                       | FOR expression block
+    | FOR expression block
                                             {
                                                 $$ = new AST::ForConditionStatement{
                                                     new AST::EmptyStatement{}, 
@@ -475,7 +513,7 @@ for_condition_statement: FOR simple_statement ';' expression ';' simple_statemen
                                                     new AST::EmptyStatement{}, 
                                                     $3};
                                             }
-                       | FOR block
+    | FOR block
                                             {
                                                 $$ = new AST::ForConditionStatement{
                                                     new AST::EmptyStatement{}, 
@@ -483,46 +521,86 @@ for_condition_statement: FOR simple_statement ';' expression ';' simple_statemen
                                                     new AST::EmptyStatement{}, 
                                                     $2};
                                             }
-                       ;
+    ;
 
 // Expressions
-expression: BOOL_LITERAL                    { $$ = new AST::BoolExpression{$1}; }
-          | INT_LITERAL                     { $$ = new AST::IntExpression{$1}; }
-          | FLOAT_LITERAL                   { $$ = new AST::Float32Expression{$1}; }
-          | RUNE_LITERAL                    { $$ = new AST::RuneExpression{$1}; }
-          | STRING_LITERAL                  { $$ = new AST::StringExpression{$1.string, $1.length}; }
-          | IDENTIFIER                      { $$ = new AST::IdentifierExpression{$1}; }
-          ;
+expression
+    : BOOL_LITERAL                          { $$ = new AST::BoolExpression{$1}; }
+    | INT_LITERAL                           { $$ = new AST::IntExpression{$1}; }
+    | FLOAT_LITERAL                         { $$ = new AST::Float32Expression{$1}; }
+    | RUNE_LITERAL                          { $$ = new AST::RuneExpression{$1}; }
+    | STRING_LITERAL                        { $$ = new AST::StringExpression{$1.string, $1.length}; }
+    | IDENTIFIER                            { $$ = new AST::IdentifierExpression{$1}; }
+    | composite_literal                     { $$ = $1; }
+    ;
 
-expression_list: expression                 {
+expression_list
+    : expression                            {
                                                 auto list = new LinkedList<AST::Expression *>{}; 
                                                 list->insert(0, $1);
                                                 $$ = list;
                                                 
                                             }
-               | expression ',' expression_list
+    | expression ',' expression_list
                                             {
                                                 auto list = $3;
                                                 list->insert(0, $1);
                                                 $$ = list;
                                             }
-               ;
+    ;
+
+composite_literal
+    : literal_type '{' element_list '}'     {
+                                                auto type = $1;
+                                                auto elements = $3->toStdVector();
+                                                delete $3;
+                                                $$ = new AST::CompositLiteralExpression(type, elements);
+                                            }   
+    ;
+
+element_list
+    : keyed_element                         { $$ = $1; }
+    | keyed_element ',' element_list        {
+
+                                                auto elements = $1->toStdVector();
+                                                delete $1;
+                                                auto list = $3;
+                                                for (int i = 0; i < elements.size(); ++i) {
+                                                    list->insert(i, elements[i]);
+                                                }
+                                                $$ = list;
+                                            }
+    ;
+
+keyed_element
+    : IDENTIFIER ':' expression             {
+                                                auto list = new LinkedList<std::pair<std::string, AST::Expression*>>;
+                                                list->insert(0, std::make_pair($1, $3));
+                                                $$ = list;
+                                            }
+    | expression                            {
+                                                auto list = new LinkedList<std::pair<std::string, AST::Expression*>>;
+                                                list->insert(0, std::make_pair("", $1));
+                                                $$ = list;
+                                            }
+    ;
 
 // Miscellaneous
-identifier_list: IDENTIFIER                 {
+identifier_list
+    : IDENTIFIER                            {
                                                 auto list = new LinkedList<std::string>{}; 
                                                 list->insert(0, $1);
                                                 $$ = list;
                                                 delete $1;
                                             }
-               | IDENTIFIER ',' identifier_list    
+    | IDENTIFIER ',' identifier_list    
                                             {
                                                 auto list = $3;
                                                 list->insert(0, $1);
                                                 $$ = list;
                                                 delete $1;
                                             }
-               ;
+    ;
 
 %%
 

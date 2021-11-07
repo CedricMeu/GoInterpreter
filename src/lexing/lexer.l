@@ -83,7 +83,6 @@ default                     { insertSemicolon = false; return DEFAULT; }
 return                      { insertSemicolon = true; return RETURN; }
 break                       { insertSemicolon = true; return BREAK; }
 continue                    { insertSemicolon = true; return CONTINUE; }
-fallthrough                 { insertSemicolon = true; return FALLTHROUGH;}
 for                         { insertSemicolon = false; return FOR; }
 
 true                        { insertSemicolon = true; yylval.boolean = true; return BOOL_LITERAL; }
@@ -92,6 +91,7 @@ false                       { insertSemicolon = true; yylval.boolean = false; re
 :=                          { insertSemicolon = false; return SHORT_VAR_DECL; }
 \+\+                        { insertSemicolon = true; return INC; }
 --                          { insertSemicolon = true; return DEC; }
+\.\.\.                      { insertSemicolon = false; return ELLIPSIS; }
 
 {bin_lit}                   { insertSemicolon = true; yylval.integer = binarytoint(yytext); return INT_LITERAL; }
 {oct_lit}                   { insertSemicolon = true; yylval.integer = octaltoint(yytext); return INT_LITERAL; }

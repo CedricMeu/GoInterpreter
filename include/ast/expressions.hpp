@@ -16,6 +16,18 @@ namespace AST {
     private:
         std::string id;
     };
+
+    class CompositLiteralExpression : public Expression
+    {
+    public:
+        CompositLiteralExpression(Type *type, std::vector<std::pair<std::string, Expression *>> elements);
+        virtual ~CompositLiteralExpression() override;
+        virtual void accept(Visitor *visitor) override;
+
+    private:
+        Type *type;
+        std::vector<std::pair<std::string, Expression *>> elements;
+    };
 };
 
 #endif // GOINTERPRETER_AST_EXPRESSIONS_HPP

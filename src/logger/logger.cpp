@@ -588,3 +588,30 @@ void Logger::Logger::visitIdentifierExpression(std::string id)
 
     this->infoBlockStack.push_back(result);
 }
+
+void Logger::Logger::visitCompositLiteralExpression(std::vector<std::string> keys)
+{
+    Logger::Logger::InfoBlock result = {"CompositLiteralExpression"};
+
+    result.push_back("- type: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- elements: ");
+
+    for (const auto &key : keys)
+    {
+        result.push_back(this->tab("- \"" + key + "\":"));
+        for (const auto &line : this->infoBlockStack.back())
+        {
+            result.push_back(this->tab(this->tab(line)));
+        }
+        this->infoBlockStack.pop_back();
+    }
+
+    this->infoBlockStack.push_back(result);
+}

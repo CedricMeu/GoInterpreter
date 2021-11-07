@@ -26,8 +26,8 @@
 - [p] floats
 - [p] runes (eg. `'c'` and including escaped chars `'\n'` etc.)
 - [p] strings (interpreted)
-- [ ] arrays
-- [ ] structs
+- [p] arrays
+- [p] structs
 - [ ] function literals
 - [ ] nil
 
@@ -42,6 +42,7 @@
 - [ ] adres operators
 
 # statements
+- [p] type declarations
 - [p] variable declarations
 - [fixme] short variable declarations
 - [p] assignment
@@ -71,8 +72,7 @@
 # mics
 - [ ] Only support 1 source file with `package main` as begin
 - [ ] main function with no parameters
-- [-] if last token in specific subset of tokentypes, return `";"` on recognising a `"\n"`
-- [p] type declarations
+- [x] if last token in specific subset of tokentypes, return `";"` on recognising a `"\n"`
 - [ ] garbage collector
 
 # Notes

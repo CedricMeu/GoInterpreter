@@ -67,34 +67,32 @@ extern int yydebug;
      BOOL = 258,
      INT = 259,
      FLOAT32 = 260,
-     COMPLEX64 = 261,
-     BYTE = 262,
-     RUNE = 263,
-     STRING = 264,
-     STRUCT = 265,
-     FUNC = 266,
-     MAP = 267,
-     TYPE = 268,
-     VAR = 269,
-     SHORT_VAR_DECL = 270,
-     IF = 271,
-     ELSE = 272,
-     SWITCH = 273,
-     CASE = 274,
-     DEFAULT = 275,
-     RETURN = 276,
-     BREAK = 277,
-     CONTINUE = 278,
-     FALLTHROUGH = 279,
-     FOR = 280,
-     INC = 281,
-     DEC = 282,
-     IDENTIFIER = 283,
-     INT_LITERAL = 284,
-     FLOAT_LITERAL = 285,
-     BOOL_LITERAL = 286,
-     RUNE_LITERAL = 287,
-     STRING_LITERAL = 288
+     RUNE = 261,
+     STRING = 262,
+     STRUCT = 263,
+     FUNC = 264,
+     MAP = 265,
+     TYPE = 266,
+     VAR = 267,
+     SHORT_VAR_DECL = 268,
+     IF = 269,
+     ELSE = 270,
+     SWITCH = 271,
+     CASE = 272,
+     DEFAULT = 273,
+     RETURN = 274,
+     BREAK = 275,
+     CONTINUE = 276,
+     FOR = 277,
+     INC = 278,
+     DEC = 279,
+     ELLIPSIS = 280,
+     IDENTIFIER = 281,
+     INT_LITERAL = 282,
+     FLOAT_LITERAL = 283,
+     BOOL_LITERAL = 284,
+     RUNE_LITERAL = 285,
+     STRING_LITERAL = 286
    };
 #endif
 
@@ -129,13 +127,14 @@ typedef union YYSTYPE
 
     AST::Expression *expression;
     LinkedList<AST::Expression *> *expressions;
+    LinkedList<std::pair<std::string, AST::Expression *>> *keyed_expressions;
 
     LinkedList<std::string> *id_list;
     LinkedList<std::pair<std::string, AST::Type *>> *fields;
 
 
 /* Line 2060 of yacc.c  */
-#line 139 "include/parsing/parser.hpp"
+#line 138 "include/parsing/parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
