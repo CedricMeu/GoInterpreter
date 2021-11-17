@@ -41,3 +41,20 @@ void AST::CompositLiteralExpression::accept(Visitor *visitor)
 
     visitor->visitCompositLiteralExpression(keys);
 }
+
+AST::FunctionLiteralExpression::FunctionLiteralExpression(Type *signature, Block* body)
+    : signature{signature}, body{body}
+{}
+
+AST::FunctionLiteralExpression::~FunctionLiteralExpression()
+{
+    delete signature;
+    delete body;
+}
+
+void AST::FunctionLiteralExpression::accept(Visitor *visitor)
+{
+    body->accept(visitor);
+    signature->accept(visitor);
+    visitor->VisitFunctionLiteralExpression();
+}

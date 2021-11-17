@@ -28,6 +28,17 @@ namespace AST {
         Type *type;
         std::vector<std::pair<std::string, Expression *>> elements;
     };
+
+    class FunctionLiteralExpression : public Expression {
+    public:
+        FunctionLiteralExpression(Type *signature, Block *body);
+        virtual ~FunctionLiteralExpression() override;
+        virtual void accept(Visitor *visitor) override;
+
+    private:
+        Type *signature;
+        Block *body;
+    };
 };
 
 #endif // GOINTERPRETER_AST_EXPRESSIONS_HPP

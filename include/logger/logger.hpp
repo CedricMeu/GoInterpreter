@@ -70,6 +70,7 @@ namespace Logger {
         // Expressions - Rest
         virtual void visitIdentifierExpression(std::string id) override;
         virtual void visitCompositLiteralExpression(std::vector<std::string> keys) override;
+        virtual void VisitFunctionLiteralExpression() override;
 
     };
 

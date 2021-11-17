@@ -532,6 +532,7 @@ expression
     | STRING_LITERAL                        { $$ = new AST::StringExpression{$1.string, $1.length}; }
     | IDENTIFIER                            { $$ = new AST::IdentifierExpression{$1}; }
     | composite_literal                     { $$ = $1; }
+    | FUNC function_signature block         { $$ = new AST::FunctionLiteralExpression{$2, $3}; }
     ;
 
 expression_list

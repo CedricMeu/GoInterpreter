@@ -8,9 +8,9 @@ Terminals unused in grammar
 
 State 47 conflicts: 1 shift/reduce
 State 49 conflicts: 1 shift/reduce
-State 72 conflicts: 1 reduce/reduce
-State 86 conflicts: 1 shift/reduce
-State 104 conflicts: 2 shift/reduce
+State 73 conflicts: 1 reduce/reduce
+State 87 conflicts: 1 shift/reduce
+State 105 conflicts: 2 shift/reduce
 
 
 Grammar
@@ -130,20 +130,21 @@ Grammar
    81           | STRING_LITERAL
    82           | IDENTIFIER
    83           | composite_literal
+   84           | FUNC function_signature block
 
-   84 expression_list: expression
-   85                | expression ',' expression_list
+   85 expression_list: expression
+   86                | expression ',' expression_list
 
-   86 composite_literal: literal_type '{' element_list '}'
+   87 composite_literal: literal_type '{' element_list '}'
 
-   87 element_list: keyed_element
-   88             | keyed_element ',' element_list
+   88 element_list: keyed_element
+   89             | keyed_element ',' element_list
 
-   89 keyed_element: IDENTIFIER ':' expression
-   90              | expression
+   90 keyed_element: IDENTIFIER ':' expression
+   91              | expression
 
-   91 identifier_list: IDENTIFIER
-   92                | IDENTIFIER ',' identifier_list
+   92 identifier_list: IDENTIFIER
+   93                | IDENTIFIER ',' identifier_list
 
 
 Terminals, with rules where they appear
@@ -152,14 +153,14 @@ $end (0) 0
 '(' (40) 2 21 22 23 39 45
 ')' (41) 2 21 22 23 39 45
 '*' (42) 8
-',' (44) 23 26 27 85 88 92
-':' (58) 68 69 89
+',' (44) 23 26 27 86 89 93
+':' (58) 68 69 90
 ';' (59) 28 29 34 42 43 49 50 63 74
 '=' (61) 40 47 48 61
 '[' (91) 12 13 15
 ']' (93) 12 13 15
-'{' (123) 14 30 67 86
-'}' (125) 14 30 67 86
+'{' (123) 14 30 67 87
+'}' (125) 14 30 67 87
 error (256)
 BOOL (258) 3
 INT (259) 4
@@ -167,7 +168,7 @@ FLOAT32 (260) 5
 RUNE (261) 6
 STRING (262) 7
 STRUCT (263) 14
-FUNC (264) 9 35
+FUNC (264) 9 35 84
 MAP (265) 15
 TYPE (266) 38 39
 VAR (267) 44 45
@@ -184,7 +185,7 @@ FOR (277) 74 75 76
 INC (278)
 DEC (279)
 ELLIPSIS (280)
-IDENTIFIER (281) 11 35 40 41 82 89 91 92
+IDENTIFIER (281) 11 35 40 41 82 90 92 93
 INT_LITERAL (282) 16 78
 FLOAT_LITERAL (283) 79
 BOOL_LITERAL (284) 77
@@ -202,11 +203,11 @@ type (45)
     on left: 2 3 4 5 6 7 8 9 10, on right: 2 8 12 13 15 20 24 25 26
     27 28 29 40 41 46 47
 literal_type (46)
-    on left: 11 12 13 14 15, on right: 10 86
+    on left: 11 12 13 14 15, on right: 10 87
 array_length (47)
     on left: 16, on right: 12
 function_signature (48)
-    on left: 17, on right: 9 35
+    on left: 17, on right: 9 35 84
 function_result (49)
     on left: 18 19 20, on right: 17
 function_parameters (50)
@@ -216,7 +217,7 @@ function_parameter_list (51)
 struct_field_decls (52)
     on left: 28 29, on right: 14 29
 block (53)
-    on left: 30, on right: 35 64 65 66 74 75 76
+    on left: 30, on right: 35 64 65 66 74 75 76 84
 top_level_declaration (54)
     on left: 31 32, on right: 33 34
 top_level_declaration_list (55)
@@ -258,18 +259,18 @@ for_statement (72)
 for_condition_statement (73)
     on left: 74 75 76, on right: 73
 expression (74)
-    on left: 77 78 79 80 81 82 83, on right: 60 64 65 66 67 74 75 84
-    85 89 90
+    on left: 77 78 79 80 81 82 83 84, on right: 60 64 65 66 67 74 75
+    85 86 90 91
 expression_list (75)
-    on left: 84 85, on right: 47 48 61 68 72 85
+    on left: 85 86, on right: 47 48 61 68 72 86
 composite_literal (76)
-    on left: 86, on right: 83
+    on left: 87, on right: 83
 element_list (77)
-    on left: 87 88, on right: 86 88
+    on left: 88 89, on right: 87 89
 keyed_element (78)
-    on left: 89 90, on right: 87 88
+    on left: 90 91, on right: 88 89
 identifier_list (79)
-    on left: 91 92, on right: 25 27 28 29 46 47 48 92
+    on left: 92 93, on right: 25 27 28 29 46 47 48 93
 
 
 State 0
@@ -423,12 +424,12 @@ State 14
 
 State 15
 
-   91 identifier_list: IDENTIFIER .
-   92                | IDENTIFIER . ',' identifier_list
+   92 identifier_list: IDENTIFIER .
+   93                | IDENTIFIER . ',' identifier_list
 
     ','  shift, and go to state 41
 
-    $default  reduce using rule 91 (identifier_list)
+    $default  reduce using rule 92 (identifier_list)
 
 
 State 16
@@ -727,7 +728,7 @@ State 40
 
 State 41
 
-   92 identifier_list: IDENTIFIER ',' . identifier_list
+   93 identifier_list: IDENTIFIER ',' . identifier_list
 
     IDENTIFIER  shift, and go to state 15
 
@@ -754,19 +755,20 @@ State 44
    48 var_spec: identifier_list '=' . expression_list
 
     STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
     '['             shift, and go to state 35
 
-    literal_type       go to state 78
-    expression         go to state 79
-    expression_list    go to state 80
-    composite_literal  go to state 81
+    literal_type       go to state 79
+    expression         go to state 80
+    expression_list    go to state 81
+    composite_literal  go to state 82
 
 
 State 45
@@ -774,7 +776,7 @@ State 45
    46 var_spec: identifier_list type .
    47         | identifier_list type . '=' expression_list
 
-    '='  shift, and go to state 82
+    '='  shift, and go to state 83
 
     $default  reduce using rule 46 (var_spec)
 
@@ -789,14 +791,14 @@ State 46
 State 47
 
    11 literal_type: IDENTIFIER .
-   91 identifier_list: IDENTIFIER .
-   92                | IDENTIFIER . ',' identifier_list
+   92 identifier_list: IDENTIFIER .
+   93                | IDENTIFIER . ',' identifier_list
 
     ','  shift, and go to state 41
 
     ')'       reduce using rule 11 (literal_type)
     ','       [reduce using rule 11 (literal_type)]
-    $default  reduce using rule 91 (identifier_list)
+    $default  reduce using rule 92 (identifier_list)
 
 
 State 48
@@ -811,7 +813,7 @@ State 49
    24 function_parameter_list: type .
    26                        | type . ',' function_parameter_list
 
-    ','  shift, and go to state 83
+    ','  shift, and go to state 84
 
     ','       [reduce using rule 24 (function_parameter_list)]
     $default  reduce using rule 24 (function_parameter_list)
@@ -822,8 +824,8 @@ State 50
    22 function_parameters: '(' function_parameter_list . ')'
    23                    | '(' function_parameter_list . ',' ')'
 
-    ')'  shift, and go to state 84
-    ','  shift, and go to state 85
+    ')'  shift, and go to state 85
+    ','  shift, and go to state 86
 
 
 State 51
@@ -844,7 +846,7 @@ State 51
     '*'         shift, and go to state 34
     '['         shift, and go to state 35
 
-    type          go to state 86
+    type          go to state 87
     literal_type  go to state 38
 
 
@@ -853,41 +855,42 @@ State 52
    30 block: '{' . statement_list '}'
 
     STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
     TYPE            shift, and go to state 2
     VAR             shift, and go to state 3
-    IF              shift, and go to state 87
-    SWITCH          shift, and go to state 88
-    RETURN          shift, and go to state 89
-    BREAK           shift, and go to state 90
-    CONTINUE        shift, and go to state 91
-    FOR             shift, and go to state 92
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
+    IF              shift, and go to state 88
+    SWITCH          shift, and go to state 89
+    RETURN          shift, and go to state 90
+    BREAK           shift, and go to state 91
+    CONTINUE        shift, and go to state 92
+    FOR             shift, and go to state 93
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
     '['             shift, and go to state 35
 
     '}'       reduce using rule 62 (statement_list)
     $default  reduce using rule 59 (simple_statement)
 
-    literal_type             go to state 78
-    declaration              go to state 93
+    literal_type             go to state 79
+    declaration              go to state 94
     type_decl                go to state 9
     var_decl                 go to state 10
-    statement                go to state 94
-    simple_statement         go to state 95
-    statement_list           go to state 96
-    if_statement             go to state 97
-    switch_statement         go to state 98
-    return_statement         go to state 99
-    for_statement            go to state 100
-    for_condition_statement  go to state 101
-    expression               go to state 102
-    expression_list          go to state 103
-    composite_literal        go to state 81
+    statement                go to state 95
+    simple_statement         go to state 96
+    statement_list           go to state 97
+    if_statement             go to state 98
+    switch_statement         go to state 99
+    return_statement         go to state 100
+    for_statement            go to state 101
+    for_condition_statement  go to state 102
+    expression               go to state 103
+    expression_list          go to state 104
+    composite_literal        go to state 82
 
 
 State 53
@@ -918,7 +921,7 @@ State 54
     '*'         shift, and go to state 34
     '['         shift, and go to state 35
 
-    type                     go to state 104
+    type                     go to state 105
     literal_type             go to state 38
     function_parameter_list  go to state 50
     identifier_list          go to state 51
@@ -951,8 +954,8 @@ State 58
 
     IDENTIFIER  shift, and go to state 15
 
-    struct_field_decls  go to state 105
-    identifier_list     go to state 106
+    struct_field_decls  go to state 106
+    identifier_list     go to state 107
 
 
 State 59
@@ -979,7 +982,7 @@ State 60
     '*'         shift, and go to state 34
     '['         shift, and go to state 35
 
-    type          go to state 107
+    type          go to state 108
     literal_type  go to state 38
 
 
@@ -987,7 +990,7 @@ State 61
 
     2 type: '(' type . ')'
 
-    ')'  shift, and go to state 108
+    ')'  shift, and go to state 109
 
 
 State 62
@@ -1021,7 +1024,7 @@ State 64
     '*'         shift, and go to state 34
     '['         shift, and go to state 35
 
-    type          go to state 109
+    type          go to state 110
     literal_type  go to state 38
 
 
@@ -1029,7 +1032,7 @@ State 65
 
    12 literal_type: '[' array_length . ']' type
 
-    ']'  shift, and go to state 110
+    ']'  shift, and go to state 111
 
 
 State 66
@@ -1049,7 +1052,7 @@ State 67
     $default  reduce using rule 42 (type_spec_list)
 
     type_spec       go to state 39
-    type_spec_list  go to state 111
+    type_spec_list  go to state 112
 
 
 State 68
@@ -1061,9 +1064,9 @@ State 68
 
 State 69
 
-   92 identifier_list: IDENTIFIER ',' identifier_list .
+   93 identifier_list: IDENTIFIER ',' identifier_list .
 
-    $default  reduce using rule 92 (identifier_list)
+    $default  reduce using rule 93 (identifier_list)
 
 
 State 70
@@ -1076,7 +1079,7 @@ State 70
     $default  reduce using rule 49 (var_spec_list)
 
     var_spec         go to state 42
-    var_spec_list    go to state 112
+    var_spec_list    go to state 113
     identifier_list  go to state 18
 
 
@@ -1089,6 +1092,16 @@ State 71
 
 State 72
 
+   84 expression: FUNC . function_signature block
+
+    '('  shift, and go to state 21
+
+    function_signature   go to state 114
+    function_parameters  go to state 23
+
+
+State 73
+
    11 literal_type: IDENTIFIER .
    82 expression: IDENTIFIER .
 
@@ -1097,93 +1110,94 @@ State 72
     $default  reduce using rule 82 (expression)
 
 
-State 73
+State 74
 
    78 expression: INT_LITERAL .
 
     $default  reduce using rule 78 (expression)
 
 
-State 74
+State 75
 
    79 expression: FLOAT_LITERAL .
 
     $default  reduce using rule 79 (expression)
 
 
-State 75
+State 76
 
    77 expression: BOOL_LITERAL .
 
     $default  reduce using rule 77 (expression)
 
 
-State 76
+State 77
 
    80 expression: RUNE_LITERAL .
 
     $default  reduce using rule 80 (expression)
 
 
-State 77
+State 78
 
    81 expression: STRING_LITERAL .
 
     $default  reduce using rule 81 (expression)
 
 
-State 78
-
-   86 composite_literal: literal_type . '{' element_list '}'
-
-    '{'  shift, and go to state 113
-
-
 State 79
 
-   84 expression_list: expression .
-   85                | expression . ',' expression_list
+   87 composite_literal: literal_type . '{' element_list '}'
 
-    ','  shift, and go to state 114
-
-    $default  reduce using rule 84 (expression_list)
+    '{'  shift, and go to state 115
 
 
 State 80
+
+   85 expression_list: expression .
+   86                | expression . ',' expression_list
+
+    ','  shift, and go to state 116
+
+    $default  reduce using rule 85 (expression_list)
+
+
+State 81
 
    48 var_spec: identifier_list '=' expression_list .
 
     $default  reduce using rule 48 (var_spec)
 
 
-State 81
+State 82
 
    83 expression: composite_literal .
 
     $default  reduce using rule 83 (expression)
 
 
-State 82
+State 83
 
    47 var_spec: identifier_list type '=' . expression_list
 
     STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
     '['             shift, and go to state 35
 
-    literal_type       go to state 78
-    expression         go to state 79
-    expression_list    go to state 115
-    composite_literal  go to state 81
+    literal_type       go to state 79
+    expression         go to state 80
+    expression_list    go to state 117
+    composite_literal  go to state 82
 
 
-State 83
+State 84
 
    26 function_parameter_list: type ',' . function_parameter_list
 
@@ -1202,284 +1216,246 @@ State 83
 
     type                     go to state 49
     literal_type             go to state 38
-    function_parameter_list  go to state 116
+    function_parameter_list  go to state 118
     identifier_list          go to state 51
 
 
-State 84
+State 85
 
    22 function_parameters: '(' function_parameter_list ')' .
 
     $default  reduce using rule 22 (function_parameters)
 
 
-State 85
+State 86
 
    23 function_parameters: '(' function_parameter_list ',' . ')'
 
-    ')'  shift, and go to state 117
+    ')'  shift, and go to state 119
 
 
-State 86
+State 87
 
    25 function_parameter_list: identifier_list type .
    27                        | identifier_list type . ',' function_parameter_list
 
-    ','  shift, and go to state 118
+    ','  shift, and go to state 120
 
     ','       [reduce using rule 25 (function_parameter_list)]
     $default  reduce using rule 25 (function_parameter_list)
 
 
-State 87
+State 88
 
    64 if_statement: IF . expression block
    65             | IF . expression block ELSE if_statement
    66             | IF . expression block ELSE block
 
     STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
     '['             shift, and go to state 35
 
-    literal_type       go to state 78
-    expression         go to state 119
-    composite_literal  go to state 81
-
-
-State 88
-
-   67 switch_statement: SWITCH . expression '{' switch_clause_list '}'
-
-    STRUCT          shift, and go to state 29
-    MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
-    '['             shift, and go to state 35
-
-    literal_type       go to state 78
-    expression         go to state 120
-    composite_literal  go to state 81
+    literal_type       go to state 79
+    expression         go to state 121
+    composite_literal  go to state 82
 
 
 State 89
 
-   72 return_statement: RETURN . expression_list
+   67 switch_statement: SWITCH . expression '{' switch_clause_list '}'
 
     STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
     '['             shift, and go to state 35
 
-    literal_type       go to state 78
-    expression         go to state 79
-    expression_list    go to state 121
-    composite_literal  go to state 81
+    literal_type       go to state 79
+    expression         go to state 122
+    composite_literal  go to state 82
 
 
 State 90
+
+   72 return_statement: RETURN . expression_list
+
+    STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
+    MAP             shift, and go to state 31
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
+    '['             shift, and go to state 35
+
+    literal_type       go to state 79
+    expression         go to state 80
+    expression_list    go to state 123
+    composite_literal  go to state 82
+
+
+State 91
 
    55 statement: BREAK .
 
     $default  reduce using rule 55 (statement)
 
 
-State 91
+State 92
 
    56 statement: CONTINUE .
 
     $default  reduce using rule 56 (statement)
 
 
-State 92
+State 93
 
    74 for_condition_statement: FOR . simple_statement ';' expression ';' simple_statement block
    75                        | FOR . expression block
    76                        | FOR . block
 
     STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
     '['             shift, and go to state 35
     '{'             shift, and go to state 52
 
     $default  reduce using rule 59 (simple_statement)
 
-    literal_type       go to state 78
-    block              go to state 122
-    simple_statement   go to state 123
-    expression         go to state 124
-    expression_list    go to state 103
-    composite_literal  go to state 81
+    literal_type       go to state 79
+    block              go to state 124
+    simple_statement   go to state 125
+    expression         go to state 126
+    expression_list    go to state 104
+    composite_literal  go to state 82
 
 
-State 93
+State 94
 
    58 statement: declaration .
 
     $default  reduce using rule 58 (statement)
 
 
-State 94
+State 95
 
    63 statement_list: statement . ';' statement_list
 
-    ';'  shift, and go to state 125
+    ';'  shift, and go to state 127
 
 
-State 95
+State 96
 
    51 statement: simple_statement .
 
     $default  reduce using rule 51 (statement)
 
 
-State 96
+State 97
 
    30 block: '{' statement_list . '}'
 
-    '}'  shift, and go to state 126
+    '}'  shift, and go to state 128
 
 
-State 97
+State 98
 
    52 statement: if_statement .
 
     $default  reduce using rule 52 (statement)
 
 
-State 98
+State 99
 
    53 statement: switch_statement .
 
     $default  reduce using rule 53 (statement)
 
 
-State 99
+State 100
 
    54 statement: return_statement .
 
     $default  reduce using rule 54 (statement)
 
 
-State 100
+State 101
 
    57 statement: for_statement .
 
     $default  reduce using rule 57 (statement)
 
 
-State 101
+State 102
 
    73 for_statement: for_condition_statement .
 
     $default  reduce using rule 73 (for_statement)
 
 
-State 102
+State 103
 
    60 simple_statement: expression .
-   84 expression_list: expression .
-   85                | expression . ',' expression_list
+   85 expression_list: expression .
+   86                | expression . ',' expression_list
 
-    ','  shift, and go to state 114
+    ','  shift, and go to state 116
 
-    '='       reduce using rule 84 (expression_list)
+    '='       reduce using rule 85 (expression_list)
     $default  reduce using rule 60 (simple_statement)
 
 
-State 103
+State 104
 
    61 simple_statement: expression_list . '=' expression_list
 
-    '='  shift, and go to state 127
+    '='  shift, and go to state 129
 
 
-State 104
+State 105
 
     2 type: '(' type . ')'
    24 function_parameter_list: type .
    26                        | type . ',' function_parameter_list
 
-    ')'  shift, and go to state 108
-    ','  shift, and go to state 83
+    ')'  shift, and go to state 109
+    ','  shift, and go to state 84
 
     ')'  [reduce using rule 24 (function_parameter_list)]
     ','  [reduce using rule 24 (function_parameter_list)]
 
 
-State 105
+State 106
 
    14 literal_type: STRUCT '{' struct_field_decls . '}'
 
-    '}'  shift, and go to state 128
-
-
-State 106
-
-   28 struct_field_decls: identifier_list . type ';'
-   29                   | identifier_list . type ';' struct_field_decls
-
-    BOOL        shift, and go to state 24
-    INT         shift, and go to state 25
-    FLOAT32     shift, and go to state 26
-    RUNE        shift, and go to state 27
-    STRING      shift, and go to state 28
-    STRUCT      shift, and go to state 29
-    FUNC        shift, and go to state 30
-    MAP         shift, and go to state 31
-    IDENTIFIER  shift, and go to state 32
-    '('         shift, and go to state 33
-    '*'         shift, and go to state 34
-    '['         shift, and go to state 35
-
-    type          go to state 129
-    literal_type  go to state 38
+    '}'  shift, and go to state 130
 
 
 State 107
 
-   15 literal_type: MAP '[' type . ']' type
-
-    ']'  shift, and go to state 130
-
-
-State 108
-
-    2 type: '(' type ')' .
-
-    $default  reduce using rule 2 (type)
-
-
-State 109
-
-   13 literal_type: '[' ']' type .
-
-    $default  reduce using rule 13 (literal_type)
-
-
-State 110
-
-   12 literal_type: '[' array_length ']' . type
+   28 struct_field_decls: identifier_list . type ';'
+   29                   | identifier_list . type ';' struct_field_decls
 
     BOOL        shift, and go to state 24
     INT         shift, and go to state 25
@@ -1498,83 +1474,136 @@ State 110
     literal_type  go to state 38
 
 
+State 108
+
+   15 literal_type: MAP '[' type . ']' type
+
+    ']'  shift, and go to state 132
+
+
+State 109
+
+    2 type: '(' type ')' .
+
+    $default  reduce using rule 2 (type)
+
+
+State 110
+
+   13 literal_type: '[' ']' type .
+
+    $default  reduce using rule 13 (literal_type)
+
+
 State 111
+
+   12 literal_type: '[' array_length ']' . type
+
+    BOOL        shift, and go to state 24
+    INT         shift, and go to state 25
+    FLOAT32     shift, and go to state 26
+    RUNE        shift, and go to state 27
+    STRING      shift, and go to state 28
+    STRUCT      shift, and go to state 29
+    FUNC        shift, and go to state 30
+    MAP         shift, and go to state 31
+    IDENTIFIER  shift, and go to state 32
+    '('         shift, and go to state 33
+    '*'         shift, and go to state 34
+    '['         shift, and go to state 35
+
+    type          go to state 133
+    literal_type  go to state 38
+
+
+State 112
 
    43 type_spec_list: type_spec ';' type_spec_list .
 
     $default  reduce using rule 43 (type_spec_list)
 
 
-State 112
+State 113
 
    50 var_spec_list: var_spec ';' var_spec_list .
 
     $default  reduce using rule 50 (var_spec_list)
 
 
-State 113
-
-   86 composite_literal: literal_type '{' . element_list '}'
-
-    STRUCT          shift, and go to state 29
-    MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 132
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
-    '['             shift, and go to state 35
-
-    literal_type       go to state 78
-    expression         go to state 133
-    composite_literal  go to state 81
-    element_list       go to state 134
-    keyed_element      go to state 135
-
-
 State 114
 
-   85 expression_list: expression ',' . expression_list
+   84 expression: FUNC function_signature . block
 
-    STRUCT          shift, and go to state 29
-    MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
-    '['             shift, and go to state 35
+    '{'  shift, and go to state 52
 
-    literal_type       go to state 78
-    expression         go to state 79
-    expression_list    go to state 136
-    composite_literal  go to state 81
+    block  go to state 134
 
 
 State 115
+
+   87 composite_literal: literal_type '{' . element_list '}'
+
+    STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
+    MAP             shift, and go to state 31
+    IDENTIFIER      shift, and go to state 135
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
+    '['             shift, and go to state 35
+
+    literal_type       go to state 79
+    expression         go to state 136
+    composite_literal  go to state 82
+    element_list       go to state 137
+    keyed_element      go to state 138
+
+
+State 116
+
+   86 expression_list: expression ',' . expression_list
+
+    STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
+    MAP             shift, and go to state 31
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
+    '['             shift, and go to state 35
+
+    literal_type       go to state 79
+    expression         go to state 80
+    expression_list    go to state 139
+    composite_literal  go to state 82
+
+
+State 117
 
    47 var_spec: identifier_list type '=' expression_list .
 
     $default  reduce using rule 47 (var_spec)
 
 
-State 116
+State 118
 
    26 function_parameter_list: type ',' function_parameter_list .
 
     $default  reduce using rule 26 (function_parameter_list)
 
 
-State 117
+State 119
 
    23 function_parameters: '(' function_parameter_list ',' ')' .
 
     $default  reduce using rule 23 (function_parameters)
 
 
-State 118
+State 120
 
    27 function_parameter_list: identifier_list type ',' . function_parameter_list
 
@@ -1593,11 +1622,11 @@ State 118
 
     type                     go to state 49
     literal_type             go to state 38
-    function_parameter_list  go to state 137
+    function_parameter_list  go to state 140
     identifier_list          go to state 51
 
 
-State 119
+State 121
 
    64 if_statement: IF expression . block
    65             | IF expression . block ELSE if_statement
@@ -1605,138 +1634,140 @@ State 119
 
     '{'  shift, and go to state 52
 
-    block  go to state 138
+    block  go to state 141
 
 
-State 120
+State 122
 
    67 switch_statement: SWITCH expression . '{' switch_clause_list '}'
 
-    '{'  shift, and go to state 139
+    '{'  shift, and go to state 142
 
 
-State 121
+State 123
 
    72 return_statement: RETURN expression_list .
 
     $default  reduce using rule 72 (return_statement)
 
 
-State 122
+State 124
 
    76 for_condition_statement: FOR block .
 
     $default  reduce using rule 76 (for_condition_statement)
 
 
-State 123
+State 125
 
    74 for_condition_statement: FOR simple_statement . ';' expression ';' simple_statement block
 
-    ';'  shift, and go to state 140
+    ';'  shift, and go to state 143
 
 
-State 124
+State 126
 
    60 simple_statement: expression .
    75 for_condition_statement: FOR expression . block
-   84 expression_list: expression .
-   85                | expression . ',' expression_list
+   85 expression_list: expression .
+   86                | expression . ',' expression_list
 
     '{'  shift, and go to state 52
-    ','  shift, and go to state 114
+    ','  shift, and go to state 116
 
-    '='       reduce using rule 84 (expression_list)
+    '='       reduce using rule 85 (expression_list)
     $default  reduce using rule 60 (simple_statement)
 
-    block  go to state 141
+    block  go to state 144
 
 
-State 125
+State 127
 
    63 statement_list: statement ';' . statement_list
 
     STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
     TYPE            shift, and go to state 2
     VAR             shift, and go to state 3
-    IF              shift, and go to state 87
-    SWITCH          shift, and go to state 88
-    RETURN          shift, and go to state 89
-    BREAK           shift, and go to state 90
-    CONTINUE        shift, and go to state 91
-    FOR             shift, and go to state 92
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
+    IF              shift, and go to state 88
+    SWITCH          shift, and go to state 89
+    RETURN          shift, and go to state 90
+    BREAK           shift, and go to state 91
+    CONTINUE        shift, and go to state 92
+    FOR             shift, and go to state 93
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
     '['             shift, and go to state 35
 
     ';'       reduce using rule 59 (simple_statement)
     $default  reduce using rule 62 (statement_list)
 
-    literal_type             go to state 78
-    declaration              go to state 93
+    literal_type             go to state 79
+    declaration              go to state 94
     type_decl                go to state 9
     var_decl                 go to state 10
-    statement                go to state 94
-    simple_statement         go to state 95
-    statement_list           go to state 142
-    if_statement             go to state 97
-    switch_statement         go to state 98
-    return_statement         go to state 99
-    for_statement            go to state 100
-    for_condition_statement  go to state 101
-    expression               go to state 102
-    expression_list          go to state 103
-    composite_literal        go to state 81
+    statement                go to state 95
+    simple_statement         go to state 96
+    statement_list           go to state 145
+    if_statement             go to state 98
+    switch_statement         go to state 99
+    return_statement         go to state 100
+    for_statement            go to state 101
+    for_condition_statement  go to state 102
+    expression               go to state 103
+    expression_list          go to state 104
+    composite_literal        go to state 82
 
 
-State 126
+State 128
 
    30 block: '{' statement_list '}' .
 
     $default  reduce using rule 30 (block)
 
 
-State 127
+State 129
 
    61 simple_statement: expression_list '=' . expression_list
 
     STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
     '['             shift, and go to state 35
 
-    literal_type       go to state 78
-    expression         go to state 79
-    expression_list    go to state 143
-    composite_literal  go to state 81
+    literal_type       go to state 79
+    expression         go to state 80
+    expression_list    go to state 146
+    composite_literal  go to state 82
 
 
-State 128
+State 130
 
    14 literal_type: STRUCT '{' struct_field_decls '}' .
 
     $default  reduce using rule 14 (literal_type)
 
 
-State 129
+State 131
 
    28 struct_field_decls: identifier_list type . ';'
    29                   | identifier_list type . ';' struct_field_decls
 
-    ';'  shift, and go to state 144
+    ';'  shift, and go to state 147
 
 
-State 130
+State 132
 
    15 literal_type: MAP '[' type ']' . type
 
@@ -1753,132 +1784,140 @@ State 130
     '*'         shift, and go to state 34
     '['         shift, and go to state 35
 
-    type          go to state 145
+    type          go to state 148
     literal_type  go to state 38
 
 
-State 131
+State 133
 
    12 literal_type: '[' array_length ']' type .
 
     $default  reduce using rule 12 (literal_type)
 
 
-State 132
+State 134
+
+   84 expression: FUNC function_signature block .
+
+    $default  reduce using rule 84 (expression)
+
+
+State 135
 
    11 literal_type: IDENTIFIER .
    82 expression: IDENTIFIER .
-   89 keyed_element: IDENTIFIER . ':' expression
+   90 keyed_element: IDENTIFIER . ':' expression
 
-    ':'  shift, and go to state 146
+    ':'  shift, and go to state 149
 
     '{'       reduce using rule 11 (literal_type)
     $default  reduce using rule 82 (expression)
 
 
-State 133
-
-   90 keyed_element: expression .
-
-    $default  reduce using rule 90 (keyed_element)
-
-
-State 134
-
-   86 composite_literal: literal_type '{' element_list . '}'
-
-    '}'  shift, and go to state 147
-
-
-State 135
-
-   87 element_list: keyed_element .
-   88             | keyed_element . ',' element_list
-
-    ','  shift, and go to state 148
-
-    $default  reduce using rule 87 (element_list)
-
-
 State 136
 
-   85 expression_list: expression ',' expression_list .
+   91 keyed_element: expression .
 
-    $default  reduce using rule 85 (expression_list)
+    $default  reduce using rule 91 (keyed_element)
 
 
 State 137
+
+   87 composite_literal: literal_type '{' element_list . '}'
+
+    '}'  shift, and go to state 150
+
+
+State 138
+
+   88 element_list: keyed_element .
+   89             | keyed_element . ',' element_list
+
+    ','  shift, and go to state 151
+
+    $default  reduce using rule 88 (element_list)
+
+
+State 139
+
+   86 expression_list: expression ',' expression_list .
+
+    $default  reduce using rule 86 (expression_list)
+
+
+State 140
 
    27 function_parameter_list: identifier_list type ',' function_parameter_list .
 
     $default  reduce using rule 27 (function_parameter_list)
 
 
-State 138
+State 141
 
    64 if_statement: IF expression block .
    65             | IF expression block . ELSE if_statement
    66             | IF expression block . ELSE block
 
-    ELSE  shift, and go to state 149
+    ELSE  shift, and go to state 152
 
     $default  reduce using rule 64 (if_statement)
 
 
-State 139
+State 142
 
    67 switch_statement: SWITCH expression '{' . switch_clause_list '}'
 
-    CASE     shift, and go to state 150
-    DEFAULT  shift, and go to state 151
+    CASE     shift, and go to state 153
+    DEFAULT  shift, and go to state 154
 
     $default  reduce using rule 70 (switch_clause_list)
 
-    switch_clause       go to state 152
-    switch_clause_list  go to state 153
+    switch_clause       go to state 155
+    switch_clause_list  go to state 156
 
 
-State 140
+State 143
 
    74 for_condition_statement: FOR simple_statement ';' . expression ';' simple_statement block
 
     STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
     '['             shift, and go to state 35
 
-    literal_type       go to state 78
-    expression         go to state 154
-    composite_literal  go to state 81
+    literal_type       go to state 79
+    expression         go to state 157
+    composite_literal  go to state 82
 
 
-State 141
+State 144
 
    75 for_condition_statement: FOR expression block .
 
     $default  reduce using rule 75 (for_condition_statement)
 
 
-State 142
+State 145
 
    63 statement_list: statement ';' statement_list .
 
     $default  reduce using rule 63 (statement_list)
 
 
-State 143
+State 146
 
    61 simple_statement: expression_list '=' expression_list .
 
     $default  reduce using rule 61 (simple_statement)
 
 
-State 144
+State 147
 
    28 struct_field_decls: identifier_list type ';' .
    29                   | identifier_list type ';' . struct_field_decls
@@ -1887,317 +1926,323 @@ State 144
 
     $default  reduce using rule 28 (struct_field_decls)
 
-    struct_field_decls  go to state 155
-    identifier_list     go to state 106
+    struct_field_decls  go to state 158
+    identifier_list     go to state 107
 
 
-State 145
+State 148
 
    15 literal_type: MAP '[' type ']' type .
 
     $default  reduce using rule 15 (literal_type)
 
 
-State 146
-
-   89 keyed_element: IDENTIFIER ':' . expression
-
-    STRUCT          shift, and go to state 29
-    MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
-    '['             shift, and go to state 35
-
-    literal_type       go to state 78
-    expression         go to state 156
-    composite_literal  go to state 81
-
-
-State 147
-
-   86 composite_literal: literal_type '{' element_list '}' .
-
-    $default  reduce using rule 86 (composite_literal)
-
-
-State 148
-
-   88 element_list: keyed_element ',' . element_list
-
-    STRUCT          shift, and go to state 29
-    MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 132
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
-    '['             shift, and go to state 35
-
-    literal_type       go to state 78
-    expression         go to state 133
-    composite_literal  go to state 81
-    element_list       go to state 157
-    keyed_element      go to state 135
-
-
 State 149
 
-   65 if_statement: IF expression block ELSE . if_statement
-   66             | IF expression block ELSE . block
+   90 keyed_element: IDENTIFIER ':' . expression
 
-    IF   shift, and go to state 87
-    '{'  shift, and go to state 52
+    STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
+    MAP             shift, and go to state 31
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
+    '['             shift, and go to state 35
 
-    block         go to state 158
-    if_statement  go to state 159
+    literal_type       go to state 79
+    expression         go to state 159
+    composite_literal  go to state 82
 
 
 State 150
 
-   68 switch_clause: CASE . expression_list ':' statement_list
+   87 composite_literal: literal_type '{' element_list '}' .
 
-    STRUCT          shift, and go to state 29
-    MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
-    '['             shift, and go to state 35
-
-    literal_type       go to state 78
-    expression         go to state 79
-    expression_list    go to state 160
-    composite_literal  go to state 81
+    $default  reduce using rule 87 (composite_literal)
 
 
 State 151
 
-   69 switch_clause: DEFAULT . ':' statement_list
+   89 element_list: keyed_element ',' . element_list
 
-    ':'  shift, and go to state 161
+    STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
+    MAP             shift, and go to state 31
+    IDENTIFIER      shift, and go to state 135
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
+    '['             shift, and go to state 35
+
+    literal_type       go to state 79
+    expression         go to state 136
+    composite_literal  go to state 82
+    element_list       go to state 160
+    keyed_element      go to state 138
 
 
 State 152
 
-   71 switch_clause_list: switch_clause . switch_clause_list
+   65 if_statement: IF expression block ELSE . if_statement
+   66             | IF expression block ELSE . block
 
-    CASE     shift, and go to state 150
-    DEFAULT  shift, and go to state 151
+    IF   shift, and go to state 88
+    '{'  shift, and go to state 52
 
-    $default  reduce using rule 70 (switch_clause_list)
-
-    switch_clause       go to state 152
-    switch_clause_list  go to state 162
+    block         go to state 161
+    if_statement  go to state 162
 
 
 State 153
 
-   67 switch_statement: SWITCH expression '{' switch_clause_list . '}'
+   68 switch_clause: CASE . expression_list ':' statement_list
 
-    '}'  shift, and go to state 163
+    STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
+    MAP             shift, and go to state 31
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
+    '['             shift, and go to state 35
+
+    literal_type       go to state 79
+    expression         go to state 80
+    expression_list    go to state 163
+    composite_literal  go to state 82
 
 
 State 154
 
-   74 for_condition_statement: FOR simple_statement ';' expression . ';' simple_statement block
+   69 switch_clause: DEFAULT . ':' statement_list
 
-    ';'  shift, and go to state 164
+    ':'  shift, and go to state 164
 
 
 State 155
+
+   71 switch_clause_list: switch_clause . switch_clause_list
+
+    CASE     shift, and go to state 153
+    DEFAULT  shift, and go to state 154
+
+    $default  reduce using rule 70 (switch_clause_list)
+
+    switch_clause       go to state 155
+    switch_clause_list  go to state 165
+
+
+State 156
+
+   67 switch_statement: SWITCH expression '{' switch_clause_list . '}'
+
+    '}'  shift, and go to state 166
+
+
+State 157
+
+   74 for_condition_statement: FOR simple_statement ';' expression . ';' simple_statement block
+
+    ';'  shift, and go to state 167
+
+
+State 158
 
    29 struct_field_decls: identifier_list type ';' struct_field_decls .
 
     $default  reduce using rule 29 (struct_field_decls)
 
 
-State 156
+State 159
 
-   89 keyed_element: IDENTIFIER ':' expression .
+   90 keyed_element: IDENTIFIER ':' expression .
 
-    $default  reduce using rule 89 (keyed_element)
-
-
-State 157
-
-   88 element_list: keyed_element ',' element_list .
-
-    $default  reduce using rule 88 (element_list)
+    $default  reduce using rule 90 (keyed_element)
 
 
-State 158
+State 160
+
+   89 element_list: keyed_element ',' element_list .
+
+    $default  reduce using rule 89 (element_list)
+
+
+State 161
 
    66 if_statement: IF expression block ELSE block .
 
     $default  reduce using rule 66 (if_statement)
 
 
-State 159
+State 162
 
    65 if_statement: IF expression block ELSE if_statement .
 
     $default  reduce using rule 65 (if_statement)
 
 
-State 160
+State 163
 
    68 switch_clause: CASE expression_list . ':' statement_list
 
-    ':'  shift, and go to state 165
+    ':'  shift, and go to state 168
 
 
-State 161
+State 164
 
    69 switch_clause: DEFAULT ':' . statement_list
 
     STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
     TYPE            shift, and go to state 2
     VAR             shift, and go to state 3
-    IF              shift, and go to state 87
-    SWITCH          shift, and go to state 88
-    RETURN          shift, and go to state 89
-    BREAK           shift, and go to state 90
-    CONTINUE        shift, and go to state 91
-    FOR             shift, and go to state 92
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
+    IF              shift, and go to state 88
+    SWITCH          shift, and go to state 89
+    RETURN          shift, and go to state 90
+    BREAK           shift, and go to state 91
+    CONTINUE        shift, and go to state 92
+    FOR             shift, and go to state 93
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
     '['             shift, and go to state 35
 
     ';'       reduce using rule 59 (simple_statement)
     $default  reduce using rule 62 (statement_list)
 
-    literal_type             go to state 78
-    declaration              go to state 93
+    literal_type             go to state 79
+    declaration              go to state 94
     type_decl                go to state 9
     var_decl                 go to state 10
-    statement                go to state 94
-    simple_statement         go to state 95
-    statement_list           go to state 166
-    if_statement             go to state 97
-    switch_statement         go to state 98
-    return_statement         go to state 99
-    for_statement            go to state 100
-    for_condition_statement  go to state 101
-    expression               go to state 102
-    expression_list          go to state 103
-    composite_literal        go to state 81
+    statement                go to state 95
+    simple_statement         go to state 96
+    statement_list           go to state 169
+    if_statement             go to state 98
+    switch_statement         go to state 99
+    return_statement         go to state 100
+    for_statement            go to state 101
+    for_condition_statement  go to state 102
+    expression               go to state 103
+    expression_list          go to state 104
+    composite_literal        go to state 82
 
 
-State 162
+State 165
 
    71 switch_clause_list: switch_clause switch_clause_list .
 
     $default  reduce using rule 71 (switch_clause_list)
 
 
-State 163
+State 166
 
    67 switch_statement: SWITCH expression '{' switch_clause_list '}' .
 
     $default  reduce using rule 67 (switch_statement)
 
 
-State 164
+State 167
 
    74 for_condition_statement: FOR simple_statement ';' expression ';' . simple_statement block
 
     STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
     '['             shift, and go to state 35
 
     $default  reduce using rule 59 (simple_statement)
 
-    literal_type       go to state 78
-    simple_statement   go to state 167
-    expression         go to state 102
-    expression_list    go to state 103
-    composite_literal  go to state 81
+    literal_type       go to state 79
+    simple_statement   go to state 170
+    expression         go to state 103
+    expression_list    go to state 104
+    composite_literal  go to state 82
 
 
-State 165
+State 168
 
    68 switch_clause: CASE expression_list ':' . statement_list
 
     STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
     TYPE            shift, and go to state 2
     VAR             shift, and go to state 3
-    IF              shift, and go to state 87
-    SWITCH          shift, and go to state 88
-    RETURN          shift, and go to state 89
-    BREAK           shift, and go to state 90
-    CONTINUE        shift, and go to state 91
-    FOR             shift, and go to state 92
-    IDENTIFIER      shift, and go to state 72
-    INT_LITERAL     shift, and go to state 73
-    FLOAT_LITERAL   shift, and go to state 74
-    BOOL_LITERAL    shift, and go to state 75
-    RUNE_LITERAL    shift, and go to state 76
-    STRING_LITERAL  shift, and go to state 77
+    IF              shift, and go to state 88
+    SWITCH          shift, and go to state 89
+    RETURN          shift, and go to state 90
+    BREAK           shift, and go to state 91
+    CONTINUE        shift, and go to state 92
+    FOR             shift, and go to state 93
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
     '['             shift, and go to state 35
 
     ';'       reduce using rule 59 (simple_statement)
     $default  reduce using rule 62 (statement_list)
 
-    literal_type             go to state 78
-    declaration              go to state 93
+    literal_type             go to state 79
+    declaration              go to state 94
     type_decl                go to state 9
     var_decl                 go to state 10
-    statement                go to state 94
-    simple_statement         go to state 95
-    statement_list           go to state 168
-    if_statement             go to state 97
-    switch_statement         go to state 98
-    return_statement         go to state 99
-    for_statement            go to state 100
-    for_condition_statement  go to state 101
-    expression               go to state 102
-    expression_list          go to state 103
-    composite_literal        go to state 81
+    statement                go to state 95
+    simple_statement         go to state 96
+    statement_list           go to state 171
+    if_statement             go to state 98
+    switch_statement         go to state 99
+    return_statement         go to state 100
+    for_statement            go to state 101
+    for_condition_statement  go to state 102
+    expression               go to state 103
+    expression_list          go to state 104
+    composite_literal        go to state 82
 
 
-State 166
+State 169
 
    69 switch_clause: DEFAULT ':' statement_list .
 
     $default  reduce using rule 69 (switch_clause)
 
 
-State 167
+State 170
 
    74 for_condition_statement: FOR simple_statement ';' expression ';' simple_statement . block
 
     '{'  shift, and go to state 52
 
-    block  go to state 169
+    block  go to state 172
 
 
-State 168
+State 171
 
    68 switch_clause: CASE expression_list ':' statement_list .
 
     $default  reduce using rule 68 (switch_clause)
 
 
-State 169
+State 172
 
    74 for_condition_statement: FOR simple_statement ';' expression ';' simple_statement block .
 

@@ -1,6 +1,5 @@
 func main() int {
-	var test = struct{
-		x, y int
-	}{x: 0, y: 1}
-	return 0
+	var test = func (test int) (test3 float32) {
+		return 1;
+	}
 }

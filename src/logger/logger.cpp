@@ -615,3 +615,26 @@ void Logger::Logger::visitCompositLiteralExpression(std::vector<std::string> key
 
     this->infoBlockStack.push_back(result);
 }
+
+void Logger::Logger::VisitFunctionLiteralExpression()
+{
+    Logger::Logger::InfoBlock result = {"FunctionLiteralExpression"};
+
+    result.push_back("- signature: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- body: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}

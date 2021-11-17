@@ -74,6 +74,7 @@ namespace AST {
         // Expressions - Rest
         virtual void visitIdentifierExpression(std::string id) = 0;
         virtual void visitCompositLiteralExpression(std::vector<std::string> keys) = 0;
+        virtual void VisitFunctionLiteralExpression() = 0;
 
     };
 
