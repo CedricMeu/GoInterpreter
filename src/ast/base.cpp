@@ -12,7 +12,7 @@ AST::Block::~Block()
     }
 }
 
-void AST::Block::accept(Visitor *visitor)
+void AST::Block::accept(Visitor *visitor) const
 {
     visitor->visitInitBlock(this->statements.size());
 
@@ -39,7 +39,7 @@ AST::Program::~Program()
     }
 }
 
-void AST::Program::accept(Visitor *visitor)
+void AST::Program::accept(Visitor *visitor) const
 {
     auto rev = this->declarations;
     std::reverse(rev.begin(), rev.end());

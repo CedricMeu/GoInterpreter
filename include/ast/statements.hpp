@@ -10,7 +10,7 @@ namespace AST {
     public:
         DeclarationStatement(Declaration *declaration);
         virtual ~DeclarationStatement() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         Declaration *declaration;
@@ -21,7 +21,7 @@ namespace AST {
     public:
         ExpressionStatement(Expression *expression);
         virtual ~ExpressionStatement() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         Expression *expression;
@@ -32,7 +32,7 @@ namespace AST {
     public:
         AssignmentStatement(std::vector<Expression *> lhs, std::vector<Expression *> rhs);
         virtual ~AssignmentStatement() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         std::vector<Expression *> lhs;
@@ -44,7 +44,7 @@ namespace AST {
     public:
         IfStatement(Expression *condition, Block *trueBody, Block *falseBody);
         virtual ~IfStatement() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         Expression *condition;
@@ -62,7 +62,7 @@ namespace AST {
         
         public:
             virtual ~SwitchClause() = default;
-            virtual void accept(Visitor *visitor) = 0;
+            virtual void accept(Visitor *visitor) const = 0;
         };
 
         class SwitchCaseClause : public SwitchClause 
@@ -74,7 +74,7 @@ namespace AST {
         public:
             SwitchCaseClause(std::vector<Expression *> expressions, std::vector<Statement *> statements);
             virtual ~SwitchCaseClause() override;
-            virtual void accept(Visitor *visitor) override;
+            virtual void accept(Visitor *visitor) const override;
         };
 
         class SwitchDefaultClause : public SwitchClause 
@@ -85,12 +85,12 @@ namespace AST {
         public:
             SwitchDefaultClause(std::vector<Statement *> statements);
             virtual ~SwitchDefaultClause() override;
-            virtual void accept(Visitor *visitor) override;
+            virtual void accept(Visitor *visitor) const override;
         };
 
         SwitchStatement(Expression *expression, std::vector<SwitchClause *> clauses);
         virtual ~SwitchStatement() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         Expression *expression;
@@ -102,7 +102,7 @@ namespace AST {
     public:
         ReturnStatement(std::vector<Expression *> expressions);
         virtual ~ReturnStatement() override;
-        virtual void accept(Visitor* visitor) override;
+        virtual void accept(Visitor* visitor) const override;
 
     private:
         std::vector<Expression *> expressions;
@@ -113,7 +113,7 @@ namespace AST {
     public:
         BreakStatement() = default;
         virtual ~BreakStatement() override = default;
-        virtual void accept(Visitor* visitor) override;
+        virtual void accept(Visitor *visitor) const override;
     };
 
     class ContinueStatement : public Statement
@@ -121,7 +121,7 @@ namespace AST {
     public:
         ContinueStatement() = default;
         virtual ~ContinueStatement() override = default;
-        virtual void accept(Visitor* visitor) override;
+        virtual void accept(Visitor *visitor) const override;
     };
 
     class EmptyStatement : public SimpleStatement
@@ -129,7 +129,7 @@ namespace AST {
     public:
         EmptyStatement() = default;
         virtual ~EmptyStatement() override = default;
-        virtual void accept(Visitor* visitor) override;
+        virtual void accept(Visitor *visitor) const override;
     };
 
     class ForConditionStatement : public Statement
@@ -137,7 +137,7 @@ namespace AST {
     public:
         ForConditionStatement(SimpleStatement *init, Expression *condition, SimpleStatement *post, Block *body);
         virtual ~ForConditionStatement() override;
-        virtual void accept(Visitor* visitor) override;
+        virtual void accept(Visitor *visitor) const override;
     
     private:
         SimpleStatement *init;

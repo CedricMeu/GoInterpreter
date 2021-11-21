@@ -13,7 +13,7 @@ namespace AST {
     public:
         BoolType() = default;
         virtual ~BoolType() override = default;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
     };
 
     class IntType : public Type
@@ -21,7 +21,7 @@ namespace AST {
     public:
         IntType() = default;
         virtual ~IntType() override = default;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
     };
 
     class Float32Type : public Type
@@ -29,7 +29,7 @@ namespace AST {
     public:
         Float32Type() = default;
         virtual ~Float32Type() override= default;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
     };
 
     class RuneType : public Type
@@ -37,7 +37,7 @@ namespace AST {
     public:
         RuneType() = default;
         virtual ~RuneType() override= default;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
     };
 
     class StringType : public Type
@@ -45,7 +45,7 @@ namespace AST {
     public:
         StringType() = default;
         virtual ~StringType() override= default;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
     };
 
     class ArrayType : public Type
@@ -53,7 +53,7 @@ namespace AST {
     public:
         ArrayType(long size, Type *type);
         virtual ~ArrayType() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         Type *type;
@@ -65,7 +65,7 @@ namespace AST {
     public:
         SliceType(Type *type);
         virtual ~SliceType() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         Type *type;
@@ -76,7 +76,7 @@ namespace AST {
     public:
         explicit StructType(std::vector<std::pair<std::string, Type *>> fields);
         virtual ~StructType() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         std::vector<std::pair<std::string, Type *>> fields;
@@ -87,7 +87,7 @@ namespace AST {
     public:
         explicit PointerType(Type *type);
         virtual ~PointerType() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         Type *type;
@@ -100,7 +100,7 @@ namespace AST {
             std::vector<std::pair<std::string, Type *>> parameters, 
             std::vector<std::pair<std::string, Type *>> returns);
         virtual ~FunctionType() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         std::vector<std::pair<std::string, Type *>> parameters;
@@ -112,7 +112,7 @@ namespace AST {
     public:
         MapType(Type* keyType, Type* elementType);
         virtual ~MapType() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         Type *keyType;
@@ -124,7 +124,7 @@ namespace AST {
     public:
         explicit CustomType(const char *id);
         virtual ~CustomType() override= default;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         const std::string id;

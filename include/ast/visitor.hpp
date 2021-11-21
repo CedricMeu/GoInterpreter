@@ -75,6 +75,12 @@ namespace AST {
         virtual void visitIdentifierExpression(std::string id) = 0;
         virtual void visitCompositLiteralExpression(std::vector<std::string> keys) = 0;
         virtual void VisitFunctionLiteralExpression() = 0;
+        virtual void visitSelectExpression(std::string id) = 0;
+        virtual void visitIndexExpression() = 0;
+        virtual void visitSimpleSliceExpression(bool lowDeclared, bool highDeclared) = 0;
+        virtual void visitFullSliceExpression(bool lowDeclared) = 0;
+        virtual void visitCallExpression(long size) = 0;
+        virtual void visitConversionExpression() = 0;
 
     };
 

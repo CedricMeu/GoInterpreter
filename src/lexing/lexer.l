@@ -47,8 +47,8 @@ dec_float_lit [0-9]((_)?[0-9]+)*\.([0-9]((_)?[0-9]+)*)?
 rune_lit_esc \\(a|b|f|n|r|t|v|\\|\'|\")
 rune_lit_oct \\[0-7]{3}
 rune_lit_hex \\(x)[0-9a-fA-F]{2}
-rune_lit_uns \\u[0-9a-fA-F]{4}
-rune_lit_unb \\U[0-9a-fA-F]{8}
+/* rune_lit_uns \\u[0-9a-fA-F]{4}
+rune_lit_unb \\U[0-9a-fA-F]{8} */
 rune_lit_all [^\a\b\f\n\r\t\v\\\'"]
 
 rune_lit ({rune_lit_esc}|{rune_lit_oct}|{rune_lit_hex}|{rune_lit_all})

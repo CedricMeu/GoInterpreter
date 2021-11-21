@@ -607,7 +607,9 @@ char convertCharLiteral(char *string);
 str convertStringLiteral(char *string);
 char *copyString(char *string); // basically strdup but with new instead of malloc
 #line 609 "src/lexing/lexer.cpp"
-#line 610 "src/lexing/lexer.cpp"
+/* rune_lit_uns \\u[0-9a-fA-F]{4}
+rune_lit_unb \\U[0-9a-fA-F]{8} */
+#line 612 "src/lexing/lexer.cpp"
 
 #define INITIAL 0
 
@@ -826,7 +828,7 @@ YY_DECL
 	{
 #line 58 "src/lexing/lexer.l"
 
-#line 829 "src/lexing/lexer.cpp"
+#line 831 "src/lexing/lexer.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1082,7 +1084,7 @@ YY_RULE_SETUP
 #line 112 "src/lexing/lexer.l"
 ECHO;
 	YY_BREAK
-#line 1085 "src/lexing/lexer.cpp"
+#line 1087 "src/lexing/lexer.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

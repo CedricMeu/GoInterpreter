@@ -15,7 +15,7 @@ namespace AST {
     { 
     public:
         virtual ~Node() = default;
-        virtual void accept(Visitor *visitor) = 0;
+        virtual void accept(Visitor *visitor) const = 0;
 
     protected:
         Node() = default;
@@ -28,7 +28,7 @@ namespace AST {
     {
     public:
         virtual ~Type() = default;
-        virtual void accept(Visitor *visitor) override = 0;
+        virtual void accept(Visitor *visitor) const override = 0;
 
     protected:
         Type() = default;
@@ -41,7 +41,7 @@ namespace AST {
     {
     public:
         virtual ~Expression() = default;
-        virtual void accept(Visitor *visitor) override = 0;
+        virtual void accept(Visitor *visitor) const override = 0;
 
     protected:
         Expression() = default;
@@ -54,7 +54,7 @@ namespace AST {
     {
     public:
         virtual ~Statement() = default;
-        virtual void accept(Visitor *visitor) override = 0;
+        virtual void accept(Visitor *visitor) const override = 0;
 
     protected:
         Statement() = default;
@@ -67,7 +67,7 @@ namespace AST {
     {
     public:
         virtual ~SimpleStatement() = default;
-        virtual void accept(Visitor *visitor) override = 0;
+        virtual void accept(Visitor *visitor) const override = 0;
 
     protected:
         SimpleStatement() = default;
@@ -80,7 +80,7 @@ namespace AST {
     {
     public:
         virtual ~TopLevelDeclaration() = default;
-        virtual void accept(Visitor *visitor) override = 0;
+        virtual void accept(Visitor *visitor) const override = 0;
 
     protected:
         TopLevelDeclaration() = default;
@@ -93,7 +93,7 @@ namespace AST {
     {
     public:
         virtual ~Declaration() = default;
-        virtual void accept(Visitor *visitor) override = 0;
+        virtual void accept(Visitor *visitor) const override = 0;
 
     protected:
         Declaration() = default;
@@ -107,7 +107,7 @@ namespace AST {
     public:
         Block(std::vector<Statement *> statements);
         virtual ~Block();
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     protected:
         std::vector<Statement *> statements;
@@ -121,7 +121,7 @@ namespace AST {
     public:
         Program(std::vector<TopLevelDeclaration *> declarations);
         virtual ~Program() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         std::vector<TopLevelDeclaration *> declarations;

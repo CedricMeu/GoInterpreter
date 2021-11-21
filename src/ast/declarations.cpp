@@ -10,7 +10,7 @@ AST::FunctionDeclaration::~FunctionDeclaration()
     delete body;
 }
 
-void AST::FunctionDeclaration::accept(Visitor *visitor)
+void AST::FunctionDeclaration::accept(Visitor *visitor) const
 {
     this->body->accept(visitor);
     this->signature->accept(visitor);
@@ -26,7 +26,7 @@ AST::TypeAliasDeclaration::~TypeAliasDeclaration()
     delete underlyingType;
 }
 
-void AST::TypeAliasDeclaration::accept(Visitor *visitor)
+void AST::TypeAliasDeclaration::accept(Visitor *visitor) const
 {
     this->underlyingType->accept(visitor);
     visitor->visitTypeAliasDeclaration(this->id);
@@ -41,7 +41,7 @@ AST::TypeDefinitionDeclaration::~TypeDefinitionDeclaration()
     delete underlyingType;
 }
 
-void AST::TypeDefinitionDeclaration::accept(Visitor *visitor)
+void AST::TypeDefinitionDeclaration::accept(Visitor *visitor) const
 {
     this->underlyingType->accept(visitor);
     visitor->visitTypeDefinitionDeclaration(this->id);
@@ -61,7 +61,7 @@ AST::VariableDeclaration::~VariableDeclaration()
     }
 }
 
-void AST::VariableDeclaration::accept(Visitor *visitor)
+void AST::VariableDeclaration::accept(Visitor *visitor) const
 {
     auto rev = this->expressions;
     std::reverse(rev.begin(), rev.end());

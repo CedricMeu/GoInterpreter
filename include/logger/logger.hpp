@@ -71,7 +71,13 @@ namespace Logger {
         virtual void visitIdentifierExpression(std::string id) override;
         virtual void visitCompositLiteralExpression(std::vector<std::string> keys) override;
         virtual void VisitFunctionLiteralExpression() override;
-
+        virtual void visitSelectExpression(std::string id) override;
+        virtual void visitIndexExpression() override;
+        virtual void visitSimpleSliceExpression(bool lowDeclared, bool highDeclared) override;
+        virtual void visitFullSliceExpression(bool lowDeclared) override;
+        virtual void visitCallExpression(long size) override;
+        virtual void visitConversionExpression() override;
+        
     };
 
 }; // namespace Logger

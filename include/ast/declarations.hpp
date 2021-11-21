@@ -12,7 +12,7 @@ namespace AST {
     public:
         FunctionDeclaration(std::string id, Type *signature, Block *body);
         virtual ~FunctionDeclaration() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         std::string id;
@@ -24,7 +24,7 @@ namespace AST {
     {
     public:
         virtual ~TypeSpecDeclaration() override = default;
-        virtual void accept(Visitor *visitor) override = 0;
+        virtual void accept(Visitor *visitor) const override = 0;
 
     protected: 
         TypeSpecDeclaration() = default;
@@ -35,7 +35,7 @@ namespace AST {
     public:
         TypeAliasDeclaration(std::string id, Type *underlyingType);
         virtual ~TypeAliasDeclaration() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         std::string id;
@@ -47,7 +47,7 @@ namespace AST {
     public:
         TypeDefinitionDeclaration(std::string id, Type *underlyingType);
         virtual ~TypeDefinitionDeclaration() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         std::string id;
@@ -59,7 +59,7 @@ namespace AST {
     public:
         VariableDeclaration(std::vector<std::string> ids, Type *type, std::vector<Expression *> expressions);
         virtual ~VariableDeclaration() override;
-        virtual void accept(Visitor *visitor) override;
+        virtual void accept(Visitor *visitor) const override;
 
     private:
         std::vector<std::string> ids;

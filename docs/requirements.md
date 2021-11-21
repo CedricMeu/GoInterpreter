@@ -28,17 +28,17 @@
 - [p] strings (interpreted)
 - [p] arrays
 - [p] structs
-- [ ] function literals
+- [p] function literals
 - [ ] nil
 
 # expressions
-- [ ] function calls
+- [p] function calls
 - [ ] arithemtic
 - [ ] logical operations
 - [ ] string concatenation
-- [ ] indexing (string, array, map)
-- [ ] selector for structs
-- [ ] conversions (`float(some_int)`)
+- [p] indexing (string, array, map)
+- [p] selector for structs
+- [p] conversions (`float(some_int)`)
 - [ ] adres operators
 
 # statements
@@ -67,7 +67,6 @@
 - [ ] delete (map entry)
 - [ ] new (pointer)
 - [ ] copy
-
 
 # mics
 - [ ] Only support 1 source file with `package main` as begin

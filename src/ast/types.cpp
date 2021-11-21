@@ -1,26 +1,26 @@
 #include "ast/types.hpp"
 
-void AST::BoolType::accept(Visitor *visitor)
+void AST::BoolType::accept(Visitor *visitor) const
 {
     visitor->visitBoolType();
 }
 
-void AST::IntType::accept(Visitor *visitor)
+void AST::IntType::accept(Visitor *visitor) const
 {
     visitor->visitIntType();
 }
 
-void AST::Float32Type::accept(Visitor *visitor)
+void AST::Float32Type::accept(Visitor *visitor) const
 {
     visitor->visitFloat32Type();
 }
 
-void AST::RuneType::accept(Visitor *visitor)
+void AST::RuneType::accept(Visitor *visitor) const
 {
     visitor->visitRuneType();
 }
 
-void AST::StringType::accept(Visitor *visitor)
+void AST::StringType::accept(Visitor *visitor) const
 {
 visitor->visitStringType();
 }
@@ -34,7 +34,7 @@ AST::ArrayType::~ArrayType()
     delete this->type;
 }
 
-void AST::ArrayType::accept(Visitor *visitor)
+void AST::ArrayType::accept(Visitor *visitor) const
 {
     this->type->accept(visitor);
     visitor->visitArrayType(this->size);
@@ -49,7 +49,7 @@ AST::SliceType::~SliceType()
     delete this->type;
 }
 
-void AST::SliceType::accept(Visitor *visitor)
+void AST::SliceType::accept(Visitor *visitor) const
 {
     this->type->accept(visitor);
     visitor->visitSliceType();
@@ -66,7 +66,7 @@ AST::StructType::~StructType()
     }
 }
 
-void AST::StructType::accept(Visitor *visitor)
+void AST::StructType::accept(Visitor *visitor) const
 {
     std::vector<std::string> field_names;
     std::vector<Type *> field_types;
@@ -94,7 +94,7 @@ AST::PointerType::~PointerType()
     delete this->type;
 }
 
-void AST::PointerType::accept(Visitor *visitor)
+void AST::PointerType::accept(Visitor *visitor) const
 {
     this->type->accept(visitor);
     visitor->visitPointerType();
@@ -117,7 +117,7 @@ AST::FunctionType::~FunctionType()
     }
 }
 
-void AST::FunctionType::accept(Visitor *visitor)
+void AST::FunctionType::accept(Visitor *visitor) const
 {
     std::vector<std::string> return_names;
     std::vector<Type *> return_types;
@@ -160,7 +160,7 @@ AST::MapType::~MapType()
     delete elementType;
 }
 
-void AST::MapType::accept(Visitor *visitor)
+void AST::MapType::accept(Visitor *visitor) const
 {
     this->elementType->accept(visitor);
     this->keyType->accept(visitor);
@@ -171,7 +171,7 @@ AST::CustomType::CustomType(const char *id)
     :id{std::string{id}} 
 {}
 
-void AST::CustomType::accept(Visitor *visitor)
+void AST::CustomType::accept(Visitor *visitor) const
 {
     visitor->visitCustomType(this->id);
 }

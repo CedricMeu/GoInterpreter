@@ -4,7 +4,7 @@ AST::IdentifierExpression::IdentifierExpression(std::string id)
     : id{id}
 {}
 
-void AST::IdentifierExpression::accept(Visitor *visitor)
+void AST::IdentifierExpression::accept(Visitor *visitor) const
 {
     visitor->visitIdentifierExpression(this->id);
 }
@@ -21,7 +21,7 @@ AST::CompositLiteralExpression::~CompositLiteralExpression()
     }
 }
 
-void AST::CompositLiteralExpression::accept(Visitor *visitor)
+void AST::CompositLiteralExpression::accept(Visitor *visitor) const
 {
     std::vector<std::string> keys;
     std::vector<Expression *> expressions;
@@ -52,9 +52,127 @@ AST::FunctionLiteralExpression::~FunctionLiteralExpression()
     delete body;
 }
 
-void AST::FunctionLiteralExpression::accept(Visitor *visitor)
+void AST::FunctionLiteralExpression::accept(Visitor *visitor) const
 {
     body->accept(visitor);
     signature->accept(visitor);
     visitor->VisitFunctionLiteralExpression();
+}
+        
+AST::SelectExpression::SelectExpression(Expression *expression, std::string id)
+    : expression{expression}, id{id}
+{}
+
+AST::SelectExpression::~SelectExpression()
+{
+    delete expression;
+}
+
+void AST::SelectExpression::accept(Visitor *visitor) const
+{
+    expression->accept(visitor);
+    visitor->visitSelectExpression(id);
+}
+
+AST::IndexExpression::IndexExpression(Expression *expression, Expression *index)
+    : expression{expression}, index{index}
+{}
+
+AST::IndexExpression::~IndexExpression()
+{
+    delete expression;
+    delete index;
+}
+
+void AST::IndexExpression::accept(Visitor *visitor) const
+{
+    index->accept(visitor);
+    expression->accept(visitor);
+    visitor->visitIndexExpression();
+}
+
+AST::SimpleSliceExpression::SimpleSliceExpression(Expression *expression, Expression *low, Expression *high)
+    : expression{expression}, low{low}, high{high}
+{}
+
+AST::SimpleSliceExpression::~SimpleSliceExpression()
+{
+    delete expression;
+    delete low;
+    delete high;
+}
+
+void AST::SimpleSliceExpression::accept(Visitor *visitor) const
+{
+    if (high != nullptr) high->accept(visitor);
+    if (low != nullptr) low->accept(visitor);
+    expression->accept(visitor);
+    visitor->visitSimpleSliceExpression(low != nullptr, high != nullptr);
+}
+
+AST::FullSliceExpression::FullSliceExpression(Expression *expression, Expression *low, Expression *high, Expression *max)
+    : expression{expression}, low{low}, high{high}, max{max}
+{}
+
+AST::FullSliceExpression::~FullSliceExpression()
+{
+    delete expression;
+    delete low;
+    delete high;
+    delete max;
+}
+
+void AST::FullSliceExpression::accept(Visitor *visitor) const
+{
+    max->accept(visitor);
+    high->accept(visitor);
+    if (low != nullptr) low->accept(visitor);
+    expression->accept(visitor);
+    visitor->visitFullSliceExpression(low != nullptr);
+}
+
+AST::CallExpression::CallExpression(Expression *expression, std::vector<Expression *> arguments)
+    : expression{expression}, arguments{arguments}
+{}
+
+AST::CallExpression::~CallExpression()
+{
+    delete expression;
+    
+    for (const auto argument : arguments)
+    {
+        delete argument;
+    }
+}
+
+void AST::CallExpression::accept(Visitor *visitor) const
+{
+    auto arguments = this->arguments;
+
+    std::reverse(arguments.begin(), arguments.end());
+
+    for (const auto argument : arguments) {
+        argument->accept(visitor);
+    }
+
+    expression->accept(visitor);
+
+    visitor->visitCallExpression(arguments.size());
+}
+
+AST::ConversionExpression::ConversionExpression(Type *type, Expression* expression)
+    : type{type}, expression{expression}
+{}
+
+AST::ConversionExpression::~ConversionExpression()
+{
+    delete type;
+    delete expression;
+}
+
+void AST::ConversionExpression::accept(Visitor *visitor) const
+{
+    expression->accept(visitor);
+    type->accept(visitor);
+    visitor->visitConversionExpression();
 }

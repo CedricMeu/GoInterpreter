@@ -9,7 +9,7 @@ AST::DeclarationStatement::~DeclarationStatement()
     delete declaration;
 }
 
-void AST::DeclarationStatement::accept(Visitor *visitor) 
+void AST::DeclarationStatement::accept(Visitor *visitor) const
 {
     this->declaration->accept(visitor);
 }
@@ -23,7 +23,7 @@ AST::ExpressionStatement::~ExpressionStatement()
     delete expression;
 }
 
-void AST::ExpressionStatement::accept(Visitor *visitor)
+void AST::ExpressionStatement::accept(Visitor *visitor) const
 {
     expression->accept(visitor);
     visitor->visitExpressionStatement();
@@ -46,7 +46,7 @@ AST::AssignmentStatement::~AssignmentStatement()
     }
 }
 
-void AST::AssignmentStatement::accept(Visitor *visitor)
+void AST::AssignmentStatement::accept(Visitor *visitor) const
 {
     auto revrhs = this->rhs;
     std::reverse(revrhs.begin(), revrhs.end());
@@ -78,7 +78,7 @@ AST::IfStatement::~IfStatement()
     delete this->falseBody;
 }
 
-void AST::IfStatement::accept(Visitor *visitor)
+void AST::IfStatement::accept(Visitor *visitor) const
 {
     condition->accept(visitor);
 
@@ -108,7 +108,7 @@ AST::SwitchStatement::SwitchCaseClause::~SwitchCaseClause()
     }
 }
 
-void AST::SwitchStatement::SwitchCaseClause::accept(Visitor *visitor)
+void AST::SwitchStatement::SwitchCaseClause::accept(Visitor *visitor) const
 {
     auto revstmt = this->statements;
     std::reverse(revstmt.begin(), revstmt.end());
@@ -140,7 +140,7 @@ AST::SwitchStatement::SwitchDefaultClause::~SwitchDefaultClause()
     }
 }
 
-void AST::SwitchStatement::SwitchDefaultClause::accept(Visitor *visitor)
+void AST::SwitchStatement::SwitchDefaultClause::accept(Visitor *visitor) const
 {
     auto revstmt = this->statements;
     std::reverse(revstmt.begin(), revstmt.end());
@@ -166,7 +166,7 @@ AST::SwitchStatement::SwitchStatement::~SwitchStatement()
     }
 }
 
-void AST::SwitchStatement::SwitchStatement::accept(Visitor *visitor)
+void AST::SwitchStatement::SwitchStatement::accept(Visitor *visitor) const
 {
     auto revclauses = this->clauses;
     std::reverse(revclauses.begin(), revclauses.end());
@@ -191,7 +191,7 @@ AST::ReturnStatement::~ReturnStatement()
     }
 }
 
-void AST::ReturnStatement::accept(Visitor* visitor)
+void AST::ReturnStatement::accept(Visitor *visitor) const
 {
     auto revexp = this->expressions;
     std::reverse(revexp.begin(), revexp.end());
@@ -203,17 +203,17 @@ void AST::ReturnStatement::accept(Visitor* visitor)
     visitor->visitReturnStatement(this->expressions.size());
 }
 
-void AST::BreakStatement::accept(Visitor* visitor)
+void AST::BreakStatement::accept(Visitor *visitor) const
 {
     visitor->visitBreakStatement();
 }
 
-void AST::ContinueStatement::accept(Visitor* visitor)
+void AST::ContinueStatement::accept(Visitor *visitor) const
 {
     visitor->visitContinueStatement();
 }
 
-void AST::EmptyStatement::accept(Visitor* visitor) 
+void AST::EmptyStatement::accept(Visitor *visitor) const
 {
     visitor->visitEmptyStatement();
 }
@@ -230,7 +230,7 @@ AST::ForConditionStatement::~ForConditionStatement()
     delete this->body;
 }
 
-void AST::ForConditionStatement::accept(Visitor* visitor)
+void AST::ForConditionStatement::accept(Visitor *visitor) const
 {
     this->body->accept(visitor);
     this->post->accept(visitor);

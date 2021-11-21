@@ -123,7 +123,12 @@
 
 %type<expressions> expression_list
 %type<expression> expression
+%type<expression> optional_expression
+%type<expression> operand
+%type<expression> literal
+%type<expression> basic_literal
 %type<expression> composite_literal
+%type<expression> primary_expression
 %type<keyed_expressions> element_list
 %type<keyed_expressions> keyed_element
 %%
@@ -525,14 +530,32 @@ for_condition_statement
 
 // Expressions
 expression
+    : primary_expression                    { $$ = $1; }
+    ;
+
+optional_expression
+    : expression                            { $$ = $1; }
+    |                                       { $$ = nullptr; }
+    ;
+
+operand
+    : literal                               { $$ = $1; }
+    | IDENTIFIER                            { $$ = new AST::IdentifierExpression{$1}; }
+    | '(' expression ')'                    { $$ = $2; }
+    ;
+
+literal
+    : basic_literal                         { $$ = $1; }
+    | composite_literal                     { $$ = $1; }
+    | FUNC function_signature block         { $$ = new AST::FunctionLiteralExpression{$2, $3}; }
+    ;
+
+basic_literal
     : BOOL_LITERAL                          { $$ = new AST::BoolExpression{$1}; }
     | INT_LITERAL                           { $$ = new AST::IntExpression{$1}; }
     | FLOAT_LITERAL                         { $$ = new AST::Float32Expression{$1}; }
     | RUNE_LITERAL                          { $$ = new AST::RuneExpression{$1}; }
     | STRING_LITERAL                        { $$ = new AST::StringExpression{$1.string, $1.length}; }
-    | IDENTIFIER                            { $$ = new AST::IdentifierExpression{$1}; }
-    | composite_literal                     { $$ = $1; }
-    | FUNC function_signature block         { $$ = new AST::FunctionLiteralExpression{$2, $3}; }
     ;
 
 expression_list
@@ -584,6 +607,19 @@ keyed_element
                                                 list->insert(0, std::make_pair("", $1));
                                                 $$ = list;
                                             }
+    ;
+
+primary_expression
+    : operand                               { $$ = $1; }
+    | type '(' expression ')'               { $$ = new AST::ConversionExpression($1, $3); }
+    | primary_expression '.' IDENTIFIER     { $$ = new AST::SelectExpression{$1, $3}; }
+    | primary_expression '[' expression ']' { $$ = new AST::IndexExpression{$1, $3}; }
+    | primary_expression '[' optional_expression ':' optional_expression ']' 
+                                            { $$ = new AST::SimpleSliceExpression{$1, $3, $5}; }
+    | primary_expression '[' optional_expression ':' expression ':' expression ']' 
+                                            { $$ = new AST::FullSliceExpression{$1, $3, $5, $7}; }
+    | primary_expression '(' expression_list ')'
+                                            { $$ = new AST::CallExpression{$1, $3->toStdVector()}; }
     ;
 
 // Miscellaneous

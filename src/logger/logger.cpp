@@ -290,7 +290,7 @@ void Logger::Logger::visitVariableDeclaration(std::vector<std::string> ids, bool
 
     result.push_back("- ids: ");
 
-    for (int i = 0; i < ids.size(); i++)
+    for (int i = 0; i < ids.size(); ++i)
     {
         const auto id = ids[i];
 
@@ -328,7 +328,7 @@ void Logger::Logger::visitAssignmentStatement(long lhsSize, long rhsSize)
 
     result.push_back("- lhs: ");
 
-    for (int i = 0; i < lhsSize; i++)
+    for (int i = 0; i < lhsSize; ++i)
     {
         for (const auto &line : this->infoBlockStack.back())
         {
@@ -339,7 +339,7 @@ void Logger::Logger::visitAssignmentStatement(long lhsSize, long rhsSize)
 
     result.push_back("- rhs: ");
 
-    for (int i = 0; i < rhsSize; i++)
+    for (int i = 0; i < rhsSize; ++i)
     {
         for (const auto &line : this->infoBlockStack.back())
         {
@@ -400,7 +400,7 @@ void Logger::Logger::visitSwitchStatement(long size)
 
     result.push_back("- cases: ");
 
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < size; ++i)
     {
         for (const auto &line : this->infoBlockStack.back())
         {
@@ -418,7 +418,7 @@ void Logger::Logger::visitSwitchCaseClause(long expressionsSize, long statements
 
     result.push_back("- expressions: ");
 
-    for (int i = 0; i < expressionsSize; i++)
+    for (int i = 0; i < expressionsSize; ++i)
     {
         for (const auto &line : this->infoBlockStack.back())
         {
@@ -429,7 +429,7 @@ void Logger::Logger::visitSwitchCaseClause(long expressionsSize, long statements
 
     result.push_back("- statements: ");
 
-    for (int i = 0; i < statementsSize; i++)
+    for (int i = 0; i < statementsSize; ++i)
     {
         for (const auto &line : this->infoBlockStack.back())
         {
@@ -447,7 +447,7 @@ void Logger::Logger::visitSwitchDefaultClause(long statementsSize)
 
     result.push_back("- statements: ");
 
-    for (int i = 0; i < statementsSize; i++)
+    for (int i = 0; i < statementsSize; ++i)
     {
         for (const auto &line : this->infoBlockStack.back())
         {
@@ -465,7 +465,7 @@ void Logger::Logger::visitReturnStatement(long size)
 
     result.push_back("- expressions: ");
 
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < size; ++i)
     {
         for (const auto &line : this->infoBlockStack.back())
         {
@@ -630,6 +630,171 @@ void Logger::Logger::VisitFunctionLiteralExpression()
 
     result.push_back("- body: ");
 
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitSelectExpression(std::string id)
+{
+    Logger::Logger::InfoBlock result = {"SelectExpression"};
+
+    result.push_back("- expression: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- id: " + id);
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitIndexExpression()
+{
+    Logger::Logger::InfoBlock result = {"IndexExpression"};
+
+    result.push_back("- expression: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- index: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitSimpleSliceExpression(bool lowDeclared, bool highDeclared)
+{
+    Logger::Logger::InfoBlock result = {"SimpleSliceExpression"};
+
+    result.push_back("- expression: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    if (lowDeclared) {
+        result.push_back("- low: ");
+
+        for (const auto &line : this->infoBlockStack.back())
+        {
+            result.push_back(this->tab(line));
+        }
+        this->infoBlockStack.pop_back();
+    }
+
+    if (highDeclared) {
+        result.push_back("- high: ");
+
+        for (const auto &line : this->infoBlockStack.back())
+        {
+            result.push_back(this->tab(line));
+        }
+        this->infoBlockStack.pop_back();
+    }
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitFullSliceExpression(bool lowDeclared)
+{
+    Logger::Logger::InfoBlock result = {"FullSliceExpression"};
+
+    result.push_back("- expression: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    if (lowDeclared) {
+        result.push_back("- low: ");
+
+        for (const auto &line : this->infoBlockStack.back())
+        {
+            result.push_back(this->tab(line));
+        }
+        this->infoBlockStack.pop_back();
+    }
+
+    result.push_back("- high: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- max: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitCallExpression(long size)
+{
+    Logger::Logger::InfoBlock result = {"CallExpression"};
+
+    result.push_back("- expression: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- arguments: ");
+
+    for (int i; i < size; ++i)
+    {
+        for (const auto &line : this->infoBlockStack.back())
+        {
+            result.push_back(this->tab(line));
+        }
+        this->infoBlockStack.pop_back();
+    }
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitConversionExpression()
+{
+    Logger::Logger::InfoBlock result = {"ConversionExpression"};
+
+    result.push_back("- type: ");
+
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- expression: ");
+    
     for (const auto &line : this->infoBlockStack.back())
     {
         result.push_back(this->tab(line));
