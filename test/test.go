@@ -1,3 +1,3 @@
 func main() int {
-	var test = int(4.5);
+	var test = 1 * 2 + 3;
 }

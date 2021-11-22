@@ -93,6 +93,15 @@ false                       { insertSemicolon = true; yylval.boolean = false; re
 --                          { insertSemicolon = true; return DEC; }
 \.\.\.                      { insertSemicolon = false; return ELLIPSIS; }
 
+\|                          { insertSemicolon = false; return OR; }
+\&                          { insertSemicolon = false; return AND; }
+\=\=                        { insertSemicolon = false; return EQ; }
+\!\=                        { insertSemicolon = false; return NEQ; }
+\<\=                        { insertSemicolon = false; return LTE; }
+\>\=                        { insertSemicolon = false; return GTE; }
+\<\<                        { insertSemicolon = false; return SHIFT_LEFT; }
+\>\>                        { insertSemicolon = false; return SHIFT_RIGHT; }
+
 {bin_lit}                   { insertSemicolon = true; yylval.integer = binarytoint(yytext); return INT_LITERAL; }
 {oct_lit}                   { insertSemicolon = true; yylval.integer = octaltoint(yytext); return INT_LITERAL; }
 {dec_lit}                   { insertSemicolon = true; yylval.integer = dectoint(yytext); return INT_LITERAL; }

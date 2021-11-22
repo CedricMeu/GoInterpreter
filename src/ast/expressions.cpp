@@ -176,3 +176,113 @@ void AST::ConversionExpression::accept(Visitor *visitor) const
     type->accept(visitor);
     visitor->visitConversionExpression();
 }
+
+
+AST::UnaryExpression::UnaryExpression(Operation operation, Expression * expression)
+    : operation{operation}, expression{expression}
+{}
+
+AST::UnaryExpression::~UnaryExpression()
+{
+    delete expression;
+}
+
+void AST::UnaryExpression::accept(Visitor *visitor) const
+{
+    expression->accept(visitor);
+    switch (operation)
+    {
+    case Operation::PLUS:
+        visitor->visitUnaryPlusExpression();
+        break;
+    case Operation::NEGATE:
+        visitor->visitUnaryNegateExpression();
+        break;
+    case Operation::L_NOT:
+        visitor->visitUnaryLogicalNotExpression();
+        break;
+    case Operation::BW_NOT:
+        visitor->visitUnaryBitwiseNotExpression();
+        break;
+    case Operation::DEREFERENCE:
+        visitor->visitUnaryDereferenceExpression();
+        break;
+    case Operation::REFERENCE:
+        visitor->visitUnaryReferenceExpression();
+        break;
+    }
+}
+
+AST::BinaryExpression::BinaryExpression(Operation operation, Expression *lhs, Expression* rhs)
+    : operation{operation}, lhs{lhs}, rhs{rhs}
+{}
+
+AST::BinaryExpression::~BinaryExpression()
+{
+    delete lhs;
+    delete rhs;
+}
+
+void AST::BinaryExpression::accept(Visitor *visitor) const
+{
+    rhs->accept(visitor);
+    lhs->accept(visitor);
+
+    switch (operation)
+    {
+    case Operation::L_OR:
+        visitor->visitBinaryLogicalOrExpression();
+        break;
+    case Operation::L_AND:
+        visitor->visitBinaryLogicalAndExpression();
+        break;
+    case Operation::EQ:
+        visitor->visitBinaryEqualExpression();
+        break;
+    case Operation::NEQ:
+        visitor->visitBinaryNotEqualExpression();
+        break;
+    case Operation::LT:
+        visitor->visitBinaryLessThanExpression();
+        break;
+    case Operation::LTE:
+        visitor->visitBinaryLessThanEqualExpression();
+        break;
+    case Operation::GT:
+        visitor->visitBinaryGreaterThanExpression();
+        break;
+    case Operation::GTE:
+        visitor->visitBinaryGreaterThanEqualExpression();
+        break;
+    case Operation::SHIFT_LEFT:
+        visitor->visitBinaryShiftLeftExpression();
+        break;
+    case Operation::SHIFT_RIGHT:
+        visitor->visitBinaryShiftRightExpression();
+        break;
+    case Operation::ADD:
+        visitor->visitBinaryAddExpression();
+        break;
+    case Operation::SUB:
+        visitor->visitBinarySubtractExpression();
+        break;
+    case Operation::BW_OR:
+        visitor->visitBinaryBitwiseOrExpression();
+        break;
+    case Operation::BW_XOR:
+        visitor->visitBinaryBitwiseXOrExpression();
+        break;
+    case Operation::BW_AND:
+        visitor->visitBinaryBitwiseAndExpression();
+        break;
+    case Operation::MULT:
+        visitor->visitBinaryMultiplyExpression();
+        break;
+    case Operation::DIV:
+        visitor->visitBinaryDivideExpression();
+        break;
+    case Operation::MOD:
+        visitor->visitBinaryModuloExpression();
+        break;
+    }
+}

@@ -77,6 +77,30 @@ namespace Logger {
         virtual void visitFullSliceExpression(bool lowDeclared) override;
         virtual void visitCallExpression(long size) override;
         virtual void visitConversionExpression() override;
+        virtual void visitUnaryPlusExpression() override;
+        virtual void visitUnaryNegateExpression() override;
+        virtual void visitUnaryLogicalNotExpression() override;
+        virtual void visitUnaryBitwiseNotExpression() override;
+        virtual void visitUnaryDereferenceExpression() override;
+        virtual void visitUnaryReferenceExpression() override;
+        virtual void visitBinaryLogicalOrExpression() override;
+        virtual void visitBinaryLogicalAndExpression() override;
+        virtual void visitBinaryEqualExpression() override;
+        virtual void visitBinaryNotEqualExpression() override;
+        virtual void visitBinaryLessThanExpression() override;
+        virtual void visitBinaryLessThanEqualExpression() override;
+        virtual void visitBinaryGreaterThanExpression() override;
+        virtual void visitBinaryGreaterThanEqualExpression() override;
+        virtual void visitBinaryShiftLeftExpression() override;
+        virtual void visitBinaryShiftRightExpression() override;
+        virtual void visitBinaryAddExpression() override;
+        virtual void visitBinarySubtractExpression() override;
+        virtual void visitBinaryBitwiseOrExpression() override;
+        virtual void visitBinaryBitwiseXOrExpression() override;
+        virtual void visitBinaryBitwiseAndExpression() override;
+        virtual void visitBinaryMultiplyExpression() override;
+        virtual void visitBinaryDivideExpression() override;
+        virtual void visitBinaryModuloExpression() override;
         
     };
 

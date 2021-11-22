@@ -803,3 +803,507 @@ void Logger::Logger::visitConversionExpression()
 
     this->infoBlockStack.push_back(result);
 }
+
+void Logger::Logger::visitUnaryPlusExpression() 
+{
+    Logger::Logger::InfoBlock result = {"UnaryPlusExpression"};
+
+    result.push_back("- expression: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitUnaryNegateExpression() 
+{
+    Logger::Logger::InfoBlock result = {"UnaryNegateExpression"};
+
+    result.push_back("- expression: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitUnaryLogicalNotExpression() 
+{
+    Logger::Logger::InfoBlock result = {"UnaryLogicalNotExpression"};
+
+    result.push_back("- expression: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitUnaryBitwiseNotExpression() 
+{
+    Logger::Logger::InfoBlock result = {"UnaryBitwiseNotExpression"};
+
+    result.push_back("- expression: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitUnaryDereferenceExpression() 
+{
+    Logger::Logger::InfoBlock result = {"UnaryDereferenceExpression"};
+
+    result.push_back("- expression: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitUnaryReferenceExpression() 
+{
+    Logger::Logger::InfoBlock result = {"UnaryReferenceExpression"};
+
+    result.push_back("- expression: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryLogicalOrExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryLogicalOrExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryLogicalAndExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryLogicalAndExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryEqualExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryEqualExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryNotEqualExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryNotEqualExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryLessThanExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryLessThanExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryLessThanEqualExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryLessThanEqualExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryGreaterThanExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryGreaterThanExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryGreaterThanEqualExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryGreaterThanEqualExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryShiftLeftExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryShiftLeftExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryShiftRightExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryShiftRightExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryAddExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryAddExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinarySubtractExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinarySubtractExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryBitwiseOrExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryBitwiseOrExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryBitwiseXOrExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryBitwiseXOrExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryBitwiseAndExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryBitwiseAndExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryMultiplyExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryMultiplyExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryDivideExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryDivideExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}
+
+void Logger::Logger::visitBinaryModuloExpression() 
+{
+    Logger::Logger::InfoBlock result = {"BinaryModuloExpression"};
+
+    result.push_back("- lhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    result.push_back("- rhs: ");
+    
+    for (const auto &line : this->infoBlockStack.back())
+    {
+        result.push_back(this->tab(line));
+    }
+    this->infoBlockStack.pop_back();
+
+    this->infoBlockStack.push_back(result);
+}

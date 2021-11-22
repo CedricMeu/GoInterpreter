@@ -24,6 +24,10 @@ namespace AST {
         // - lists are visited in reversed order //
         //***************************************//
 
+        // TODO: visit everyting in-order
+        //  Otherwise rhs will be evaluated before lhs 
+        //  and '++', etc. will not work correctly
+
         // Program
         virtual void visitProgram(long size) = 0;
 
@@ -81,6 +85,30 @@ namespace AST {
         virtual void visitFullSliceExpression(bool lowDeclared) = 0;
         virtual void visitCallExpression(long size) = 0;
         virtual void visitConversionExpression() = 0;
+        virtual void visitUnaryPlusExpression() = 0;
+        virtual void visitUnaryNegateExpression() = 0;
+        virtual void visitUnaryLogicalNotExpression() = 0;
+        virtual void visitUnaryBitwiseNotExpression() = 0;
+        virtual void visitUnaryDereferenceExpression() = 0;
+        virtual void visitUnaryReferenceExpression() = 0;
+        virtual void visitBinaryLogicalOrExpression() = 0;
+        virtual void visitBinaryLogicalAndExpression() = 0;
+        virtual void visitBinaryEqualExpression() = 0;
+        virtual void visitBinaryNotEqualExpression() = 0;
+        virtual void visitBinaryLessThanExpression() = 0;
+        virtual void visitBinaryLessThanEqualExpression() = 0;
+        virtual void visitBinaryGreaterThanExpression() = 0;
+        virtual void visitBinaryGreaterThanEqualExpression() = 0;
+        virtual void visitBinaryShiftLeftExpression() = 0;
+        virtual void visitBinaryShiftRightExpression() = 0;
+        virtual void visitBinaryAddExpression() = 0;
+        virtual void visitBinarySubtractExpression() = 0;
+        virtual void visitBinaryBitwiseOrExpression() = 0;
+        virtual void visitBinaryBitwiseXOrExpression() = 0;
+        virtual void visitBinaryBitwiseAndExpression() = 0;
+        virtual void visitBinaryMultiplyExpression() = 0;
+        virtual void visitBinaryDivideExpression() = 0;
+        virtual void visitBinaryModuloExpression() = 0;
 
     };
 

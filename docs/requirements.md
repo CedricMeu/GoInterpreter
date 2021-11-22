@@ -33,9 +33,9 @@
 
 # expressions
 - [p] function calls
-- [ ] arithemtic
-- [ ] logical operations
-- [ ] string concatenation
+- [p] arithemtic
+- [p] logical operations
+- [p] string concatenation
 - [p] indexing (string, array, map)
 - [p] selector for structs
 - [p] conversions (`float(some_int)`)

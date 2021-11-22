@@ -87,12 +87,20 @@ extern int yydebug;
      INC = 278,
      DEC = 279,
      ELLIPSIS = 280,
-     IDENTIFIER = 281,
-     INT_LITERAL = 282,
-     FLOAT_LITERAL = 283,
-     BOOL_LITERAL = 284,
-     RUNE_LITERAL = 285,
-     STRING_LITERAL = 286
+     OR = 281,
+     AND = 282,
+     EQ = 283,
+     NEQ = 284,
+     LTE = 285,
+     GTE = 286,
+     SHIFT_LEFT = 287,
+     SHIFT_RIGHT = 288,
+     IDENTIFIER = 289,
+     INT_LITERAL = 290,
+     FLOAT_LITERAL = 291,
+     BOOL_LITERAL = 292,
+     RUNE_LITERAL = 293,
+     STRING_LITERAL = 294
    };
 #endif
 
@@ -134,7 +142,7 @@ typedef union YYSTYPE
 
 
 /* Line 2060 of yacc.c  */
-#line 138 "include/parsing/parser.hpp"
+#line 146 "include/parsing/parser.hpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

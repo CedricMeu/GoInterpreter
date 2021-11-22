@@ -114,6 +114,61 @@ namespace AST {
         Type *type;
         Expression *expression;
     };
+
+    class UnaryExpression : public Expression
+    {
+    public:
+        enum class Operation {
+            PLUS,
+            NEGATE,
+            L_NOT,
+            BW_NOT,
+            DEREFERENCE,
+            REFERENCE,
+        };
+
+        UnaryExpression(Operation operation, Expression * expression);
+        virtual ~UnaryExpression() override;
+        virtual void accept(Visitor *visitor) const override;
+    
+    private:
+        Operation operation;
+        Expression *expression;
+    };
+
+    class BinaryExpression : public Expression
+    {
+    public:
+        enum class Operation {
+            L_OR,
+            L_AND,
+            EQ,
+            NEQ,
+            LT,
+            LTE,
+            GT,
+            GTE,
+            SHIFT_LEFT,
+            SHIFT_RIGHT,
+            ADD,
+            SUB,
+            BW_OR,
+            BW_XOR,
+            BW_AND,
+            MULT,
+            DIV,
+            MOD,
+        };
+
+        BinaryExpression(Operation operation, Expression *lhs, Expression* rhs);
+        virtual ~BinaryExpression() override;
+        virtual void accept(Visitor *visitor) const override;
+    
+    private:
+        Operation operation;
+        Expression *lhs;
+        Expression *rhs;
+    };
 };
 
 #endif // GOINTERPRETER_AST_EXPRESSIONS_HPP

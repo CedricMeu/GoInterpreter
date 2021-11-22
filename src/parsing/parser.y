@@ -79,6 +79,14 @@
 %token INC
 %token DEC
 %token ELLIPSIS
+%token OR
+%token AND
+%token EQ
+%token NEQ
+%token LTE
+%token GTE
+%token SHIFT_LEFT
+%token SHIFT_RIGHT
 
 %token<identifier> IDENTIFIER
 %token<integer> INT_LITERAL
@@ -124,6 +132,7 @@
 %type<expressions> expression_list
 %type<expression> expression
 %type<expression> optional_expression
+%type<expression> unary_expression
 %type<expression> operand
 %type<expression> literal
 %type<expression> basic_literal
@@ -131,6 +140,12 @@
 %type<expression> primary_expression
 %type<keyed_expressions> element_list
 %type<keyed_expressions> keyed_element
+
+%left OR
+%left AND
+%left EQ NEQ '<' LTE '>' GTE
+%left '+' '-' '|' '^'
+%left '*' '/' '%' SHIFT_LEFT SHIFT_RIGHT '&'
 %%
 
 start
@@ -530,12 +545,40 @@ for_condition_statement
 
 // Expressions
 expression
-    : primary_expression                    { $$ = $1; }
+    : unary_expression                      { $$ = $1; }
+    | expression OR expression              { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::L_OR, $1, $3}; }
+    | expression AND expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::L_AND, $1, $3}; }
+    | expression EQ expression              { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::EQ, $1, $3}; }
+    | expression NEQ expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::NEQ, $1, $3}; }
+    | expression LTE expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::LTE, $1, $3}; }
+    | expression GTE expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::GTE, $1, $3}; }
+    | expression SHIFT_LEFT expression      { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::SHIFT_LEFT, $1, $3}; }
+    | expression SHIFT_RIGHT expression     { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::SHIFT_RIGHT, $1, $3}; }
+    | expression '<' expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::LT, $1, $3}; }
+    | expression '>' expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::GT, $1, $3}; }
+    | expression '+' expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::ADD, $1, $3}; }
+    | expression '-' expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::SUB, $1, $3}; }
+    | expression '|' expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::BW_OR, $1, $3}; }
+    | expression '^' expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::BW_XOR, $1, $3}; }
+    | expression '&' expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::BW_AND, $1, $3}; }
+    | expression '*' expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::MULT, $1, $3}; }
+    | expression '/' expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::DIV, $1, $3}; }
+    | expression '%' expression             { $$ = new AST::BinaryExpression{AST::BinaryExpression::Operation::MOD, $1, $3}; }
     ;
 
 optional_expression
     : expression                            { $$ = $1; }
     |                                       { $$ = nullptr; }
+    ;
+
+unary_expression
+    : primary_expression                    { $$ = $1; }
+    | '+' unary_expression                  { $$ = new AST::UnaryExpression{AST::UnaryExpression::Operation::PLUS, $2}; }
+    | '-' unary_expression                  { $$ = new AST::UnaryExpression{AST::UnaryExpression::Operation::NEGATE, $2}; }
+    | '!' unary_expression                  { $$ = new AST::UnaryExpression{AST::UnaryExpression::Operation::L_NOT, $2}; }
+    | '^' unary_expression                  { $$ = new AST::UnaryExpression{AST::UnaryExpression::Operation::BW_NOT, $2}; }
+    | '*' unary_expression                  { $$ = new AST::UnaryExpression{AST::UnaryExpression::Operation::DEREFERENCE, $2}; }
+    | '&' unary_expression                  { $$ = new AST::UnaryExpression{AST::UnaryExpression::Operation::REFERENCE, $2}; }
     ;
 
 operand
