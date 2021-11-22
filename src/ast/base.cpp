@@ -16,10 +16,7 @@ void AST::Block::accept(Visitor *visitor) const
 {
     visitor->visitInitBlock(this->statements.size());
 
-    auto rev = this->statements;
-    std::reverse(rev.begin(), rev.end());
-
-    for (const auto statement : rev)
+    for (const auto statement : this->statements)
     {
         statement->accept(visitor);
     }
@@ -41,10 +38,7 @@ AST::Program::~Program()
 
 void AST::Program::accept(Visitor *visitor) const
 {
-    auto rev = this->declarations;
-    std::reverse(rev.begin(), rev.end());
-
-    for (const auto declaration : rev)
+    for (const auto declaration : this->declarations)
     {
         declaration->accept(visitor);
     }

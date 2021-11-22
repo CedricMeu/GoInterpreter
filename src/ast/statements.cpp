@@ -48,18 +48,13 @@ AST::AssignmentStatement::~AssignmentStatement()
 
 void AST::AssignmentStatement::accept(Visitor *visitor) const
 {
-    auto revrhs = this->rhs;
-    std::reverse(revrhs.begin(), revrhs.end());
 
-    for (const auto expression : revrhs)
+    for (const auto expression : this->lhs)
     {
         expression->accept(visitor);
     }
 
-    auto revlhs = this->lhs;
-    std::reverse(revlhs.begin(), revlhs.end());
-
-    for (const auto expression : revlhs)
+    for (const auto expression : this->rhs)
     {
         expression->accept(visitor);
     }
@@ -110,20 +105,14 @@ AST::SwitchStatement::SwitchCaseClause::~SwitchCaseClause()
 
 void AST::SwitchStatement::SwitchCaseClause::accept(Visitor *visitor) const
 {
-    auto revstmt = this->statements;
-    std::reverse(revstmt.begin(), revstmt.end());
-
-    for (const auto statement : revstmt)
-    {
-        statement->accept(visitor);
-    }
-
-    auto revexp = this->expressions;
-    std::reverse(revexp.begin(), revexp.end());
-
-    for (const auto expression : revexp)
+    for (const auto expression : this->expressions)
     {
         expression->accept(visitor);
+    }
+
+    for (const auto statement : this->statements)
+    {
+        statement->accept(visitor);
     }
 
     visitor->visitSwitchCaseClause(this->expressions.size(), this->statements.size());
@@ -142,10 +131,7 @@ AST::SwitchStatement::SwitchDefaultClause::~SwitchDefaultClause()
 
 void AST::SwitchStatement::SwitchDefaultClause::accept(Visitor *visitor) const
 {
-    auto revstmt = this->statements;
-    std::reverse(revstmt.begin(), revstmt.end());
-
-    for (const auto statement : revstmt)
+    for (const auto statement : this->statements)
     {
         statement->accept(visitor);
     }
@@ -168,14 +154,11 @@ AST::SwitchStatement::SwitchStatement::~SwitchStatement()
 
 void AST::SwitchStatement::SwitchStatement::accept(Visitor *visitor) const
 {
-    auto revclauses = this->clauses;
-    std::reverse(revclauses.begin(), revclauses.end());
+    this->expression->accept(visitor);
 
-    for (const auto clause : revclauses) {
+    for (const auto clause : this->clauses) {
         clause->accept(visitor);
     }
-
-    this->expression->accept(visitor);
 
     visitor->visitSwitchStatement(this->clauses.size());
 }
@@ -193,10 +176,7 @@ AST::ReturnStatement::~ReturnStatement()
 
 void AST::ReturnStatement::accept(Visitor *visitor) const
 {
-    auto revexp = this->expressions;
-    std::reverse(revexp.begin(), revexp.end());
-
-    for (const auto expression : revexp) {
+    for (const auto expression : this->expressions) {
         expression->accept(visitor);
     }
 
@@ -232,10 +212,10 @@ AST::ForConditionStatement::~ForConditionStatement()
 
 void AST::ForConditionStatement::accept(Visitor *visitor) const
 {
-    this->body->accept(visitor);
-    this->post->accept(visitor);
-    this->condition->accept(visitor);
     this->init->accept(visitor);
+    this->condition->accept(visitor);
+    this->post->accept(visitor);
+    this->body->accept(visitor);
 
     visitor->visitForConditionStatement();
 }

@@ -12,8 +12,8 @@ AST::FunctionDeclaration::~FunctionDeclaration()
 
 void AST::FunctionDeclaration::accept(Visitor *visitor) const
 {
-    this->body->accept(visitor);
     this->signature->accept(visitor);
+    this->body->accept(visitor);
     visitor->visitFunctionDeclaration(this->id);
 }
 
@@ -63,17 +63,14 @@ AST::VariableDeclaration::~VariableDeclaration()
 
 void AST::VariableDeclaration::accept(Visitor *visitor) const
 {
-    auto rev = this->expressions;
-    std::reverse(rev.begin(), rev.end());
-
-    for (const auto expression : rev)
-    {
-        expression->accept(visitor);
-    }
-
     if (type != nullptr) 
     {
         type->accept(visitor);
+    }
+
+    for (const auto expression : this->expressions)
+    {
+        expression->accept(visitor);
     }
 
     visitor->visitVariableDeclaration(this->ids, type != nullptr, this->expressions.size());

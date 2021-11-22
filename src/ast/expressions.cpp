@@ -23,6 +23,8 @@ AST::CompositLiteralExpression::~CompositLiteralExpression()
 
 void AST::CompositLiteralExpression::accept(Visitor *visitor) const
 {
+    type->accept(visitor);
+    
     std::vector<std::string> keys;
     std::vector<Expression *> expressions;
 
@@ -30,14 +32,10 @@ void AST::CompositLiteralExpression::accept(Visitor *visitor) const
         keys.push_back(pair.first);
         expressions.push_back(pair.second);
     }
-    
-    std::reverse(expressions.begin(), expressions.end());
 
     for (const auto expression : expressions) {
         expression->accept(visitor);
     }
-
-    type->accept(visitor);
 
     visitor->visitCompositLiteralExpression(keys);
 }
@@ -54,8 +52,8 @@ AST::FunctionLiteralExpression::~FunctionLiteralExpression()
 
 void AST::FunctionLiteralExpression::accept(Visitor *visitor) const
 {
-    body->accept(visitor);
     signature->accept(visitor);
+    body->accept(visitor);
     visitor->VisitFunctionLiteralExpression();
 }
         
@@ -86,8 +84,8 @@ AST::IndexExpression::~IndexExpression()
 
 void AST::IndexExpression::accept(Visitor *visitor) const
 {
-    index->accept(visitor);
     expression->accept(visitor);
+    index->accept(visitor);
     visitor->visitIndexExpression();
 }
 
@@ -104,9 +102,9 @@ AST::SimpleSliceExpression::~SimpleSliceExpression()
 
 void AST::SimpleSliceExpression::accept(Visitor *visitor) const
 {
-    if (high != nullptr) high->accept(visitor);
-    if (low != nullptr) low->accept(visitor);
     expression->accept(visitor);
+    if (low != nullptr) low->accept(visitor);
+    if (high != nullptr) high->accept(visitor);
     visitor->visitSimpleSliceExpression(low != nullptr, high != nullptr);
 }
 
@@ -124,10 +122,10 @@ AST::FullSliceExpression::~FullSliceExpression()
 
 void AST::FullSliceExpression::accept(Visitor *visitor) const
 {
-    max->accept(visitor);
-    high->accept(visitor);
-    if (low != nullptr) low->accept(visitor);
     expression->accept(visitor);
+    if (low != nullptr) low->accept(visitor);
+    high->accept(visitor);
+    max->accept(visitor);
     visitor->visitFullSliceExpression(low != nullptr);
 }
 
@@ -147,15 +145,11 @@ AST::CallExpression::~CallExpression()
 
 void AST::CallExpression::accept(Visitor *visitor) const
 {
-    auto arguments = this->arguments;
+    expression->accept(visitor);
 
-    std::reverse(arguments.begin(), arguments.end());
-
-    for (const auto argument : arguments) {
+    for (const auto argument : this->arguments) {
         argument->accept(visitor);
     }
-
-    expression->accept(visitor);
 
     visitor->visitCallExpression(arguments.size());
 }
@@ -172,8 +166,8 @@ AST::ConversionExpression::~ConversionExpression()
 
 void AST::ConversionExpression::accept(Visitor *visitor) const
 {
-    expression->accept(visitor);
     type->accept(visitor);
+    expression->accept(visitor);
     visitor->visitConversionExpression();
 }
 
@@ -225,8 +219,8 @@ AST::BinaryExpression::~BinaryExpression()
 
 void AST::BinaryExpression::accept(Visitor *visitor) const
 {
-    rhs->accept(visitor);
     lhs->accept(visitor);
+    rhs->accept(visitor);
 
     switch (operation)
     {

@@ -8,7 +8,6 @@
 #include <iostream>
 #include "lexing/lexer.hpp"
 #include "ast/ast.hpp"
-#include "logger/logger.hpp"
 extern int yyparse();
 extern AST::Node *tree;
 

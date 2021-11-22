@@ -15,19 +15,6 @@ namespace AST {
     public:
         virtual ~Visitor() = default;
 
-        //***************************************//
-        //            Visit functions            //
-        //***************************************//
-        // Rules:                                //
-        // - Nodes are visited depth-first       //
-        //      Pre-order (except initblock)     //
-        // - lists are visited in reversed order //
-        //***************************************//
-
-        // TODO: visit everyting in-order
-        //  Otherwise rhs will be evaluated before lhs 
-        //  and '++', etc. will not work correctly
-
         // Program
         virtual void visitProgram(long size) = 0;
 

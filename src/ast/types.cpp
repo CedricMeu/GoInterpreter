@@ -75,8 +75,6 @@ void AST::StructType::accept(Visitor *visitor) const
         field_names.push_back(pair.first);
         field_types.push_back(pair.second);
     }
-    
-    std::reverse(field_types.begin(), field_types.end());
 
     for (const auto type : field_types) {
         type->accept(visitor);
@@ -119,20 +117,6 @@ AST::FunctionType::~FunctionType()
 
 void AST::FunctionType::accept(Visitor *visitor) const
 {
-    std::vector<std::string> return_names;
-    std::vector<Type *> return_types;
-
-    for (const auto rpair : this->returns) {
-        return_names.push_back(rpair.first);
-        return_types.push_back(rpair.second);
-    }
-    
-    std::reverse(return_types.begin(), return_types.end());
-
-    for (const auto type : return_types) {
-        type->accept(visitor);
-    }
-
     std::vector<std::string> parameter_names;
     std::vector<Type *> parameter_types;
 
@@ -140,10 +124,20 @@ void AST::FunctionType::accept(Visitor *visitor) const
         parameter_names.push_back(ppair.first);
         parameter_types.push_back(ppair.second);
     }
-    
-    std::reverse(parameter_types.begin(), parameter_types.end());
 
     for (const auto type : parameter_types) {
+        type->accept(visitor);
+    }
+
+    std::vector<std::string> return_names;
+    std::vector<Type *> return_types;
+
+    for (const auto rpair : this->returns) {
+        return_names.push_back(rpair.first);
+        return_types.push_back(rpair.second);
+    }
+
+    for (const auto type : return_types) {
         type->accept(visitor);
     }
 
@@ -162,8 +156,8 @@ AST::MapType::~MapType()
 
 void AST::MapType::accept(Visitor *visitor) const
 {
-    this->elementType->accept(visitor);
     this->keyType->accept(visitor);
+    this->elementType->accept(visitor);
     visitor->visitMapType();
 }
 

@@ -12,11 +12,7 @@ int main() {
 
     yyparse();
 
-    Logger::Logger logger;
-
     if (tree != nullptr) {
-        tree->accept(&logger);
-        std::cout << logger.getLogString() << std::endl;
         return EXIT_SUCCESS;
     } else {
         return EXIT_FAILURE;
