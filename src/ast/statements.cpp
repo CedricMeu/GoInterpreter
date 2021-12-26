@@ -49,17 +49,25 @@ AST::AssignmentStatement::~AssignmentStatement()
 void AST::AssignmentStatement::accept(Visitor *visitor) const
 {
 
-    for (const auto expression : this->lhs)
-    {
-        expression->accept(visitor);
-    }
+    auto visitLhs = [this, visitor](){
+        for (const auto expression : this->lhs)
+        {
+            expression->accept(visitor);
+        }
 
-    for (const auto expression : this->rhs)
-    {
-        expression->accept(visitor);
-    }
+        return this->lhs.size();
+    };
 
-    visitor->visitAssignmentStatement(this->lhs.size(), this->rhs.size());
+    auto visitRhs = [this, visitor](){
+        for (const auto expression : this->rhs)
+        {
+            expression->accept(visitor);
+        }
+
+        return this->rhs.size();
+    };
+
+    visitor->visitAssignmentStatement(visitLhs, visitRhs);
 }
 
 AST::IfStatement::IfStatement(Expression *condition, Block *trueBody, Block *falseBody)
@@ -88,11 +96,11 @@ void AST::IfStatement::accept(Visitor *visitor) const
     visitor->visitIfStatement(visitTrue, visitFalse);
 }
 
-AST::SwitchStatement::SwitchCaseClause::SwitchCaseClause(std::vector<Expression *> expressions, std::vector<Statement *> statements)
+AST::SwitchStatement::SwitchExpressionClause::SwitchExpressionClause(std::vector<Expression *> expressions, std::vector<Statement *> statements)
     : expressions{expressions}, statements{statements}
 {}
 
-AST::SwitchStatement::SwitchCaseClause::~SwitchCaseClause()
+AST::SwitchStatement::SwitchExpressionClause::~SwitchExpressionClause()
 {
     for (const auto expression : this->expressions) {
         delete expression;
@@ -103,19 +111,24 @@ AST::SwitchStatement::SwitchCaseClause::~SwitchCaseClause()
     }
 }
 
-void AST::SwitchStatement::SwitchCaseClause::accept(Visitor *visitor) const
+void AST::SwitchStatement::SwitchExpressionClause::accept(Visitor *visitor) const
 {
-    for (const auto expression : this->expressions)
-    {
-        expression->accept(visitor);
+    std::vector<const std::function<void ()>> visitExpressions{};
+    std::vector<const std::function<void ()>> visitStatements{};
+
+    for (const auto expression : this->expressions) {
+        visitExpressions.push_back([expression, visitor]() {
+            expression->accept(visitor);
+        });
     }
 
-    for (const auto statement : this->statements)
-    {
-        statement->accept(visitor);
+    for (const auto statement : this->statements) {
+        visitStatements.push_back([statement, visitor]() {
+            statement->accept(visitor);
+        });
     }
 
-    visitor->visitSwitchCaseClause(this->expressions.size(), this->statements.size());
+    visitor->visitSwitchExpressionClause(visitExpressions, visitStatements);
 }
 
 AST::SwitchStatement::SwitchDefaultClause::SwitchDefaultClause(std::vector<Statement *> statements)
@@ -131,12 +144,15 @@ AST::SwitchStatement::SwitchDefaultClause::~SwitchDefaultClause()
 
 void AST::SwitchStatement::SwitchDefaultClause::accept(Visitor *visitor) const
 {
-    for (const auto statement : this->statements)
-    {
-        statement->accept(visitor);
+    std::vector<const std::function<void ()>> visitStatements{};
+
+    for (const auto statement : this->statements) {
+        visitStatements.push_back([statement, visitor]() {
+            statement->accept(visitor);
+        });
     }
 
-    visitor->visitSwitchDefaultClause(this->statements.size());
+    visitor->visitSwitchDefaultClause(visitStatements);
 }
 
 AST::SwitchStatement::SwitchStatement::SwitchStatement(Expression *expression, std::vector<SwitchClause *> clauses)
@@ -153,14 +169,18 @@ AST::SwitchStatement::SwitchStatement::~SwitchStatement()
 }
 
 void AST::SwitchStatement::SwitchStatement::accept(Visitor *visitor) const
-{
-    this->expression->accept(visitor);
+{  
+    std::vector<const std::function<void ()>> visitClauses{};
 
     for (const auto clause : this->clauses) {
-        clause->accept(visitor);
+        visitClauses.push_back([clause, visitor]() {
+            clause->accept(visitor);
+        });
     }
 
-    visitor->visitSwitchStatement(this->clauses.size());
+    visitor->visitSwitchStatement([this, visitor]() {
+        this->expression->accept(visitor);
+    }, visitClauses);
 }
 
 AST::ReturnStatement::ReturnStatement(std::vector<Expression *> expressions)
@@ -212,10 +232,13 @@ AST::ForConditionStatement::~ForConditionStatement()
 
 void AST::ForConditionStatement::accept(Visitor *visitor) const
 {
-    this->init->accept(visitor);
-    this->condition->accept(visitor);
-    this->post->accept(visitor);
-    this->body->accept(visitor);
-
-    visitor->visitForConditionStatement();
+    visitor->visitForConditionStatement([this, visitor]() {
+        this->init->accept(visitor);
+    }, [this, visitor]() {
+        this->condition->accept(visitor);
+    }, [this, visitor]() {
+        this->post->accept(visitor);
+    }, [this, visitor]() {
+        this->body->accept(visitor);
+    });
 }

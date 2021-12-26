@@ -14,14 +14,16 @@ AST::Block::~Block()
 
 void AST::Block::accept(Visitor *visitor) const
 {
-    visitor->visitInitBlock(this->statements.size());
+    std::vector<const std::function<void ()>> visitStatements;
 
     for (const auto statement : this->statements)
     {
-        statement->accept(visitor);
+        visitStatements.push_back([visitor, statement]() {
+            statement->accept(visitor);
+        });
     }
 
-    visitor->visitDeinitBlock(this->statements.size());
+    visitor->visitBlock(visitStatements);
 }
 
 AST::Program::Program(std::vector<TopLevelDeclaration *> declarations)

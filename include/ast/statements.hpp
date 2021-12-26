@@ -59,33 +59,33 @@ namespace AST {
         {
         protected:
             SwitchClause() = default;
-        
+
         public:
             virtual ~SwitchClause() = default;
             virtual void accept(Visitor *visitor) const = 0;
         };
 
-        class SwitchCaseClause : public SwitchClause 
+        class SwitchExpressionClause : public SwitchClause
         {
         private:
             std::vector<Expression *> expressions;
             std::vector<Statement *> statements;
 
         public:
-            SwitchCaseClause(std::vector<Expression *> expressions, std::vector<Statement *> statements);
-            virtual ~SwitchCaseClause() override;
-            virtual void accept(Visitor *visitor) const override;
+            SwitchExpressionClause(std::vector<Expression *> expressions, std::vector<Statement *> statements);
+            ~SwitchExpressionClause();
+            void accept(Visitor *visitor) const override;
         };
 
-        class SwitchDefaultClause : public SwitchClause 
+        class SwitchDefaultClause : public SwitchClause
         {
         private:
             std::vector<Statement *> statements;
 
         public:
             SwitchDefaultClause(std::vector<Statement *> statements);
-            virtual ~SwitchDefaultClause() override;
-            virtual void accept(Visitor *visitor) const override;
+            ~SwitchDefaultClause();
+            void accept(Visitor *visitor) const override;
         };
 
         SwitchStatement(Expression *expression, std::vector<SwitchClause *> clauses);

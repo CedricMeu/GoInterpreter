@@ -6,14 +6,11 @@ Terminals unused in grammar
    ELLIPSIS
 
 
-State 23 conflicts: 1 shift/reduce
 State 47 conflicts: 1 shift/reduce
 State 49 conflicts: 1 shift/reduce
-State 73 conflicts: 3 reduce/reduce
-State 100 conflicts: 1 shift/reduce
-State 118 conflicts: 2 shift/reduce
-State 131 conflicts: 1 shift/reduce
-State 181 conflicts: 1 reduce/reduce
+State 73 conflicts: 1 reduce/reduce
+State 99 conflicts: 1 shift/reduce
+State 117 conflicts: 2 shift/reduce
 
 
 Grammar
@@ -183,11 +180,11 @@ Grammar
   122              | expression
 
   123 primary_expression: operand
-  124                   | type '(' expression ')'
-  125                   | primary_expression '.' IDENTIFIER
-  126                   | primary_expression '[' expression ']'
-  127                   | primary_expression '[' optional_expression ':' optional_expression ']'
-  128                   | primary_expression '[' optional_expression ':' expression ':' expression ']'
+  124                   | primary_expression '.' IDENTIFIER
+  125                   | primary_expression '[' expression ']'
+  126                   | primary_expression '[' optional_expression ':' optional_expression ']'
+  127                   | primary_expression '[' optional_expression ':' expression ':' expression ']'
+  128                   | primary_expression '(' ')'
   129                   | primary_expression '(' expression_list ')'
 
   130 identifier_list: IDENTIFIER
@@ -200,21 +197,21 @@ $end (0) 0
 '!' (33) 101
 '%' (37) 95
 '&' (38) 92 104
-'(' (40) 2 21 22 23 39 45 107 124 129
-')' (41) 2 21 22 23 39 45 107 124 129
+'(' (40) 2 21 22 23 39 45 107 128 129
+')' (41) 2 21 22 23 39 45 107 128 129
 '*' (42) 8 93 103
 '+' (43) 88 99
 ',' (44) 23 26 27 117 120 131
 '-' (45) 89 100
-'.' (46) 125
+'.' (46) 124
 '/' (47) 94
-':' (58) 68 69 121 127 128
+':' (58) 68 69 121 126 127
 ';' (59) 28 29 34 42 43 49 50 63 74
 '<' (60) 86
 '=' (61) 40 47 48 61
 '>' (62) 87
-'[' (91) 12 13 15 126 127 128
-']' (93) 12 13 15 126 127 128
+'[' (91) 12 13 15 125 126 127
+']' (93) 12 13 15 125 126 127
 '^' (94) 91 102
 '{' (123) 14 30 67 118
 '|' (124) 90
@@ -251,7 +248,7 @@ LTE (285) 82
 GTE (286) 83
 SHIFT_LEFT (287) 84
 SHIFT_RIGHT (288) 85
-IDENTIFIER (289) 11 35 40 41 106 121 125 130 131
+IDENTIFIER (289) 11 35 40 41 106 121 124 130 131
 INT_LITERAL (290) 16 112
 FLOAT_LITERAL (291) 113
 BOOL_LITERAL (292) 111
@@ -267,7 +264,7 @@ start (63)
     on left: 1, on right: 0
 type (64)
     on left: 2 3 4 5 6 7 8 9 10, on right: 2 8 12 13 15 20 24 25 26
-    27 28 29 40 41 46 47 124
+    27 28 29 40 41 46 47
 literal_type (65)
     on left: 11 12 13 14 15, on right: 10 118
 array_length (66)
@@ -327,9 +324,9 @@ for_condition_statement (92)
 expression (93)
     on left: 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94
     95, on right: 60 64 65 66 67 74 75 78 79 80 81 82 83 84 85 86 87
-    88 89 90 91 92 93 94 95 96 107 116 117 121 122 124 126 128
+    88 89 90 91 92 93 94 95 96 107 116 117 121 122 125 127
 optional_expression (94)
-    on left: 96 97, on right: 127 128
+    on left: 96 97, on right: 126 127
 unary_expression (95)
     on left: 98 99 100 101 102 103 104, on right: 77 99 100 101 102
     103 104
@@ -348,8 +345,8 @@ element_list (101)
 keyed_element (102)
     on left: 121 122, on right: 119 120
 primary_expression (103)
-    on left: 123 124 125 126 127 128 129, on right: 98 125 126 127
-    128 129
+    on left: 123 124 125 126 127 128 129, on right: 98 124 125 126
+    127 128 129
 identifier_list (104)
     on left: 130 131, on right: 25 27 28 29 46 47 48 131
 
@@ -630,7 +627,6 @@ State 23
     '('         shift, and go to state 54
     '['         shift, and go to state 35
 
-    '('       [reduce using rule 18 (function_result)]
     $default  reduce using rule 18 (function_result)
 
     type                 go to state 55
@@ -836,11 +832,6 @@ State 44
 
    48 var_spec: identifier_list '=' . expression_list
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -859,16 +850,15 @@ State 44
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 88
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    expression_list     go to state 93
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 87
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    expression_list     go to state 92
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 45
@@ -876,7 +866,7 @@ State 45
    46 var_spec: identifier_list type .
    47         | identifier_list type . '=' expression_list
 
-    '='  shift, and go to state 96
+    '='  shift, and go to state 95
 
     $default  reduce using rule 46 (var_spec)
 
@@ -913,7 +903,7 @@ State 49
    24 function_parameter_list: type .
    26                        | type . ',' function_parameter_list
 
-    ','  shift, and go to state 97
+    ','  shift, and go to state 96
 
     ','       [reduce using rule 24 (function_parameter_list)]
     $default  reduce using rule 24 (function_parameter_list)
@@ -924,8 +914,8 @@ State 50
    22 function_parameters: '(' function_parameter_list . ')'
    23                    | '(' function_parameter_list . ',' ')'
 
-    ')'  shift, and go to state 98
-    ','  shift, and go to state 99
+    ')'  shift, and go to state 97
+    ','  shift, and go to state 98
 
 
 State 51
@@ -946,7 +936,7 @@ State 51
     '('         shift, and go to state 34
     '['         shift, and go to state 35
 
-    type          go to state 100
+    type          go to state 99
     literal_type  go to state 38
 
 
@@ -954,22 +944,17 @@ State 52
 
    30 block: '{' . statement_list '}'
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
     TYPE            shift, and go to state 2
     VAR             shift, and go to state 3
-    IF              shift, and go to state 101
-    SWITCH          shift, and go to state 102
-    RETURN          shift, and go to state 103
-    BREAK           shift, and go to state 104
-    CONTINUE        shift, and go to state 105
-    FOR             shift, and go to state 106
+    IF              shift, and go to state 100
+    SWITCH          shift, and go to state 101
+    RETURN          shift, and go to state 102
+    BREAK           shift, and go to state 103
+    CONTINUE        shift, and go to state 104
+    FOR             shift, and go to state 105
     IDENTIFIER      shift, and go to state 73
     INT_LITERAL     shift, and go to state 74
     FLOAT_LITERAL   shift, and go to state 75
@@ -988,27 +973,26 @@ State 52
     '}'       reduce using rule 62 (statement_list)
     $default  reduce using rule 59 (simple_statement)
 
-    type                     go to state 86
-    literal_type             go to state 87
-    declaration              go to state 107
+    literal_type             go to state 86
+    declaration              go to state 106
     type_decl                go to state 9
     var_decl                 go to state 10
-    statement                go to state 108
-    simple_statement         go to state 109
-    statement_list           go to state 110
-    if_statement             go to state 111
-    switch_statement         go to state 112
-    return_statement         go to state 113
-    for_statement            go to state 114
-    for_condition_statement  go to state 115
-    expression               go to state 116
-    unary_expression         go to state 89
-    operand                  go to state 90
-    literal                  go to state 91
-    basic_literal            go to state 92
-    expression_list          go to state 117
-    composite_literal        go to state 94
-    primary_expression       go to state 95
+    statement                go to state 107
+    simple_statement         go to state 108
+    statement_list           go to state 109
+    if_statement             go to state 110
+    switch_statement         go to state 111
+    return_statement         go to state 112
+    for_statement            go to state 113
+    for_condition_statement  go to state 114
+    expression               go to state 115
+    unary_expression         go to state 88
+    operand                  go to state 89
+    literal                  go to state 90
+    basic_literal            go to state 91
+    expression_list          go to state 116
+    composite_literal        go to state 93
+    primary_expression       go to state 94
 
 
 State 53
@@ -1039,7 +1023,7 @@ State 54
     ')'         shift, and go to state 48
     '['         shift, and go to state 35
 
-    type                     go to state 118
+    type                     go to state 117
     literal_type             go to state 38
     function_parameter_list  go to state 50
     identifier_list          go to state 51
@@ -1072,8 +1056,8 @@ State 58
 
     IDENTIFIER  shift, and go to state 15
 
-    struct_field_decls  go to state 119
-    identifier_list     go to state 120
+    struct_field_decls  go to state 118
+    identifier_list     go to state 119
 
 
 State 59
@@ -1100,7 +1084,7 @@ State 60
     '('         shift, and go to state 34
     '['         shift, and go to state 35
 
-    type          go to state 121
+    type          go to state 120
     literal_type  go to state 38
 
 
@@ -1115,7 +1099,7 @@ State 62
 
     2 type: '(' type . ')'
 
-    ')'  shift, and go to state 122
+    ')'  shift, and go to state 121
 
 
 State 63
@@ -1142,7 +1126,7 @@ State 64
     '('         shift, and go to state 34
     '['         shift, and go to state 35
 
-    type          go to state 123
+    type          go to state 122
     literal_type  go to state 38
 
 
@@ -1150,7 +1134,7 @@ State 65
 
    12 literal_type: '[' array_length . ']' type
 
-    ']'  shift, and go to state 124
+    ']'  shift, and go to state 123
 
 
 State 66
@@ -1170,7 +1154,7 @@ State 67
     $default  reduce using rule 42 (type_spec_list)
 
     type_spec       go to state 39
-    type_spec_list  go to state 125
+    type_spec_list  go to state 124
 
 
 State 68
@@ -1197,7 +1181,7 @@ State 70
     $default  reduce using rule 49 (var_spec_list)
 
     var_spec         go to state 42
-    var_spec_list    go to state 126
+    var_spec_list    go to state 125
     identifier_list  go to state 18
 
 
@@ -1210,12 +1194,11 @@ State 71
 
 State 72
 
-    9 type: FUNC . function_signature
   110 literal: FUNC . function_signature block
 
     '('  shift, and go to state 21
 
-    function_signature   go to state 127
+    function_signature   go to state 126
     function_parameters  go to state 23
 
 
@@ -1224,10 +1207,6 @@ State 73
    11 literal_type: IDENTIFIER .
   106 operand: IDENTIFIER .
 
-    '('       reduce using rule 11 (literal_type)
-    '('       [reduce using rule 106 (operand)]
-    ')'       reduce using rule 11 (literal_type)
-    ')'       [reduce using rule 106 (operand)]
     '{'       reduce using rule 11 (literal_type)
     '{'       [reduce using rule 106 (operand)]
     $default  reduce using rule 106 (operand)
@@ -1272,11 +1251,6 @@ State 79
 
    99 unary_expression: '+' . unary_expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -1295,25 +1269,19 @@ State 79
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    unary_expression    go to state 128
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    unary_expression    go to state 127
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 80
 
   100 unary_expression: '-' . unary_expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -1332,25 +1300,19 @@ State 80
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    unary_expression    go to state 129
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    unary_expression    go to state 128
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 81
 
   102 unary_expression: '^' . unary_expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -1369,26 +1331,19 @@ State 81
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    unary_expression    go to state 130
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    unary_expression    go to state 129
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 82
 
-    8 type: '*' . type
   103 unary_expression: '*' . unary_expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -1407,25 +1362,19 @@ State 82
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 131
-    literal_type        go to state 87
-    unary_expression    go to state 132
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    unary_expression    go to state 130
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 83
 
   104 unary_expression: '&' . unary_expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -1444,26 +1393,19 @@ State 83
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    unary_expression    go to state 133
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    unary_expression    go to state 131
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 84
 
-    2 type: '(' . type ')'
   107 operand: '(' . expression ')'
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -1482,26 +1424,20 @@ State 84
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 134
-    literal_type        go to state 87
-    expression          go to state 135
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 132
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 85
 
   101 unary_expression: '!' . unary_expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -1520,34 +1456,23 @@ State 85
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    unary_expression    go to state 136
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    unary_expression    go to state 133
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 86
 
-  124 primary_expression: type . '(' expression ')'
+  118 composite_literal: literal_type . '{' element_list '}'
 
-    '('  shift, and go to state 137
+    '{'  shift, and go to state 134
 
 
 State 87
-
-   10 type: literal_type .
-  118 composite_literal: literal_type . '{' element_list '}'
-
-    '{'  shift, and go to state 138
-
-    $default  reduce using rule 10 (type)
-
-
-State 88
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -1570,96 +1495,92 @@ State 88
   116 expression_list: expression .
   117                | expression . ',' expression_list
 
-    OR           shift, and go to state 139
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
-    ','          shift, and go to state 157
+    OR           shift, and go to state 135
+    AND          shift, and go to state 136
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
+    ','          shift, and go to state 153
 
     $default  reduce using rule 116 (expression_list)
 
 
-State 89
+State 88
 
    77 expression: unary_expression .
 
     $default  reduce using rule 77 (expression)
 
 
-State 90
+State 89
 
   123 primary_expression: operand .
 
     $default  reduce using rule 123 (primary_expression)
 
 
-State 91
+State 90
 
   105 operand: literal .
 
     $default  reduce using rule 105 (operand)
 
 
-State 92
+State 91
 
   108 literal: basic_literal .
 
     $default  reduce using rule 108 (literal)
 
 
-State 93
+State 92
 
    48 var_spec: identifier_list '=' expression_list .
 
     $default  reduce using rule 48 (var_spec)
 
 
-State 94
+State 93
 
   109 literal: composite_literal .
 
     $default  reduce using rule 109 (literal)
 
 
-State 95
+State 94
 
    98 unary_expression: primary_expression .
-  125 primary_expression: primary_expression . '.' IDENTIFIER
-  126                   | primary_expression . '[' expression ']'
-  127                   | primary_expression . '[' optional_expression ':' optional_expression ']'
-  128                   | primary_expression . '[' optional_expression ':' expression ':' expression ']'
+  124 primary_expression: primary_expression . '.' IDENTIFIER
+  125                   | primary_expression . '[' expression ']'
+  126                   | primary_expression . '[' optional_expression ':' optional_expression ']'
+  127                   | primary_expression . '[' optional_expression ':' expression ':' expression ']'
+  128                   | primary_expression . '(' ')'
   129                   | primary_expression . '(' expression_list ')'
 
-    '('  shift, and go to state 158
-    '['  shift, and go to state 159
-    '.'  shift, and go to state 160
+    '('  shift, and go to state 154
+    '['  shift, and go to state 155
+    '.'  shift, and go to state 156
 
     $default  reduce using rule 98 (unary_expression)
 
 
-State 96
+State 95
 
    47 var_spec: identifier_list type '=' . expression_list
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -1678,19 +1599,18 @@ State 96
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 88
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    expression_list     go to state 161
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 87
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    expression_list     go to state 157
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
-State 97
+State 96
 
    26 function_parameter_list: type ',' . function_parameter_list
 
@@ -1709,46 +1629,41 @@ State 97
 
     type                     go to state 49
     literal_type             go to state 38
-    function_parameter_list  go to state 162
+    function_parameter_list  go to state 158
     identifier_list          go to state 51
 
 
-State 98
+State 97
 
    22 function_parameters: '(' function_parameter_list ')' .
 
     $default  reduce using rule 22 (function_parameters)
 
 
-State 99
+State 98
 
    23 function_parameters: '(' function_parameter_list ',' . ')'
 
-    ')'  shift, and go to state 163
+    ')'  shift, and go to state 159
 
 
-State 100
+State 99
 
    25 function_parameter_list: identifier_list type .
    27                        | identifier_list type . ',' function_parameter_list
 
-    ','  shift, and go to state 164
+    ','  shift, and go to state 160
 
     ','       [reduce using rule 25 (function_parameter_list)]
     $default  reduce using rule 25 (function_parameter_list)
 
 
-State 101
+State 100
 
    64 if_statement: IF . expression block
    65             | IF . expression block ELSE if_statement
    66             | IF . expression block ELSE block
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -1767,26 +1682,52 @@ State 101
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 165
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 161
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
+
+
+State 101
+
+   67 switch_statement: SWITCH . expression '{' switch_clause_list '}'
+
+    STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
+    MAP             shift, and go to state 31
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
+    '+'             shift, and go to state 79
+    '-'             shift, and go to state 80
+    '^'             shift, and go to state 81
+    '*'             shift, and go to state 82
+    '&'             shift, and go to state 83
+    '('             shift, and go to state 84
+    '['             shift, and go to state 35
+    '!'             shift, and go to state 85
+
+    literal_type        go to state 86
+    expression          go to state 162
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 102
 
-   67 switch_statement: SWITCH . expression '{' switch_clause_list '}'
+   72 return_statement: RETURN . expression_list
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -1805,81 +1746,37 @@ State 102
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 166
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 87
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    expression_list     go to state 163
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 103
-
-   72 return_statement: RETURN . expression_list
-
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
-    STRUCT          shift, and go to state 29
-    FUNC            shift, and go to state 72
-    MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 73
-    INT_LITERAL     shift, and go to state 74
-    FLOAT_LITERAL   shift, and go to state 75
-    BOOL_LITERAL    shift, and go to state 76
-    RUNE_LITERAL    shift, and go to state 77
-    STRING_LITERAL  shift, and go to state 78
-    '+'             shift, and go to state 79
-    '-'             shift, and go to state 80
-    '^'             shift, and go to state 81
-    '*'             shift, and go to state 82
-    '&'             shift, and go to state 83
-    '('             shift, and go to state 84
-    '['             shift, and go to state 35
-    '!'             shift, and go to state 85
-
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 88
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    expression_list     go to state 167
-    composite_literal   go to state 94
-    primary_expression  go to state 95
-
-
-State 104
 
    55 statement: BREAK .
 
     $default  reduce using rule 55 (statement)
 
 
-State 105
+State 104
 
    56 statement: CONTINUE .
 
     $default  reduce using rule 56 (statement)
 
 
-State 106
+State 105
 
    74 for_condition_statement: FOR . simple_statement ';' expression ';' simple_statement block
    75                        | FOR . expression block
    76                        | FOR . block
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -1901,84 +1798,83 @@ State 106
 
     $default  reduce using rule 59 (simple_statement)
 
-    type                go to state 86
-    literal_type        go to state 87
-    block               go to state 168
-    simple_statement    go to state 169
-    expression          go to state 170
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    expression_list     go to state 117
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    block               go to state 164
+    simple_statement    go to state 165
+    expression          go to state 166
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    expression_list     go to state 116
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
-State 107
+State 106
 
    58 statement: declaration .
 
     $default  reduce using rule 58 (statement)
 
 
-State 108
+State 107
 
    63 statement_list: statement . ';' statement_list
 
-    ';'  shift, and go to state 171
+    ';'  shift, and go to state 167
 
 
-State 109
+State 108
 
    51 statement: simple_statement .
 
     $default  reduce using rule 51 (statement)
 
 
-State 110
+State 109
 
    30 block: '{' statement_list . '}'
 
-    '}'  shift, and go to state 172
+    '}'  shift, and go to state 168
 
 
-State 111
+State 110
 
    52 statement: if_statement .
 
     $default  reduce using rule 52 (statement)
 
 
-State 112
+State 111
 
    53 statement: switch_statement .
 
     $default  reduce using rule 53 (statement)
 
 
-State 113
+State 112
 
    54 statement: return_statement .
 
     $default  reduce using rule 54 (statement)
 
 
-State 114
+State 113
 
    57 statement: for_statement .
 
     $default  reduce using rule 57 (statement)
 
 
-State 115
+State 114
 
    73 for_statement: for_condition_statement .
 
     $default  reduce using rule 73 (for_statement)
 
 
-State 116
+State 115
 
    60 simple_statement: expression .
    78 expression: expression . OR expression
@@ -2002,58 +1898,58 @@ State 116
   116 expression_list: expression .
   117                | expression . ',' expression_list
 
-    OR           shift, and go to state 139
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
-    ','          shift, and go to state 157
+    OR           shift, and go to state 135
+    AND          shift, and go to state 136
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
+    ','          shift, and go to state 153
 
     '='       reduce using rule 116 (expression_list)
     $default  reduce using rule 60 (simple_statement)
 
 
-State 117
+State 116
 
    61 simple_statement: expression_list . '=' expression_list
 
-    '='  shift, and go to state 173
+    '='  shift, and go to state 169
 
 
-State 118
+State 117
 
     2 type: '(' type . ')'
    24 function_parameter_list: type .
    26                        | type . ',' function_parameter_list
 
-    ')'  shift, and go to state 122
-    ','  shift, and go to state 97
+    ')'  shift, and go to state 121
+    ','  shift, and go to state 96
 
     ')'  [reduce using rule 24 (function_parameter_list)]
     ','  [reduce using rule 24 (function_parameter_list)]
 
 
-State 119
+State 118
 
    14 literal_type: STRUCT '{' struct_field_decls . '}'
 
-    '}'  shift, and go to state 174
+    '}'  shift, and go to state 170
 
 
-State 120
+State 119
 
    28 struct_field_decls: identifier_list . type ';'
    29                   | identifier_list . type ';' struct_field_decls
@@ -2071,32 +1967,32 @@ State 120
     '('         shift, and go to state 34
     '['         shift, and go to state 35
 
-    type          go to state 175
+    type          go to state 171
     literal_type  go to state 38
 
 
-State 121
+State 120
 
    15 literal_type: MAP '[' type . ']' type
 
-    ']'  shift, and go to state 176
+    ']'  shift, and go to state 172
 
 
-State 122
+State 121
 
     2 type: '(' type ')' .
 
     $default  reduce using rule 2 (type)
 
 
-State 123
+State 122
 
    13 literal_type: '[' ']' type .
 
     $default  reduce using rule 13 (literal_type)
 
 
-State 124
+State 123
 
    12 literal_type: '[' array_length ']' . type
 
@@ -2113,92 +2009,69 @@ State 124
     '('         shift, and go to state 34
     '['         shift, and go to state 35
 
-    type          go to state 177
+    type          go to state 173
     literal_type  go to state 38
 
 
-State 125
+State 124
 
    43 type_spec_list: type_spec ';' type_spec_list .
 
     $default  reduce using rule 43 (type_spec_list)
 
 
-State 126
+State 125
 
    50 var_spec_list: var_spec ';' var_spec_list .
 
     $default  reduce using rule 50 (var_spec_list)
 
 
-State 127
+State 126
 
-    9 type: FUNC function_signature .
   110 literal: FUNC function_signature . block
 
     '{'  shift, and go to state 52
 
-    $default  reduce using rule 9 (type)
-
-    block  go to state 178
+    block  go to state 174
 
 
-State 128
+State 127
 
    99 unary_expression: '+' unary_expression .
 
     $default  reduce using rule 99 (unary_expression)
 
 
-State 129
+State 128
 
   100 unary_expression: '-' unary_expression .
 
     $default  reduce using rule 100 (unary_expression)
 
 
-State 130
+State 129
 
   102 unary_expression: '^' unary_expression .
 
     $default  reduce using rule 102 (unary_expression)
 
 
-State 131
-
-    8 type: '*' type .
-  124 primary_expression: type . '(' expression ')'
-
-    '('  shift, and go to state 137
-
-    '('       [reduce using rule 8 (type)]
-    $default  reduce using rule 8 (type)
-
-
-State 132
+State 130
 
   103 unary_expression: '*' unary_expression .
 
     $default  reduce using rule 103 (unary_expression)
 
 
-State 133
+State 131
 
   104 unary_expression: '&' unary_expression .
 
     $default  reduce using rule 104 (unary_expression)
 
 
-State 134
-
-    2 type: '(' type . ')'
-  124 primary_expression: type . '(' expression ')'
-
-    '('  shift, and go to state 137
-    ')'  shift, and go to state 122
-
-
-State 135
+State 132
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -2220,43 +2093,72 @@ State 135
    95           | expression . '%' expression
   107 operand: '(' expression . ')'
 
-    OR           shift, and go to state 139
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
-    ')'          shift, and go to state 179
+    OR           shift, and go to state 135
+    AND          shift, and go to state 136
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
+    ')'          shift, and go to state 175
 
 
-State 136
+State 133
 
   101 unary_expression: '!' unary_expression .
 
     $default  reduce using rule 101 (unary_expression)
 
 
-State 137
+State 134
 
-  124 primary_expression: type '(' . expression ')'
+  118 composite_literal: literal_type '{' . element_list '}'
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
+    STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
+    MAP             shift, and go to state 31
+    IDENTIFIER      shift, and go to state 176
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
+    '+'             shift, and go to state 79
+    '-'             shift, and go to state 80
+    '^'             shift, and go to state 81
+    '*'             shift, and go to state 82
+    '&'             shift, and go to state 83
+    '('             shift, and go to state 84
+    '['             shift, and go to state 35
+    '!'             shift, and go to state 85
+
+    literal_type        go to state 86
+    expression          go to state 177
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    element_list        go to state 178
+    keyed_element       go to state 179
+    primary_expression  go to state 94
+
+
+State 135
+
+   78 expression: expression OR . expression
+
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2275,30 +2177,88 @@ State 137
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
+    literal_type        go to state 86
     expression          go to state 180
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
+
+
+State 136
+
+   79 expression: expression AND . expression
+
+    STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
+    MAP             shift, and go to state 31
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
+    '+'             shift, and go to state 79
+    '-'             shift, and go to state 80
+    '^'             shift, and go to state 81
+    '*'             shift, and go to state 82
+    '&'             shift, and go to state 83
+    '('             shift, and go to state 84
+    '['             shift, and go to state 35
+    '!'             shift, and go to state 85
+
+    literal_type        go to state 86
+    expression          go to state 181
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
+
+
+State 137
+
+   80 expression: expression EQ . expression
+
+    STRUCT          shift, and go to state 29
+    FUNC            shift, and go to state 72
+    MAP             shift, and go to state 31
+    IDENTIFIER      shift, and go to state 73
+    INT_LITERAL     shift, and go to state 74
+    FLOAT_LITERAL   shift, and go to state 75
+    BOOL_LITERAL    shift, and go to state 76
+    RUNE_LITERAL    shift, and go to state 77
+    STRING_LITERAL  shift, and go to state 78
+    '+'             shift, and go to state 79
+    '-'             shift, and go to state 80
+    '^'             shift, and go to state 81
+    '*'             shift, and go to state 82
+    '&'             shift, and go to state 83
+    '('             shift, and go to state 84
+    '['             shift, and go to state 35
+    '!'             shift, and go to state 85
+
+    literal_type        go to state 86
+    expression          go to state 182
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 138
 
-  118 composite_literal: literal_type '{' . element_list '}'
+   81 expression: expression NEQ . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 181
+    IDENTIFIER      shift, and go to state 73
     INT_LITERAL     shift, and go to state 74
     FLOAT_LITERAL   shift, and go to state 75
     BOOL_LITERAL    shift, and go to state 76
@@ -2313,28 +2273,20 @@ State 138
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 182
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    element_list        go to state 183
-    keyed_element       go to state 184
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 183
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 139
 
-   78 expression: expression OR . expression
+   82 expression: expression LTE . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2353,26 +2305,20 @@ State 139
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 185
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 184
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 140
 
-   79 expression: expression AND . expression
+   83 expression: expression GTE . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2391,26 +2337,20 @@ State 140
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 186
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 185
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 141
 
-   80 expression: expression EQ . expression
+   84 expression: expression SHIFT_LEFT . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2429,26 +2369,20 @@ State 141
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 187
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 186
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 142
 
-   81 expression: expression NEQ . expression
+   85 expression: expression SHIFT_RIGHT . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2467,26 +2401,20 @@ State 142
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 188
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 187
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 143
 
-   82 expression: expression LTE . expression
+   86 expression: expression '<' . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2505,26 +2433,20 @@ State 143
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 189
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 188
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 144
 
-   83 expression: expression GTE . expression
+   87 expression: expression '>' . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2543,26 +2465,20 @@ State 144
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 190
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 189
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 145
 
-   84 expression: expression SHIFT_LEFT . expression
+   88 expression: expression '+' . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2581,26 +2497,20 @@ State 145
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 191
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 190
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 146
 
-   85 expression: expression SHIFT_RIGHT . expression
+   89 expression: expression '-' . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2619,26 +2529,20 @@ State 146
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 192
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 191
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 147
 
-   86 expression: expression '<' . expression
+   90 expression: expression '|' . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2657,26 +2561,20 @@ State 147
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 193
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 192
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 148
 
-   87 expression: expression '>' . expression
+   91 expression: expression '^' . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2695,26 +2593,20 @@ State 148
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 194
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 193
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 149
 
-   88 expression: expression '+' . expression
+   93 expression: expression '*' . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2733,26 +2625,20 @@ State 149
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 195
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 194
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 150
 
-   89 expression: expression '-' . expression
+   94 expression: expression '/' . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2771,26 +2657,20 @@ State 150
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 196
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 195
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 151
 
-   90 expression: expression '|' . expression
+   95 expression: expression '%' . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2809,26 +2689,20 @@ State 151
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 197
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 196
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 152
 
-   91 expression: expression '^' . expression
+   92 expression: expression '&' . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2847,26 +2721,20 @@ State 152
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 198
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 197
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 153
 
-   93 expression: expression '*' . expression
+  117 expression_list: expression ',' . expression_list
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2885,26 +2753,22 @@ State 153
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 199
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 87
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    expression_list     go to state 198
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 154
 
-   94 expression: expression '/' . expression
+  128 primary_expression: primary_expression '(' . ')'
+  129                   | primary_expression '(' . expression_list ')'
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -2920,185 +2784,27 @@ State 154
     '*'             shift, and go to state 82
     '&'             shift, and go to state 83
     '('             shift, and go to state 84
+    ')'             shift, and go to state 199
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 200
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 87
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    expression_list     go to state 200
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
 State 155
 
-   95 expression: expression '%' . expression
+  125 primary_expression: primary_expression '[' . expression ']'
+  126                   | primary_expression '[' . optional_expression ':' optional_expression ']'
+  127                   | primary_expression '[' . optional_expression ':' expression ':' expression ']'
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
-    STRUCT          shift, and go to state 29
-    FUNC            shift, and go to state 72
-    MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 73
-    INT_LITERAL     shift, and go to state 74
-    FLOAT_LITERAL   shift, and go to state 75
-    BOOL_LITERAL    shift, and go to state 76
-    RUNE_LITERAL    shift, and go to state 77
-    STRING_LITERAL  shift, and go to state 78
-    '+'             shift, and go to state 79
-    '-'             shift, and go to state 80
-    '^'             shift, and go to state 81
-    '*'             shift, and go to state 82
-    '&'             shift, and go to state 83
-    '('             shift, and go to state 84
-    '['             shift, and go to state 35
-    '!'             shift, and go to state 85
-
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 201
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
-
-
-State 156
-
-   92 expression: expression '&' . expression
-
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
-    STRUCT          shift, and go to state 29
-    FUNC            shift, and go to state 72
-    MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 73
-    INT_LITERAL     shift, and go to state 74
-    FLOAT_LITERAL   shift, and go to state 75
-    BOOL_LITERAL    shift, and go to state 76
-    RUNE_LITERAL    shift, and go to state 77
-    STRING_LITERAL  shift, and go to state 78
-    '+'             shift, and go to state 79
-    '-'             shift, and go to state 80
-    '^'             shift, and go to state 81
-    '*'             shift, and go to state 82
-    '&'             shift, and go to state 83
-    '('             shift, and go to state 84
-    '['             shift, and go to state 35
-    '!'             shift, and go to state 85
-
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 202
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
-
-
-State 157
-
-  117 expression_list: expression ',' . expression_list
-
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
-    STRUCT          shift, and go to state 29
-    FUNC            shift, and go to state 72
-    MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 73
-    INT_LITERAL     shift, and go to state 74
-    FLOAT_LITERAL   shift, and go to state 75
-    BOOL_LITERAL    shift, and go to state 76
-    RUNE_LITERAL    shift, and go to state 77
-    STRING_LITERAL  shift, and go to state 78
-    '+'             shift, and go to state 79
-    '-'             shift, and go to state 80
-    '^'             shift, and go to state 81
-    '*'             shift, and go to state 82
-    '&'             shift, and go to state 83
-    '('             shift, and go to state 84
-    '['             shift, and go to state 35
-    '!'             shift, and go to state 85
-
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 88
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    expression_list     go to state 203
-    composite_literal   go to state 94
-    primary_expression  go to state 95
-
-
-State 158
-
-  129 primary_expression: primary_expression '(' . expression_list ')'
-
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
-    STRUCT          shift, and go to state 29
-    FUNC            shift, and go to state 72
-    MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 73
-    INT_LITERAL     shift, and go to state 74
-    FLOAT_LITERAL   shift, and go to state 75
-    BOOL_LITERAL    shift, and go to state 76
-    RUNE_LITERAL    shift, and go to state 77
-    STRING_LITERAL  shift, and go to state 78
-    '+'             shift, and go to state 79
-    '-'             shift, and go to state 80
-    '^'             shift, and go to state 81
-    '*'             shift, and go to state 82
-    '&'             shift, and go to state 83
-    '('             shift, and go to state 84
-    '['             shift, and go to state 35
-    '!'             shift, and go to state 85
-
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 88
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    expression_list     go to state 204
-    composite_literal   go to state 94
-    primary_expression  go to state 95
-
-
-State 159
-
-  126 primary_expression: primary_expression '[' . expression ']'
-  127                   | primary_expression '[' . optional_expression ':' optional_expression ']'
-  128                   | primary_expression '[' . optional_expression ':' expression ':' expression ']'
-
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -3119,47 +2825,46 @@ State 159
 
     $default  reduce using rule 97 (optional_expression)
 
-    type                 go to state 86
-    literal_type         go to state 87
-    expression           go to state 205
-    optional_expression  go to state 206
-    unary_expression     go to state 89
-    operand              go to state 90
-    literal              go to state 91
-    basic_literal        go to state 92
-    composite_literal    go to state 94
-    primary_expression   go to state 95
+    literal_type         go to state 86
+    expression           go to state 201
+    optional_expression  go to state 202
+    unary_expression     go to state 88
+    operand              go to state 89
+    literal              go to state 90
+    basic_literal        go to state 91
+    composite_literal    go to state 93
+    primary_expression   go to state 94
 
 
-State 160
+State 156
 
-  125 primary_expression: primary_expression '.' . IDENTIFIER
+  124 primary_expression: primary_expression '.' . IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 207
+    IDENTIFIER  shift, and go to state 203
 
 
-State 161
+State 157
 
    47 var_spec: identifier_list type '=' expression_list .
 
     $default  reduce using rule 47 (var_spec)
 
 
-State 162
+State 158
 
    26 function_parameter_list: type ',' function_parameter_list .
 
     $default  reduce using rule 26 (function_parameter_list)
 
 
-State 163
+State 159
 
    23 function_parameters: '(' function_parameter_list ',' ')' .
 
     $default  reduce using rule 23 (function_parameters)
 
 
-State 164
+State 160
 
    27 function_parameter_list: identifier_list type ',' . function_parameter_list
 
@@ -3178,11 +2883,11 @@ State 164
 
     type                     go to state 49
     literal_type             go to state 38
-    function_parameter_list  go to state 208
+    function_parameter_list  go to state 204
     identifier_list          go to state 51
 
 
-State 165
+State 161
 
    64 if_statement: IF expression . block
    65             | IF expression . block ELSE if_statement
@@ -3206,30 +2911,30 @@ State 165
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    OR           shift, and go to state 139
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    OR           shift, and go to state 135
+    AND          shift, and go to state 136
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
     '{'          shift, and go to state 52
 
-    block  go to state 209
+    block  go to state 205
 
 
-State 166
+State 162
 
    67 switch_statement: SWITCH expression . '{' switch_clause_list '}'
    78 expression: expression . OR expression
@@ -3251,49 +2956,49 @@ State 166
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    OR           shift, and go to state 139
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
-    '{'          shift, and go to state 210
+    OR           shift, and go to state 135
+    AND          shift, and go to state 136
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
+    '{'          shift, and go to state 206
 
 
-State 167
+State 163
 
    72 return_statement: RETURN expression_list .
 
     $default  reduce using rule 72 (return_statement)
 
 
-State 168
+State 164
 
    76 for_condition_statement: FOR block .
 
     $default  reduce using rule 76 (for_condition_statement)
 
 
-State 169
+State 165
 
    74 for_condition_statement: FOR simple_statement . ';' expression ';' simple_statement block
 
-    ';'  shift, and go to state 211
+    ';'  shift, and go to state 207
 
 
-State 170
+State 166
 
    60 simple_statement: expression .
    75 for_condition_statement: FOR expression . block
@@ -3318,53 +3023,48 @@ State 170
   116 expression_list: expression .
   117                | expression . ',' expression_list
 
-    OR           shift, and go to state 139
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    OR           shift, and go to state 135
+    AND          shift, and go to state 136
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
     '{'          shift, and go to state 52
-    ','          shift, and go to state 157
+    ','          shift, and go to state 153
 
     '='       reduce using rule 116 (expression_list)
     $default  reduce using rule 60 (simple_statement)
 
-    block  go to state 212
+    block  go to state 208
 
 
-State 171
+State 167
 
    63 statement_list: statement ';' . statement_list
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
     TYPE            shift, and go to state 2
     VAR             shift, and go to state 3
-    IF              shift, and go to state 101
-    SWITCH          shift, and go to state 102
-    RETURN          shift, and go to state 103
-    BREAK           shift, and go to state 104
-    CONTINUE        shift, and go to state 105
-    FOR             shift, and go to state 106
+    IF              shift, and go to state 100
+    SWITCH          shift, and go to state 101
+    RETURN          shift, and go to state 102
+    BREAK           shift, and go to state 103
+    CONTINUE        shift, and go to state 104
+    FOR             shift, and go to state 105
     IDENTIFIER      shift, and go to state 73
     INT_LITERAL     shift, and go to state 74
     FLOAT_LITERAL   shift, and go to state 75
@@ -3383,45 +3083,39 @@ State 171
     ';'       reduce using rule 59 (simple_statement)
     $default  reduce using rule 62 (statement_list)
 
-    type                     go to state 86
-    literal_type             go to state 87
-    declaration              go to state 107
+    literal_type             go to state 86
+    declaration              go to state 106
     type_decl                go to state 9
     var_decl                 go to state 10
-    statement                go to state 108
-    simple_statement         go to state 109
-    statement_list           go to state 213
-    if_statement             go to state 111
-    switch_statement         go to state 112
-    return_statement         go to state 113
-    for_statement            go to state 114
-    for_condition_statement  go to state 115
-    expression               go to state 116
-    unary_expression         go to state 89
-    operand                  go to state 90
-    literal                  go to state 91
-    basic_literal            go to state 92
-    expression_list          go to state 117
-    composite_literal        go to state 94
-    primary_expression       go to state 95
+    statement                go to state 107
+    simple_statement         go to state 108
+    statement_list           go to state 209
+    if_statement             go to state 110
+    switch_statement         go to state 111
+    return_statement         go to state 112
+    for_statement            go to state 113
+    for_condition_statement  go to state 114
+    expression               go to state 115
+    unary_expression         go to state 88
+    operand                  go to state 89
+    literal                  go to state 90
+    basic_literal            go to state 91
+    expression_list          go to state 116
+    composite_literal        go to state 93
+    primary_expression       go to state 94
 
 
-State 172
+State 168
 
    30 block: '{' statement_list '}' .
 
     $default  reduce using rule 30 (block)
 
 
-State 173
+State 169
 
    61 simple_statement: expression_list '=' . expression_list
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -3440,34 +3134,33 @@ State 173
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 88
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    expression_list     go to state 214
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 87
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    expression_list     go to state 210
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
-State 174
+State 170
 
    14 literal_type: STRUCT '{' struct_field_decls '}' .
 
     $default  reduce using rule 14 (literal_type)
 
 
-State 175
+State 171
 
    28 struct_field_decls: identifier_list type . ';'
    29                   | identifier_list type . ';' struct_field_decls
 
-    ';'  shift, and go to state 215
+    ';'  shift, and go to state 211
 
 
-State 176
+State 172
 
    15 literal_type: MAP '[' type ']' . type
 
@@ -3484,89 +3177,44 @@ State 176
     '('         shift, and go to state 34
     '['         shift, and go to state 35
 
-    type          go to state 216
+    type          go to state 212
     literal_type  go to state 38
 
 
-State 177
+State 173
 
    12 literal_type: '[' array_length ']' type .
 
     $default  reduce using rule 12 (literal_type)
 
 
-State 178
+State 174
 
   110 literal: FUNC function_signature block .
 
     $default  reduce using rule 110 (literal)
 
 
-State 179
+State 175
 
   107 operand: '(' expression ')' .
 
     $default  reduce using rule 107 (operand)
 
 
-State 180
-
-   78 expression: expression . OR expression
-   79           | expression . AND expression
-   80           | expression . EQ expression
-   81           | expression . NEQ expression
-   82           | expression . LTE expression
-   83           | expression . GTE expression
-   84           | expression . SHIFT_LEFT expression
-   85           | expression . SHIFT_RIGHT expression
-   86           | expression . '<' expression
-   87           | expression . '>' expression
-   88           | expression . '+' expression
-   89           | expression . '-' expression
-   90           | expression . '|' expression
-   91           | expression . '^' expression
-   92           | expression . '&' expression
-   93           | expression . '*' expression
-   94           | expression . '/' expression
-   95           | expression . '%' expression
-  124 primary_expression: type '(' expression . ')'
-
-    OR           shift, and go to state 139
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
-    ')'          shift, and go to state 217
-
-
-State 181
+State 176
 
    11 literal_type: IDENTIFIER .
   106 operand: IDENTIFIER .
   121 keyed_element: IDENTIFIER . ':' expression
 
-    ':'  shift, and go to state 218
+    ':'  shift, and go to state 213
 
-    '('       reduce using rule 11 (literal_type)
-    '('       [reduce using rule 106 (operand)]
     '{'       reduce using rule 11 (literal_type)
     $default  reduce using rule 106 (operand)
 
 
-State 182
+State 177
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -3588,46 +3236,46 @@ State 182
    95           | expression . '%' expression
   122 keyed_element: expression .
 
-    OR           shift, and go to state 139
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    OR           shift, and go to state 135
+    AND          shift, and go to state 136
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 122 (keyed_element)
 
 
-State 183
+State 178
 
   118 composite_literal: literal_type '{' element_list . '}'
 
-    '}'  shift, and go to state 219
+    '}'  shift, and go to state 214
 
 
-State 184
+State 179
 
   119 element_list: keyed_element .
   120             | keyed_element . ',' element_list
 
-    ','  shift, and go to state 220
+    ','  shift, and go to state 215
 
     $default  reduce using rule 119 (element_list)
 
 
-State 185
+State 180
 
    78 expression: expression . OR expression
    78           | expression OR expression .
@@ -3649,28 +3297,28 @@ State 185
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    AND          shift, and go to state 136
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 78 (expression)
 
 
-State 186
+State 181
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -3692,27 +3340,27 @@ State 186
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 79 (expression)
 
 
-State 187
+State 182
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -3734,21 +3382,21 @@ State 187
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 80 (expression)
 
 
-State 188
+State 183
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -3770,21 +3418,21 @@ State 188
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 81 (expression)
 
 
-State 189
+State 184
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -3806,21 +3454,21 @@ State 189
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 82 (expression)
 
 
-State 190
+State 185
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -3842,21 +3490,21 @@ State 190
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 83 (expression)
 
 
-State 191
+State 186
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -3881,7 +3529,7 @@ State 191
     $default  reduce using rule 84 (expression)
 
 
-State 192
+State 187
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -3906,7 +3554,7 @@ State 192
     $default  reduce using rule 85 (expression)
 
 
-State 193
+State 188
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -3928,21 +3576,21 @@ State 193
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 86 (expression)
 
 
-State 194
+State 189
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -3964,21 +3612,21 @@ State 194
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 87 (expression)
 
 
-State 195
+State 190
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -4000,17 +3648,17 @@ State 195
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 88 (expression)
 
 
-State 196
+State 191
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -4032,17 +3680,17 @@ State 196
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 89 (expression)
 
 
-State 197
+State 192
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -4064,17 +3712,17 @@ State 197
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 90 (expression)
 
 
-State 198
+State 193
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -4096,17 +3744,17 @@ State 198
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 91 (expression)
 
 
-State 199
+State 194
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -4131,7 +3779,7 @@ State 199
     $default  reduce using rule 93 (expression)
 
 
-State 200
+State 195
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -4156,7 +3804,7 @@ State 200
     $default  reduce using rule 94 (expression)
 
 
-State 201
+State 196
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -4181,7 +3829,7 @@ State 201
     $default  reduce using rule 95 (expression)
 
 
-State 202
+State 197
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -4206,21 +3854,28 @@ State 202
     $default  reduce using rule 92 (expression)
 
 
-State 203
+State 198
 
   117 expression_list: expression ',' expression_list .
 
     $default  reduce using rule 117 (expression_list)
 
 
-State 204
+State 199
+
+  128 primary_expression: primary_expression '(' ')' .
+
+    $default  reduce using rule 128 (primary_expression)
+
+
+State 200
 
   129 primary_expression: primary_expression '(' expression_list . ')'
 
-    ')'  shift, and go to state 221
+    ')'  shift, and go to state 216
 
 
-State 205
+State 201
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -4241,86 +3896,81 @@ State 205
    94           | expression . '/' expression
    95           | expression . '%' expression
    96 optional_expression: expression .
-  126 primary_expression: primary_expression '[' expression . ']'
+  125 primary_expression: primary_expression '[' expression . ']'
 
-    OR           shift, and go to state 139
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
-    ']'          shift, and go to state 222
+    OR           shift, and go to state 135
+    AND          shift, and go to state 136
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
+    ']'          shift, and go to state 217
 
     $default  reduce using rule 96 (optional_expression)
 
 
-State 206
+State 202
 
-  127 primary_expression: primary_expression '[' optional_expression . ':' optional_expression ']'
-  128                   | primary_expression '[' optional_expression . ':' expression ':' expression ']'
+  126 primary_expression: primary_expression '[' optional_expression . ':' optional_expression ']'
+  127                   | primary_expression '[' optional_expression . ':' expression ':' expression ']'
 
-    ':'  shift, and go to state 223
-
-
-State 207
-
-  125 primary_expression: primary_expression '.' IDENTIFIER .
-
-    $default  reduce using rule 125 (primary_expression)
+    ':'  shift, and go to state 218
 
 
-State 208
+State 203
+
+  124 primary_expression: primary_expression '.' IDENTIFIER .
+
+    $default  reduce using rule 124 (primary_expression)
+
+
+State 204
 
    27 function_parameter_list: identifier_list type ',' function_parameter_list .
 
     $default  reduce using rule 27 (function_parameter_list)
 
 
-State 209
+State 205
 
    64 if_statement: IF expression block .
    65             | IF expression block . ELSE if_statement
    66             | IF expression block . ELSE block
 
-    ELSE  shift, and go to state 224
+    ELSE  shift, and go to state 219
 
     $default  reduce using rule 64 (if_statement)
 
 
-State 210
+State 206
 
    67 switch_statement: SWITCH expression '{' . switch_clause_list '}'
 
-    CASE     shift, and go to state 225
-    DEFAULT  shift, and go to state 226
+    CASE     shift, and go to state 220
+    DEFAULT  shift, and go to state 221
 
     $default  reduce using rule 70 (switch_clause_list)
 
-    switch_clause       go to state 227
-    switch_clause_list  go to state 228
+    switch_clause       go to state 222
+    switch_clause_list  go to state 223
 
 
-State 211
+State 207
 
    74 for_condition_statement: FOR simple_statement ';' . expression ';' simple_statement block
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -4339,39 +3989,38 @@ State 211
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 229
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 224
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
-State 212
+State 208
 
    75 for_condition_statement: FOR expression block .
 
     $default  reduce using rule 75 (for_condition_statement)
 
 
-State 213
+State 209
 
    63 statement_list: statement ';' statement_list .
 
     $default  reduce using rule 63 (statement_list)
 
 
-State 214
+State 210
 
    61 simple_statement: expression_list '=' expression_list .
 
     $default  reduce using rule 61 (simple_statement)
 
 
-State 215
+State 211
 
    28 struct_field_decls: identifier_list type ';' .
    29                   | identifier_list type ';' . struct_field_decls
@@ -4380,33 +4029,21 @@ State 215
 
     $default  reduce using rule 28 (struct_field_decls)
 
-    struct_field_decls  go to state 230
-    identifier_list     go to state 120
+    struct_field_decls  go to state 225
+    identifier_list     go to state 119
 
 
-State 216
+State 212
 
    15 literal_type: MAP '[' type ']' type .
 
     $default  reduce using rule 15 (literal_type)
 
 
-State 217
-
-  124 primary_expression: type '(' expression ')' .
-
-    $default  reduce using rule 124 (primary_expression)
-
-
-State 218
+State 213
 
   121 keyed_element: IDENTIFIER ':' . expression
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -4425,37 +4062,31 @@ State 218
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 231
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 226
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
-State 219
+State 214
 
   118 composite_literal: literal_type '{' element_list '}' .
 
     $default  reduce using rule 118 (composite_literal)
 
 
-State 220
+State 215
 
   120 element_list: keyed_element ',' . element_list
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
-    IDENTIFIER      shift, and go to state 181
+    IDENTIFIER      shift, and go to state 176
     INT_LITERAL     shift, and go to state 74
     FLOAT_LITERAL   shift, and go to state 75
     BOOL_LITERAL    shift, and go to state 76
@@ -4470,43 +4101,37 @@ State 220
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 182
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    element_list        go to state 232
-    keyed_element       go to state 184
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 177
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    element_list        go to state 227
+    keyed_element       go to state 179
+    primary_expression  go to state 94
 
 
-State 221
+State 216
 
   129 primary_expression: primary_expression '(' expression_list ')' .
 
     $default  reduce using rule 129 (primary_expression)
 
 
-State 222
+State 217
 
-  126 primary_expression: primary_expression '[' expression ']' .
+  125 primary_expression: primary_expression '[' expression ']' .
 
-    $default  reduce using rule 126 (primary_expression)
+    $default  reduce using rule 125 (primary_expression)
 
 
-State 223
+State 218
 
-  127 primary_expression: primary_expression '[' optional_expression ':' . optional_expression ']'
-  128                   | primary_expression '[' optional_expression ':' . expression ':' expression ']'
+  126 primary_expression: primary_expression '[' optional_expression ':' . optional_expression ']'
+  127                   | primary_expression '[' optional_expression ':' . expression ':' expression ']'
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -4527,39 +4152,33 @@ State 223
 
     $default  reduce using rule 97 (optional_expression)
 
-    type                 go to state 86
-    literal_type         go to state 87
-    expression           go to state 233
-    optional_expression  go to state 234
-    unary_expression     go to state 89
-    operand              go to state 90
-    literal              go to state 91
-    basic_literal        go to state 92
-    composite_literal    go to state 94
-    primary_expression   go to state 95
+    literal_type         go to state 86
+    expression           go to state 228
+    optional_expression  go to state 229
+    unary_expression     go to state 88
+    operand              go to state 89
+    literal              go to state 90
+    basic_literal        go to state 91
+    composite_literal    go to state 93
+    primary_expression   go to state 94
 
 
-State 224
+State 219
 
    65 if_statement: IF expression block ELSE . if_statement
    66             | IF expression block ELSE . block
 
-    IF   shift, and go to state 101
+    IF   shift, and go to state 100
     '{'  shift, and go to state 52
 
-    block         go to state 235
-    if_statement  go to state 236
+    block         go to state 230
+    if_statement  go to state 231
 
 
-State 225
+State 220
 
    68 switch_clause: CASE . expression_list ':' statement_list
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -4578,46 +4197,45 @@ State 225
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 88
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    expression_list     go to state 237
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 87
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    expression_list     go to state 232
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
-State 226
+State 221
 
    69 switch_clause: DEFAULT . ':' statement_list
 
-    ':'  shift, and go to state 238
+    ':'  shift, and go to state 233
 
 
-State 227
+State 222
 
    71 switch_clause_list: switch_clause . switch_clause_list
 
-    CASE     shift, and go to state 225
-    DEFAULT  shift, and go to state 226
+    CASE     shift, and go to state 220
+    DEFAULT  shift, and go to state 221
 
     $default  reduce using rule 70 (switch_clause_list)
 
-    switch_clause       go to state 227
-    switch_clause_list  go to state 239
+    switch_clause       go to state 222
+    switch_clause_list  go to state 234
 
 
-State 228
+State 223
 
    67 switch_statement: SWITCH expression '{' switch_clause_list . '}'
 
-    '}'  shift, and go to state 240
+    '}'  shift, and go to state 235
 
 
-State 229
+State 224
 
    74 for_condition_statement: FOR simple_statement ';' expression . ';' simple_statement block
    78 expression: expression . OR expression
@@ -4639,35 +4257,35 @@ State 229
    94           | expression . '/' expression
    95           | expression . '%' expression
 
-    OR           shift, and go to state 139
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
-    ';'          shift, and go to state 241
+    OR           shift, and go to state 135
+    AND          shift, and go to state 136
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
+    ';'          shift, and go to state 236
 
 
-State 230
+State 225
 
    29 struct_field_decls: identifier_list type ';' struct_field_decls .
 
     $default  reduce using rule 29 (struct_field_decls)
 
 
-State 231
+State 226
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -4689,36 +4307,36 @@ State 231
    95           | expression . '%' expression
   121 keyed_element: IDENTIFIER ':' expression .
 
-    OR           shift, and go to state 139
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
+    OR           shift, and go to state 135
+    AND          shift, and go to state 136
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
 
     $default  reduce using rule 121 (keyed_element)
 
 
-State 232
+State 227
 
   120 element_list: keyed_element ',' element_list .
 
     $default  reduce using rule 120 (element_list)
 
 
-State 233
+State 228
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -4739,79 +4357,74 @@ State 233
    94           | expression . '/' expression
    95           | expression . '%' expression
    96 optional_expression: expression .
-  128 primary_expression: primary_expression '[' optional_expression ':' expression . ':' expression ']'
+  127 primary_expression: primary_expression '[' optional_expression ':' expression . ':' expression ']'
 
-    OR           shift, and go to state 139
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
-    ':'          shift, and go to state 242
+    OR           shift, and go to state 135
+    AND          shift, and go to state 136
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
+    ':'          shift, and go to state 237
 
     $default  reduce using rule 96 (optional_expression)
 
 
-State 234
+State 229
 
-  127 primary_expression: primary_expression '[' optional_expression ':' optional_expression . ']'
+  126 primary_expression: primary_expression '[' optional_expression ':' optional_expression . ']'
 
-    ']'  shift, and go to state 243
+    ']'  shift, and go to state 238
 
 
-State 235
+State 230
 
    66 if_statement: IF expression block ELSE block .
 
     $default  reduce using rule 66 (if_statement)
 
 
-State 236
+State 231
 
    65 if_statement: IF expression block ELSE if_statement .
 
     $default  reduce using rule 65 (if_statement)
 
 
-State 237
+State 232
 
    68 switch_clause: CASE expression_list . ':' statement_list
 
-    ':'  shift, and go to state 244
+    ':'  shift, and go to state 239
 
 
-State 238
+State 233
 
    69 switch_clause: DEFAULT ':' . statement_list
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
     TYPE            shift, and go to state 2
     VAR             shift, and go to state 3
-    IF              shift, and go to state 101
-    SWITCH          shift, and go to state 102
-    RETURN          shift, and go to state 103
-    BREAK           shift, and go to state 104
-    CONTINUE        shift, and go to state 105
-    FOR             shift, and go to state 106
+    IF              shift, and go to state 100
+    SWITCH          shift, and go to state 101
+    RETURN          shift, and go to state 102
+    BREAK           shift, and go to state 103
+    CONTINUE        shift, and go to state 104
+    FOR             shift, and go to state 105
     IDENTIFIER      shift, and go to state 73
     INT_LITERAL     shift, and go to state 74
     FLOAT_LITERAL   shift, and go to state 75
@@ -4830,52 +4443,46 @@ State 238
     ';'       reduce using rule 59 (simple_statement)
     $default  reduce using rule 62 (statement_list)
 
-    type                     go to state 86
-    literal_type             go to state 87
-    declaration              go to state 107
+    literal_type             go to state 86
+    declaration              go to state 106
     type_decl                go to state 9
     var_decl                 go to state 10
-    statement                go to state 108
-    simple_statement         go to state 109
-    statement_list           go to state 245
-    if_statement             go to state 111
-    switch_statement         go to state 112
-    return_statement         go to state 113
-    for_statement            go to state 114
-    for_condition_statement  go to state 115
-    expression               go to state 116
-    unary_expression         go to state 89
-    operand                  go to state 90
-    literal                  go to state 91
-    basic_literal            go to state 92
-    expression_list          go to state 117
-    composite_literal        go to state 94
-    primary_expression       go to state 95
+    statement                go to state 107
+    simple_statement         go to state 108
+    statement_list           go to state 240
+    if_statement             go to state 110
+    switch_statement         go to state 111
+    return_statement         go to state 112
+    for_statement            go to state 113
+    for_condition_statement  go to state 114
+    expression               go to state 115
+    unary_expression         go to state 88
+    operand                  go to state 89
+    literal                  go to state 90
+    basic_literal            go to state 91
+    expression_list          go to state 116
+    composite_literal        go to state 93
+    primary_expression       go to state 94
 
 
-State 239
+State 234
 
    71 switch_clause_list: switch_clause switch_clause_list .
 
     $default  reduce using rule 71 (switch_clause_list)
 
 
-State 240
+State 235
 
    67 switch_statement: SWITCH expression '{' switch_clause_list '}' .
 
     $default  reduce using rule 67 (switch_statement)
 
 
-State 241
+State 236
 
    74 for_condition_statement: FOR simple_statement ';' expression ';' . simple_statement block
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -4896,28 +4503,22 @@ State 241
 
     $default  reduce using rule 59 (simple_statement)
 
-    type                go to state 86
-    literal_type        go to state 87
-    simple_statement    go to state 246
-    expression          go to state 116
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    expression_list     go to state 117
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    simple_statement    go to state 241
+    expression          go to state 115
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    expression_list     go to state 116
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
-State 242
+State 237
 
-  128 primary_expression: primary_expression '[' optional_expression ':' expression ':' . expression ']'
+  127 primary_expression: primary_expression '[' optional_expression ':' expression ':' . expression ']'
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
@@ -4936,44 +4537,38 @@ State 242
     '['             shift, and go to state 35
     '!'             shift, and go to state 85
 
-    type                go to state 86
-    literal_type        go to state 87
-    expression          go to state 247
-    unary_expression    go to state 89
-    operand             go to state 90
-    literal             go to state 91
-    basic_literal       go to state 92
-    composite_literal   go to state 94
-    primary_expression  go to state 95
+    literal_type        go to state 86
+    expression          go to state 242
+    unary_expression    go to state 88
+    operand             go to state 89
+    literal             go to state 90
+    basic_literal       go to state 91
+    composite_literal   go to state 93
+    primary_expression  go to state 94
 
 
-State 243
+State 238
 
-  127 primary_expression: primary_expression '[' optional_expression ':' optional_expression ']' .
+  126 primary_expression: primary_expression '[' optional_expression ':' optional_expression ']' .
 
-    $default  reduce using rule 127 (primary_expression)
+    $default  reduce using rule 126 (primary_expression)
 
 
-State 244
+State 239
 
    68 switch_clause: CASE expression_list ':' . statement_list
 
-    BOOL            shift, and go to state 24
-    INT             shift, and go to state 25
-    FLOAT32         shift, and go to state 26
-    RUNE            shift, and go to state 27
-    STRING          shift, and go to state 28
     STRUCT          shift, and go to state 29
     FUNC            shift, and go to state 72
     MAP             shift, and go to state 31
     TYPE            shift, and go to state 2
     VAR             shift, and go to state 3
-    IF              shift, and go to state 101
-    SWITCH          shift, and go to state 102
-    RETURN          shift, and go to state 103
-    BREAK           shift, and go to state 104
-    CONTINUE        shift, and go to state 105
-    FOR             shift, and go to state 106
+    IF              shift, and go to state 100
+    SWITCH          shift, and go to state 101
+    RETURN          shift, and go to state 102
+    BREAK           shift, and go to state 103
+    CONTINUE        shift, and go to state 104
+    FOR             shift, and go to state 105
     IDENTIFIER      shift, and go to state 73
     INT_LITERAL     shift, and go to state 74
     FLOAT_LITERAL   shift, and go to state 75
@@ -4992,46 +4587,45 @@ State 244
     ';'       reduce using rule 59 (simple_statement)
     $default  reduce using rule 62 (statement_list)
 
-    type                     go to state 86
-    literal_type             go to state 87
-    declaration              go to state 107
+    literal_type             go to state 86
+    declaration              go to state 106
     type_decl                go to state 9
     var_decl                 go to state 10
-    statement                go to state 108
-    simple_statement         go to state 109
-    statement_list           go to state 248
-    if_statement             go to state 111
-    switch_statement         go to state 112
-    return_statement         go to state 113
-    for_statement            go to state 114
-    for_condition_statement  go to state 115
-    expression               go to state 116
-    unary_expression         go to state 89
-    operand                  go to state 90
-    literal                  go to state 91
-    basic_literal            go to state 92
-    expression_list          go to state 117
-    composite_literal        go to state 94
-    primary_expression       go to state 95
+    statement                go to state 107
+    simple_statement         go to state 108
+    statement_list           go to state 243
+    if_statement             go to state 110
+    switch_statement         go to state 111
+    return_statement         go to state 112
+    for_statement            go to state 113
+    for_condition_statement  go to state 114
+    expression               go to state 115
+    unary_expression         go to state 88
+    operand                  go to state 89
+    literal                  go to state 90
+    basic_literal            go to state 91
+    expression_list          go to state 116
+    composite_literal        go to state 93
+    primary_expression       go to state 94
 
 
-State 245
+State 240
 
    69 switch_clause: DEFAULT ':' statement_list .
 
     $default  reduce using rule 69 (switch_clause)
 
 
-State 246
+State 241
 
    74 for_condition_statement: FOR simple_statement ';' expression ';' simple_statement . block
 
     '{'  shift, and go to state 52
 
-    block  go to state 249
+    block  go to state 244
 
 
-State 247
+State 242
 
    78 expression: expression . OR expression
    79           | expression . AND expression
@@ -5051,45 +4645,45 @@ State 247
    93           | expression . '*' expression
    94           | expression . '/' expression
    95           | expression . '%' expression
-  128 primary_expression: primary_expression '[' optional_expression ':' expression ':' expression . ']'
+  127 primary_expression: primary_expression '[' optional_expression ':' expression ':' expression . ']'
 
-    OR           shift, and go to state 139
-    AND          shift, and go to state 140
-    EQ           shift, and go to state 141
-    NEQ          shift, and go to state 142
-    LTE          shift, and go to state 143
-    GTE          shift, and go to state 144
-    SHIFT_LEFT   shift, and go to state 145
-    SHIFT_RIGHT  shift, and go to state 146
-    '<'          shift, and go to state 147
-    '>'          shift, and go to state 148
-    '+'          shift, and go to state 149
-    '-'          shift, and go to state 150
-    '|'          shift, and go to state 151
-    '^'          shift, and go to state 152
-    '*'          shift, and go to state 153
-    '/'          shift, and go to state 154
-    '%'          shift, and go to state 155
-    '&'          shift, and go to state 156
-    ']'          shift, and go to state 250
+    OR           shift, and go to state 135
+    AND          shift, and go to state 136
+    EQ           shift, and go to state 137
+    NEQ          shift, and go to state 138
+    LTE          shift, and go to state 139
+    GTE          shift, and go to state 140
+    SHIFT_LEFT   shift, and go to state 141
+    SHIFT_RIGHT  shift, and go to state 142
+    '<'          shift, and go to state 143
+    '>'          shift, and go to state 144
+    '+'          shift, and go to state 145
+    '-'          shift, and go to state 146
+    '|'          shift, and go to state 147
+    '^'          shift, and go to state 148
+    '*'          shift, and go to state 149
+    '/'          shift, and go to state 150
+    '%'          shift, and go to state 151
+    '&'          shift, and go to state 152
+    ']'          shift, and go to state 245
 
 
-State 248
+State 243
 
    68 switch_clause: CASE expression_list ':' statement_list .
 
     $default  reduce using rule 68 (switch_clause)
 
 
-State 249
+State 244
 
    74 for_condition_statement: FOR simple_statement ';' expression ';' simple_statement block .
 
     $default  reduce using rule 74 (for_condition_statement)
 
 
-State 250
+State 245
 
-  128 primary_expression: primary_expression '[' optional_expression ':' expression ':' expression ']' .
+  127 primary_expression: primary_expression '[' optional_expression ':' expression ':' expression ']' .
 
-    $default  reduce using rule 128 (primary_expression)
+    $default  reduce using rule 127 (primary_expression)

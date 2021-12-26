@@ -12,9 +12,11 @@ AST::FunctionDeclaration::~FunctionDeclaration()
 
 void AST::FunctionDeclaration::accept(Visitor *visitor) const
 {
-    this->signature->accept(visitor);
-    this->body->accept(visitor);
-    visitor->visitFunctionDeclaration(this->id);
+    visitor->visitFunctionDeclaration(this->id, [this, visitor]() {
+        this->signature->accept(visitor);
+    }, [this, visitor]() {
+        this->body->accept(visitor);
+    });
 }
 
 AST::TypeAliasDeclaration::TypeAliasDeclaration(std::string id, Type *underlyingType)

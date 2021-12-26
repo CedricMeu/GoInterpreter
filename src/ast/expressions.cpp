@@ -52,9 +52,11 @@ AST::FunctionLiteralExpression::~FunctionLiteralExpression()
 
 void AST::FunctionLiteralExpression::accept(Visitor *visitor) const
 {
-    signature->accept(visitor);
-    body->accept(visitor);
-    visitor->VisitFunctionLiteralExpression();
+    visitor->VisitFunctionLiteralExpression([this, visitor]() {
+        signature->accept(visitor);
+    }, [this, visitor]() {
+        body->accept(visitor);
+    });
 }
         
 AST::SelectExpression::SelectExpression(Expression *expression, std::string id)

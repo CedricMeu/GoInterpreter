@@ -1,16 +1,24 @@
 #ifndef GOINTERPRETER_VALIDATION_VALIDATOR_HPP
 #define GOINTERPRETER_VALIDATION_VALIDATOR_HPP
 
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <iostream>
+
 #include "ast/visitor.hpp"
+#include "validation/symbol_table.hpp"
+#include "validation/types.hpp"
+#include "utils/stack.hpp"
+#include "utils/instanceof.hpp"
 
 class Validator : public AST::Visitor
 {
-private:
-
 public:
-    Validator() = default;
-    ~Validator() = default;
+    Validator();
+    ~Validator();
 
+    std::vector<std::string> getErrors() const;
 
     // Program
     void visitProgram(long size) override;
@@ -30,27 +38,26 @@ public:
     void visitCustomType(std::string id) override;
 
     // Block
-    void visitInitBlock(long size) override;
-    void visitDeinitBlock(long size) override;
+    void visitBlock(const std::vector<const std::function<void ()>> visitStatements) override;
 
     // Declarations
-    void visitFunctionDeclaration(std::string id) override;
+        virtual void visitFunctionDeclaration(std::string id, const std::function<void ()>& visitSignature, const std::function<void ()>& visitBody) override;
     void visitTypeAliasDeclaration(std::string id) override;
     void visitTypeDefinitionDeclaration(std::string id) override;
     void visitVariableDeclaration(std::vector<std::string> ids, bool typeDeclared, long expression_count) override;
 
     // Statements
     void visitExpressionStatement() override;
-    void visitAssignmentStatement(long lhsSize, long rhsSize) override;
+    void visitAssignmentStatement(const std::function<long ()>& visitLhs, const std::function<long ()>& visitRhs) override;
     void visitIfStatement(const std::function <void ()>& visitTrue, const std::function <void ()>& visitFalse) override;
-    void visitSwitchStatement(long size) override;
-    void visitSwitchCaseClause(long expressionsSize, long statementsSize) override;
-    void visitSwitchDefaultClause(long statementsSize) override;
+    void visitSwitchStatement(const std::function<void ()>& visitExpression, const std::vector<const std::function<void ()>> visitClauses) override;
+    virtual void visitSwitchExpressionClause(const std::vector<const std::function<void ()>> visitExpressions, const std::vector<const std::function<void ()>> visitStatements) override;
+    virtual void visitSwitchDefaultClause(const std::vector<const std::function<void ()>> visitStatements) override;
     void visitReturnStatement(long size) override;
     void visitBreakStatement() override;
     void visitContinueStatement() override;
     void visitEmptyStatement() override;
-    void visitForConditionStatement() override;
+    void visitForConditionStatement(const std::function<void ()>& visitInit, const std::function<void ()>& visitCondition, const std::function<void ()>& visitPost, const std::function<void ()>& visitBody) override;
 
     // Expressions - Literals
     void visitBoolExpression(bool value) override;
@@ -62,7 +69,7 @@ public:
     // Expressions - Rest
     void visitIdentifierExpression(std::string id) override;
     void visitCompositLiteralExpression(std::vector<std::string> keys) override;
-    void VisitFunctionLiteralExpression() override;
+        virtual void VisitFunctionLiteralExpression(const std::function<void ()>& visitSignature, const std::function<void ()>& visitBody) override;
     void visitSelectExpression(std::string id) override;
     void visitIndexExpression() override;
     void visitSimpleSliceExpression(bool lowDeclared, bool highDeclared) override;
@@ -93,6 +100,23 @@ public:
     void visitBinaryMultiplyExpression() override;
     void visitBinaryDivideExpression() override;
     void visitBinaryModuloExpression() override;
+
+private:
+    std::vector<std::string> errors;
+    std::vector<std::function<void ()>> functionDeclarationValidators;
+
+    SymbolTable<Type *> typeDeclTable;
+    SymbolTable<Type *> varDeclTable;
+
+    // I know, "that's a lot of stacks", well unused memory is wasted memory.
+
+    Stack<Type *> typeStack;
+    Stack<Type *> switchExpressionTypeStack;
+    Stack<FunctionType *> currentFunction;
+
+    Stack<long> forSwitchCountStack;
+    Stack<bool> returnsStack;
+    Stack<bool> switchDefaultCaseDeclared;
 };
 
-#endif GOINTERPRETER_VALIDATION_VALIDATOR_HPP
+#endif // GOINTERPRETER_VALIDATION_VALIDATOR_HPP

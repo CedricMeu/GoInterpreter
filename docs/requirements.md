@@ -1,65 +1,65 @@
 ## Requirements
 # legend
 - p : implemented in lexer and parser
-- v : p and implemented in validation
-- t : v and implemented in typechecking
-- x : v and implemented in interpreter (done)
+- t : p and implemented in typechecking
+- x : t and implemented in interpreter (done)
 
 # Types
-- [p] bool
-- [p] int
-- [p] float32
-- [p] byte
-- [p] rune
-- [p] type declarations
-- [p] string
-- [p] array
-- [p] slice
-- [p] struct
-- [p] function
-- [p] maps
-- [p] pointers
+- [t] bool
+- [t] int
+- [t] float32
+- [t] byte
+- [t] rune
+- [t] type declarations
+- [t] string
+- [t] array
+- [t] slice
+- [t] struct
+- [t] function
+- [t] maps
+- [t] pointers
 
 # literals
-- [p] bool `true` and `false`
-- [p] integers
-- [p] floats
-- [p] runes (eg. `'c'` and including escaped chars `'\n'` etc.)
-- [p] strings (interpreted)
-- [p] arrays
-- [p] structs
-- [p] function literals
+- [t] bool `true` and `false`
+- [t] integers
+- [t] floats
+- [t] runes (eg. `'c'` and including escaped chars `'\n'` etc.)
+- [t] strings (interpreted)
+- [t] arrays
+- [t] structs
+- [t] function literals
 - [ ] nil
 
 # expressions
-- [p] function calls
-- [p] arithemtic
-- [p] logical operations
-- [p] string concatenation
-- [p] indexing (string, array, map)
-- [p] selector for structs
-- [p] conversions (`float(some_int)`)
+- [t] function calls
+- [t] arithemtic
+- [t] logical operations
+- [t] string concatenation
+- [t] indexing (string, array, map)
+- [t] selector for structs
+- [fixme] conversions (`float(some_int)`)
 - [ ] adres operators
 
 # statements
-- [p] type declarations
-- [p] variable declarations
+- [t] type declarations
+- [t] variable declarations
 - [fixme] short variable declarations
-- [p] assignment
-- [p] return
-- [p] if
-- [p] single expression
-- [p] switch statement
-- [p] break
-- [p] continue
-- [p] for conditional
+- [t] assignment
+- [t] return
+- [t] if
+- [t] single expression
+- [t] switch statement
+- [t] break
+- [t] continue
+- [t] for conditional
 - [ ] for range
 
 # functions
-- [p] block scopes
-- [p] function declarations
-- [p] can have all types as input and output
+- [t] block scopes
+- [t] function declarations
+- [t] can have all types as input and output
 - [ ] varargs (`...`)
+- [fixme] multiple return values
 
 # built in
 - [ ] print

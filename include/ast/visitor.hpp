@@ -33,27 +33,26 @@ namespace AST {
         virtual void visitCustomType(std::string id) = 0;
 
         // Block
-        virtual void visitInitBlock(long size) = 0;
-        virtual void visitDeinitBlock(long size) = 0;
+        virtual void visitBlock(const std::vector<const std::function<void ()>> visitStatements) = 0;
 
         // Declarations
-        virtual void visitFunctionDeclaration(std::string id) = 0;
+        virtual void visitFunctionDeclaration(std::string id, const std::function<void ()>& visitSignature, const std::function<void ()>& visitBody) = 0;
         virtual void visitTypeAliasDeclaration(std::string id) = 0;
         virtual void visitTypeDefinitionDeclaration(std::string id) = 0;
         virtual void visitVariableDeclaration(std::vector<std::string> ids, bool typeDeclared, long expression_count) = 0;
 
         // Statements
         virtual void visitExpressionStatement() = 0;
-        virtual void visitAssignmentStatement(long lhsSize, long rhsSize) = 0;
-        virtual void visitIfStatement(const std::function <void ()>& visitTrue, const std::function <void ()>& visitFalse) = 0;
-        virtual void visitSwitchStatement(long size) = 0;
-        virtual void visitSwitchCaseClause(long expressionsSize, long statementsSize) = 0;
-        virtual void visitSwitchDefaultClause(long statementsSize) = 0;
+        virtual void visitAssignmentStatement(const std::function<long ()>& visitLhs, const std::function<long ()>& visitRhs) = 0;
+        virtual void visitIfStatement(const std::function<void ()>& visitTrue, const std::function<void ()>& visitFalse) = 0;
+        virtual void visitSwitchStatement(const std::function<void ()>& visitExpression, const std::vector<const std::function<void ()>> visitClauses) = 0;
+        virtual void visitSwitchExpressionClause(const std::vector<const std::function<void ()>> visitExpressions, const std::vector<const std::function<void ()>> visitStatements) = 0;
+        virtual void visitSwitchDefaultClause(const std::vector<const std::function<void ()>> visitStatements) = 0;
         virtual void visitReturnStatement(long size) = 0;
         virtual void visitBreakStatement() = 0;
         virtual void visitContinueStatement() = 0;
         virtual void visitEmptyStatement() = 0;
-        virtual void visitForConditionStatement() = 0;
+        virtual void visitForConditionStatement(const std::function<void ()>& visitInit, const std::function<void ()>& visitCondition, const std::function<void ()>& visitPost, const std::function<void ()>& visitBody) = 0;
 
         // Expressions - Literals
         virtual void visitBoolExpression(bool value) = 0;
@@ -65,7 +64,7 @@ namespace AST {
         // Expressions - Rest
         virtual void visitIdentifierExpression(std::string id) = 0;
         virtual void visitCompositLiteralExpression(std::vector<std::string> keys) = 0;
-        virtual void VisitFunctionLiteralExpression() = 0;
+        virtual void VisitFunctionLiteralExpression(const std::function<void ()>& visitSignature, const std::function<void ()>& visitBody) = 0;
         virtual void visitSelectExpression(std::string id) = 0;
         virtual void visitIndexExpression() = 0;
         virtual void visitSimpleSliceExpression(bool lowDeclared, bool highDeclared) = 0;

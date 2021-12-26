@@ -485,7 +485,7 @@ switch_statement
 switch_clause
     : CASE expression_list ':' statement_list
                                             {
-                                                $$ = new AST::SwitchStatement::SwitchCaseClause{$2->toStdVector(), $4->toStdVector()}; 
+                                                $$ = new AST::SwitchStatement::SwitchExpressionClause{$2->toStdVector(), $4->toStdVector()}; 
                                                 delete $2;
                                                 delete $4;
                                             }
@@ -654,15 +654,17 @@ keyed_element
 
 primary_expression
     : operand                               { $$ = $1; }
-    | type '(' expression ')'               { $$ = new AST::ConversionExpression($1, $3); }
     | primary_expression '.' IDENTIFIER     { $$ = new AST::SelectExpression{$1, $3}; }
     | primary_expression '[' expression ']' { $$ = new AST::IndexExpression{$1, $3}; }
     | primary_expression '[' optional_expression ':' optional_expression ']' 
                                             { $$ = new AST::SimpleSliceExpression{$1, $3, $5}; }
     | primary_expression '[' optional_expression ':' expression ':' expression ']' 
                                             { $$ = new AST::FullSliceExpression{$1, $3, $5, $7}; }
+    | primary_expression '(' ')'
+                                            { $$ = new AST::CallExpression{$1, {}}; }
     | primary_expression '(' expression_list ')'
                                             { $$ = new AST::CallExpression{$1, $3->toStdVector()}; }
+    /* | type '(' expression ')'               { $$ = new AST::ConversionExpression($1, $3); } */
     ;
 
 // Miscellaneous

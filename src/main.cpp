@@ -12,11 +12,18 @@ int main() {
 
     yyparse();
 
-    if (tree != nullptr) {
-        return EXIT_SUCCESS;
-    } else {
+    if (tree == nullptr) {
         return EXIT_FAILURE;
     }
 
-    
+    Validator validator{};
+
+    tree->accept(&validator);
+
+    for (auto error : validator.getErrors())
+    {
+        std::cerr << error << std::endl;
+    }
+
+    return EXIT_SUCCESS;
 }
