@@ -293,8 +293,8 @@ top_level_declaration
     ;
 
 top_level_declaration_list
-    : top_level_declaration     
-                                            { $$ = $1; }
+    :     
+                                            { $$ = new LinkedList<AST::TopLevelDeclaration *>; }
     | top_level_declaration ';' top_level_declaration_list
                                             {
                                                 auto declarations = $1->toStdVector();

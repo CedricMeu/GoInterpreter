@@ -27,8 +27,23 @@ std::vector<std::string> Validator::getErrors() const
 
 void Validator::visitProgram(long size)
 {
+    if (!functionDeclarationValidators.contains("main")) {
+        errors.push_back("Program does not contain a main function");
+    } else {
+        std::string id = "main";
+        auto main = dynamic_cast<FunctionType*>(varDeclTable.get(id));
+
+        if (!main->getParameters().empty()) {
+            errors.push_back("Main function should not accept any parameters");
+        }
+        
+        if (!main->getReturns().empty()) {
+            errors.push_back("Main function should not return any values");
+        }
+    }
+
     for (const auto functionValidator : functionDeclarationValidators) {
-        functionValidator();
+        functionValidator.second();
     }
 }
 
@@ -173,7 +188,7 @@ void Validator::visitFunctionDeclaration(std::string id, const std::function<voi
     auto signature = typeStack.pop();
     varDeclTable.add(id, signature);
     
-    functionDeclarationValidators.push_back([this, visitSignature, visitBody]() {
+    functionDeclarationValidators.insert(std::make_pair(id, [this, visitSignature, visitBody]() {
         visitSignature();
         auto signature = dynamic_cast<FunctionType *>(typeStack.pop());
         currentFunction.push(signature);
@@ -198,7 +213,7 @@ void Validator::visitFunctionDeclaration(std::string id, const std::function<voi
         if (!returns && signature->getReturns().size() > 0) {
             this->errors.push_back("Not all paths through function return.");
         }
-    });
+    }));
 }
 
 void Validator::visitTypeAliasDeclaration(std::string id)

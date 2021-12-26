@@ -69,8 +69,7 @@
 - [ ] copy
 
 # mics
-- [ ] Only support 1 source file with `package main` as begin
-- [ ] main function with no parameters
+- [t] main function with no parameters
 - [x] if last token in specific subset of tokentypes, return `";"` on recognising a `"\n"`
 - [ ] garbage collector
 

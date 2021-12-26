@@ -5,6 +5,7 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include <map>
 
 #include "ast/visitor.hpp"
 #include "validation/symbol_table.hpp"
@@ -103,7 +104,7 @@ public:
 
 private:
     std::vector<std::string> errors;
-    std::vector<std::function<void ()>> functionDeclarationValidators;
+    std::map<std::string, const std::function<void ()>> functionDeclarationValidators;
 
     SymbolTable<Type *> typeDeclTable;
     SymbolTable<Type *> varDeclTable;
