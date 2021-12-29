@@ -1,7 +1,18 @@
 #include "validation/validator.hpp"
 
 Validator::Validator()
-    : typeDeclTable{}, varDeclTable{}, typeStack{}, forSwitchCountStack{}
+    : 
+    errors{},
+    functionDeclarationValidators{},
+    typeDeclTable{}, 
+    varDeclTable{}, 
+    typeStack{}, 
+    referencableStack{}, 
+    switchExpressionTypeStack{},
+    currentFunction{},
+    forSwitchCountStack{},
+    returnsStack{},
+    switchDefaultCaseDeclared{}
 {
     this->typeDeclTable.addScope();
     this->varDeclTable.addScope();
@@ -232,6 +243,7 @@ void Validator::visitVariableDeclaration(std::vector<std::string> ids, bool type
 {
     Type *type = new UnresolvedType{};
     std::vector<Type *> types = typeStack.pop(expression_count);
+    std::vector<bool> referencable = referencableStack.pop(expression_count);
     std::reverse(types.begin(), types.end());
 
     if (typeDeclared) {
@@ -271,6 +283,7 @@ void Validator::visitExpressionStatement()
 {
     // FIXME: function calls can return more than one type. THIS WILL BREAK EVERYTING IF YOU USE ONE OF THOSE
     typeStack.pop(); // ommit
+    referencableStack.pop();
 }
 
 void Validator::visitAssignmentStatement(const std::function<long ()>& visitLhs, const std::function<long ()>& visitRhs)
@@ -278,17 +291,26 @@ void Validator::visitAssignmentStatement(const std::function<long ()>& visitLhs,
     auto lhsSize = visitLhs();
     auto rhsSize = visitRhs();
 
+    auto rhsTypes = typeStack.pop(rhsSize);
+    auto lhsTypes = typeStack.pop(lhsSize);
+
+    auto rhsReferencable = referencableStack.pop(rhsSize);
+    auto lhsReferencable = referencableStack.pop(lhsSize);
+
     if (lhsSize != rhsSize) {
         errors.push_back("Assignment mismatch, " + std::to_string(lhsSize) + " variables but " + std::to_string(rhsSize) + (rhsSize == 1 ? " value." : " values."));
         return;
     }
 
-    auto rhsTypes = typeStack.pop(rhsSize);
-    auto lhsTypes = typeStack.pop(lhsSize);
-
     for (int i = 0; i < lhsSize; ++i) {
         auto lhs = lhsTypes[i];
         auto rhs = rhsTypes[i];
+
+        auto referencable = lhsReferencable[i];
+
+        if (!referencable) {
+            errors.push_back("Left hand side of assignment must be assignable");
+        }
 
         if (!lhs->equals(*rhs)) {
             errors.push_back("Got type " + rhs->toString() + " but expected " + lhs->toString() + ".");
@@ -299,6 +321,7 @@ void Validator::visitAssignmentStatement(const std::function<long ()>& visitLhs,
 void Validator::visitIfStatement(const std::function <void ()>& visitTrue, const std::function <void ()>& visitFalse)
 {
     auto conditionType = typeStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<BoolType>(conditionType)) {
         errors.push_back("Condition of if-statement must be Bool, not " + conditionType->toString() + ".");
@@ -321,6 +344,7 @@ void Validator::visitSwitchStatement(const std::function<void ()>& visitExpressi
     visitExpression();
 
     auto expressionType = typeStack.pop();
+    referencableStack.pop();
     switchExpressionTypeStack.push(expressionType);
     auto returns = true;
 
@@ -345,6 +369,7 @@ void Validator::visitSwitchExpressionClause(const std::vector<const std::functio
         visitExpression();
 
         auto type = typeStack.pop();
+        referencableStack.pop();
         auto expected = switchExpressionTypeStack.top();
 
         if (!type->equals(*expected)) {
@@ -372,6 +397,7 @@ void Validator::visitReturnStatement(long size)
     auto signature = currentFunction.top();
     auto returns = signature->getReturns();
     auto types = typeStack.pop(size);
+    referencableStack.pop(size);
     std::reverse(types.begin(), types.end());
 
 
@@ -418,6 +444,7 @@ void Validator::visitForConditionStatement(const std::function<void ()>& visitIn
     visitCondition();
 
     auto conditionType = typeStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<BoolType>(conditionType)) {
         errors.push_back("Condition of a for-loop must be of boolean type, not " + conditionType->toString() + ".");
@@ -436,26 +463,31 @@ void Validator::visitForConditionStatement(const std::function<void ()>& visitIn
 void Validator::visitBoolExpression(bool value)
 {
     typeStack.push(new BoolType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitIntExpression(int value)
 {
     typeStack.push(new IntType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitFloat32Expression(float value)
 {
     typeStack.push(new Float32Type{});
+    referencableStack.push(false);
 }
 
 void Validator::visitRuneExpression(char value)
 {
     typeStack.push(new RuneType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitStringExpression(char *value, long length)
 {
     typeStack.push(new StringType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitIdentifierExpression(std::string id)
@@ -469,20 +501,24 @@ void Validator::visitIdentifierExpression(std::string id)
     auto type = varDeclTable.get(id);
 
     typeStack.push(type);
+    referencableStack.push(true);
 }
 
 void Validator::visitCompositLiteralExpression(std::vector<std::string> keys)
 {
     auto expressionTypes = typeStack.pop(keys.size());
+    referencableStack.pop(keys.size());
 
     std::reverse(expressionTypes.begin(), expressionTypes.end());
 
     Type *type = typeStack.pop();
+    referencableStack.pop();
     Type *baseType = type;
 
     if (!type->composable()) {
         errors.push_back(type->toString() + " is not composable.");
         typeStack.push(new UnresolvedType{});
+        referencableStack.push(false);
         return;
     }
 
@@ -494,6 +530,7 @@ void Validator::visitCompositLiteralExpression(std::vector<std::string> keys)
         if (!std::all_of(keys.begin(), keys.end(), [](std::string key) { return key == ""; })) {
             errors.push_back("Keys on a composite literal are only accepted for structures (because i got lazy).");
             typeStack.push(type);
+            referencableStack.push(false);
             return;
         }
 
@@ -508,6 +545,7 @@ void Validator::visitCompositLiteralExpression(std::vector<std::string> keys)
         if (!std::all_of(keys.begin(), keys.end(), [](std::string key) { return key == ""; })) {
             errors.push_back("Keys on a composite literal are only accepted for structures (because i got lazy).");
             typeStack.push(type);
+            referencableStack.push(false);
             return;
         }
 
@@ -535,6 +573,7 @@ void Validator::visitCompositLiteralExpression(std::vector<std::string> keys)
         if (!std::all_of(keys.begin(), keys.end(), [](std::string key) { return key != ""; })) {
             errors.push_back("Keys on a composite literal are required for structures (because i got lazy).");
             typeStack.push(type);
+            referencableStack.push(false);
             return;
         }
 
@@ -553,6 +592,7 @@ void Validator::visitCompositLiteralExpression(std::vector<std::string> keys)
 
         if (flag) {
             typeStack.push(type);
+            referencableStack.push(false);
             return;
         }
 
@@ -567,18 +607,21 @@ void Validator::visitCompositLiteralExpression(std::vector<std::string> keys)
         if (baseType != composedType) {
             errors.push_back("Given type doesn't match composed type, either the fields are out of order, or incorrect/not all fields have been declared.");
             typeStack.push(type);
+            referencableStack.push(false);
             return;
         }
 
     }
 
     typeStack.push(type);
+    referencableStack.push(false);
 }
 
 void Validator::VisitFunctionLiteralExpression(const std::function<void ()>& visitSignature, const std::function<void ()>& visitBody)
 {
     visitSignature();
     auto signature = dynamic_cast<FunctionType *>(typeStack.pop());
+    referencableStack.pop();
     currentFunction.push(signature);
     
     for (const auto param : signature->getParameters()) {
@@ -601,11 +644,15 @@ void Validator::VisitFunctionLiteralExpression(const std::function<void ()>& vis
     if (!returns && signature->getReturns().size() > 0) {
         this->errors.push_back("Not all paths through function return.");
     }
+
+    typeStack.push(signature);
+    referencableStack.push(false);
 }
 
 void Validator::visitSelectExpression(std::string id)
 {
     auto type = typeStack.pop();
+    auto referencable = referencableStack.pop();
     auto baseType = type;
 
     if (instanceof<CustomType>(baseType)) {
@@ -619,15 +666,18 @@ void Validator::visitSelectExpression(std::string id)
         } else {
             typeStack.push(dynamic_cast<StructType *>(baseType)->typeOfField(id));
         }
+        referencableStack.push(referencable);
     } else {
         errors.push_back("Selectors can only be used on Structs not on " + type->toString());
         typeStack.push(new UnresolvedType{});
+        referencableStack.push(false);
     }
 }
 
 void Validator::visitIndexExpression()
 {
     auto indexType = typeStack.pop();
+    auto referencable = referencableStack.pop();
     auto expressionType = typeStack.pop();
 
     if (instanceof<ArrayType>(expressionType)) {
@@ -636,27 +686,32 @@ void Validator::visitIndexExpression()
         }
 
         typeStack.push(dynamic_cast<ArrayType *>(expressionType)->elementType());
+        referencableStack.push(referencable);
     } else if (instanceof<SliceType>(expressionType)) {
         if (!instanceof<IntType>(indexType)) {
             errors.push_back("Slices can only be indexed using Ints, not " + indexType->toString() + ".");
         }
 
         typeStack.push(dynamic_cast<SliceType *>(expressionType)->elementType());
+        referencableStack.push(referencable);
     } else if (instanceof<StringType>(expressionType)) {
         if (!instanceof<IntType>(indexType)) {
             errors.push_back("Strings can only be indexed using Ints, not " + indexType->toString() + ".");
         }
 
         typeStack.push(dynamic_cast<SliceType *>(expressionType)->elementType());
+        referencableStack.push(referencable);
     } else if (instanceof<MapType>(expressionType)) {
         if (indexType != dynamic_cast<MapType *>(expressionType)->keyType()) {
             errors.push_back(expressionType->toString() + " can only be indexed using " + dynamic_cast<MapType *>(expressionType)->keyType()->toString() + ", not " + indexType->toString() + ".");
         }
 
         typeStack.push(dynamic_cast<MapType *>(expressionType)->elementType());
-    }else {
+        referencableStack.push(referencable);
+    } else {
         errors.push_back("Indexing can not be used on " + expressionType->toString() + ".");
         typeStack.push(new UnresolvedType{});
+        referencableStack.push(false);
     }
 }
 
@@ -664,6 +719,7 @@ void Validator::visitSimpleSliceExpression(bool lowDeclared, bool highDeclared)
 {
     if (highDeclared) {
         auto highType = typeStack.pop();
+        referencableStack.pop();
         if(!instanceof<IntType>(highType)) {
             errors.push_back("High index on slice can only be of type int, not " + highType->toString() + ".");
         }
@@ -671,78 +727,96 @@ void Validator::visitSimpleSliceExpression(bool lowDeclared, bool highDeclared)
 
     if (lowDeclared) {
         auto lowType = typeStack.pop();
+        referencableStack.pop();
         if(!instanceof<IntType>(lowType)) {
             errors.push_back("Low index on slice can only be of type int, not " + lowType->toString() + ".");
         }
     }
 
     auto expressionType = typeStack.pop();
+    referencableStack.pop();
 
     if (instanceof<ArrayType>(expressionType)) {
         typeStack.push(
             new SliceType{
                 dynamic_cast<ArrayType *>(expressionType)
                     ->elementType()});
+        referencableStack.push(false);
     } else if (instanceof<SliceType>(expressionType)) {
         typeStack.push(
             new SliceType{
                 dynamic_cast<SliceType *>(expressionType)
                     ->elementType()});
+        referencableStack.push(false);
     } else if (instanceof<StringType>(expressionType)) {
         typeStack.push(expressionType);
+        referencableStack.push(false);
     } else {
         errors.push_back("Can not take slice of " + expressionType->toString() + ".");
         typeStack.push(new UnresolvedType{});
+        referencableStack.push(false);
     }
 }
 
 void Validator::visitFullSliceExpression(bool lowDeclared)
 {
     auto maxType = typeStack.pop();
+    referencableStack.pop();
+
     if(!instanceof<IntType>(maxType)) {
         errors.push_back("Max index on slice can only be of type int, not " + maxType->toString() + ".");
     }
 
     auto highType = typeStack.pop();
+    referencableStack.pop();
     if(!instanceof<IntType>(highType)) {
         errors.push_back("High index on slice can only be of type int, not " + highType->toString() + ".");
     }
 
     if (lowDeclared) {
         auto lowType = typeStack.pop();
+        referencableStack.pop();
         if(!instanceof<IntType>(lowType)) {
             errors.push_back("Low index on slice can only be of type int, not " + lowType->toString() + ".");
         }
     }
 
     auto expressionType = typeStack.pop();
+    referencableStack.pop();
 
     if (instanceof<ArrayType>(expressionType)) {
         typeStack.push(
             new SliceType{
                 dynamic_cast<ArrayType *>(expressionType)
                     ->elementType()});
+        referencableStack.push(false);
     } else if (instanceof<SliceType>(expressionType)) {
         typeStack.push(
             new SliceType{
                 dynamic_cast<SliceType *>(expressionType)
                     ->elementType()});
+        referencableStack.push(false);
     } else if (instanceof<StringType>(expressionType)) {
         typeStack.push(expressionType);
+        referencableStack.push(false);
     } else {
         errors.push_back("Can not take slice of " + expressionType->toString() + ".");
         typeStack.push(new UnresolvedType{});
+        referencableStack.push(false);
     }
 }
 
 void Validator::visitCallExpression(long size)
 {
     auto argTypes = typeStack.pop(size);
+    referencableStack.pop(size);
     auto expressionType = typeStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<FunctionType>(expressionType)) {
         errors.push_back("Expected a function, not " + expressionType->toString() + ".");
         typeStack.push(new UnresolvedType{});
+        referencableStack.push(false);
         return;
     }
 
@@ -766,6 +840,7 @@ void Validator::visitCallExpression(long size)
 
     for (const auto ret : funcType->getReturnTypes()) {
         typeStack.push(ret);
+        referencableStack.push(false);
     }
 }
 
@@ -777,6 +852,7 @@ void Validator::visitConversionExpression()
 void Validator::visitUnaryPlusExpression()
 {
     auto operand = typeStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<IntType>(operand)
         || !instanceof<Float32Type>(operand)) {
@@ -784,11 +860,13 @@ void Validator::visitUnaryPlusExpression()
     }
 
     typeStack.push(operand);
+    referencableStack.push(false);
 }
 
 void Validator::visitUnaryNegateExpression()
 {
     auto operand = typeStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<IntType>(operand)
         || !instanceof<Float32Type>(operand)) {
@@ -796,17 +874,20 @@ void Validator::visitUnaryNegateExpression()
     }
 
     typeStack.push(operand);
+    referencableStack.push(false);
 }
 
 void Validator::visitUnaryLogicalNotExpression()
 {
     auto operand = typeStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<BoolType>(operand)) {
             errors.push_back("Logical not can only be used on booleans, not on " + operand->toString() + ".");
     }
 
     typeStack.push(operand);
+    referencableStack.push(false);
 }
 
 void Validator::visitUnaryBitwiseNotExpression()
@@ -818,6 +899,7 @@ void Validator::visitUnaryBitwiseNotExpression()
     }
 
     typeStack.push(operand);
+    referencableStack.push(false);
 }
 
 void Validator::visitUnaryDereferenceExpression()
@@ -825,12 +907,15 @@ void Validator::visitUnaryDereferenceExpression()
     errors.push_back("Address operations are not supported.");
 
     auto operand = typeStack.pop();
+    auto referencable = referencableStack.pop();
 
     if (!instanceof<PointerType>(operand)) {
         errors.push_back("Dereference can only be used on pointers, not on " + operand->toString() + ".");
         typeStack.push(new UnresolvedType{});
+        referencableStack.push(referencable);
     } else {
         typeStack.push(dynamic_cast<PointerType*>(operand)->underlyingType());
+        referencableStack.push(referencable);
     }
 }
 
@@ -839,13 +924,17 @@ void Validator::visitUnaryReferenceExpression()
     errors.push_back("Address operations are not supported.");
 
     auto operand = typeStack.pop();
+    referencableStack.pop();
     typeStack.push(new PointerType{operand});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryLogicalOrExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<BoolType>(lhs)) {
             errors.push_back("Logical or can only be used on booleans, not on " + lhs->toString() + ".");
@@ -856,12 +945,15 @@ void Validator::visitBinaryLogicalOrExpression()
     }
 
     typeStack.push(new BoolType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryLogicalAndExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<BoolType>(lhs)) {
             errors.push_back("Logical or can only be used on booleans, not on " + lhs->toString() + ".");
@@ -872,12 +964,15 @@ void Validator::visitBinaryLogicalAndExpression()
     }
 
     typeStack.push(new BoolType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryEqualExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (instanceof<UnresolvedType>(lhs) || instanceof<MapType>(lhs) || instanceof<FunctionType>(lhs)) {
         errors.push_back(lhs->toString() + " is not comparable.");
@@ -892,12 +987,15 @@ void Validator::visitBinaryEqualExpression()
     }
 
     typeStack.push(new BoolType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryNotEqualExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (instanceof<UnresolvedType>(lhs) || instanceof<MapType>(lhs) || instanceof<FunctionType>(lhs)) {
         errors.push_back(lhs->toString() + " is not comparable.");
@@ -912,12 +1010,15 @@ void Validator::visitBinaryNotEqualExpression()
     }
 
     typeStack.push(new BoolType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryLessThanExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (instanceof<UnresolvedType>(lhs) || instanceof<MapType>(lhs) || instanceof<FunctionType>(lhs)) {
         errors.push_back(lhs->toString() + " is not comparable.");
@@ -932,12 +1033,15 @@ void Validator::visitBinaryLessThanExpression()
     }
 
     typeStack.push(new BoolType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryLessThanEqualExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (instanceof<UnresolvedType>(lhs) || instanceof<MapType>(lhs) || instanceof<FunctionType>(lhs)) {
         errors.push_back(lhs->toString() + " is not comparable.");
@@ -952,12 +1056,15 @@ void Validator::visitBinaryLessThanEqualExpression()
     }
 
     typeStack.push(new BoolType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryGreaterThanExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (instanceof<UnresolvedType>(lhs) || instanceof<MapType>(lhs) || instanceof<FunctionType>(lhs)) {
         errors.push_back(lhs->toString() + " is not comparable.");
@@ -972,12 +1079,15 @@ void Validator::visitBinaryGreaterThanExpression()
     }
 
     typeStack.push(new BoolType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryGreaterThanEqualExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (instanceof<UnresolvedType>(lhs) || instanceof<MapType>(lhs) || instanceof<FunctionType>(lhs)) {
         errors.push_back(lhs->toString() + " is not comparable.");
@@ -992,12 +1102,15 @@ void Validator::visitBinaryGreaterThanEqualExpression()
     }
 
     typeStack.push(new BoolType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryShiftLeftExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<IntType>(lhs)) {
         errors.push_back("Shift expression can only be used on an integer, not on " + lhs->toString() + ".");
@@ -1008,12 +1121,15 @@ void Validator::visitBinaryShiftLeftExpression()
     }
 
     typeStack.push(new IntType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryShiftRightExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<IntType>(lhs)) {
         errors.push_back("Shift expression can only be used on an integer, not on " + lhs->toString() + ".");
@@ -1024,12 +1140,15 @@ void Validator::visitBinaryShiftRightExpression()
     }
 
     typeStack.push(new IntType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryAddExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<IntType>(lhs) && !instanceof<Float32Type>(lhs) && !instanceof<StringType>(lhs)) {
         errors.push_back("Add expression can only be used on an integer, float32 or string, not on " + lhs->toString() + ".");
@@ -1044,12 +1163,15 @@ void Validator::visitBinaryAddExpression()
     }
 
     typeStack.push(lhs);
+    referencableStack.push(false);
 }
 
 void Validator::visitBinarySubtractExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<IntType>(lhs) && !instanceof<Float32Type>(lhs)) {
         errors.push_back("Subtract expression can only be used on an integer or float32, not on " + lhs->toString() + ".");
@@ -1064,12 +1186,15 @@ void Validator::visitBinarySubtractExpression()
     }
 
     typeStack.push(lhs);
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryBitwiseOrExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<IntType>(lhs)) {
         errors.push_back("Bitwise or expression can only be used on an integer, not on " + lhs->toString() + ".");
@@ -1080,12 +1205,15 @@ void Validator::visitBinaryBitwiseOrExpression()
     }
 
     typeStack.push(new IntType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryBitwiseXOrExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<IntType>(lhs)) {
         errors.push_back("Bitwise xor expression can only be used on an integer, not on " + lhs->toString() + ".");
@@ -1096,12 +1224,15 @@ void Validator::visitBinaryBitwiseXOrExpression()
     }
 
     typeStack.push(new IntType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryBitwiseAndExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<IntType>(lhs)) {
         errors.push_back("Bitwise and expression can only be used on an integer, not on " + lhs->toString() + ".");
@@ -1112,12 +1243,15 @@ void Validator::visitBinaryBitwiseAndExpression()
     }
 
     typeStack.push(new IntType{});
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryMultiplyExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<IntType>(lhs) && !instanceof<Float32Type>(lhs)) {
         errors.push_back("Multiply expression can only be used on an integer or float32, not on " + lhs->toString() + ".");
@@ -1132,12 +1266,15 @@ void Validator::visitBinaryMultiplyExpression()
     }
 
     typeStack.push(lhs);
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryDivideExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<IntType>(lhs) && !instanceof<Float32Type>(lhs)) {
         errors.push_back("Divide expression can only be used on an integer or float32, not on " + lhs->toString() + ".");
@@ -1152,12 +1289,15 @@ void Validator::visitBinaryDivideExpression()
     }
 
     typeStack.push(lhs);
+    referencableStack.push(false);
 }
 
 void Validator::visitBinaryModuloExpression()
 {
     auto rhs = typeStack.pop();
     auto lhs = typeStack.pop();
+    referencableStack.pop();
+    referencableStack.pop();
 
     if (!instanceof<IntType>(lhs)) {
         errors.push_back("Modulo expression can only be used on an integer, not on " + lhs->toString() + ".");
@@ -1172,4 +1312,5 @@ void Validator::visitBinaryModuloExpression()
     }
 
     typeStack.push(lhs);
+    referencableStack.push(false);
 }

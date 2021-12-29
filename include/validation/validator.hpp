@@ -112,6 +112,7 @@ private:
     // I know, "that's a lot of stacks", well unused memory is wasted memory.
 
     Stack<Type *> typeStack;
+    Stack<bool> referencableStack;
     Stack<Type *> switchExpressionTypeStack;
     Stack<FunctionType *> currentFunction;
 

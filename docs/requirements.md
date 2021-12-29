@@ -69,7 +69,7 @@
 - [ ] copy
 
 # mics
-- [t] main function with no parameters
+- [x] main function with no parameters
 - [x] if last token in specific subset of tokentypes, return `";"` on recognising a `"\n"`
 - [ ] garbage collector
 
