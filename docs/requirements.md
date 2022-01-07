@@ -5,62 +5,62 @@
 - x : t and implemented in interpreter (done)
 
 # Types
-- [t] bool
-- [t] int
-- [t] float32
-- [t] byte
-- [t] rune
-- [t] type declarations
-- [t] string
-- [t] array
-- [t] slice
-- [t] struct
-- [t] function
-- [t] maps
+- [x] bool
+- [x] int
+- [x] float32
+- [x] byte
+- [x] rune
+- [x] type declarations
+- [x] string
+- [x] array
+- [x] slice
+- [x] struct
+- [x] function
+- [x] maps
 - [t] pointers
 
 # literals
-- [t] bool `true` and `false`
-- [t] integers
-- [t] floats
-- [t] runes (eg. `'c'` and including escaped chars `'\n'` etc.)
-- [t] strings (interpreted)
+- [x] bool `true` and `false`
+- [x] integers
+- [x] floats
+- [x] runes (eg. `'c'` and including escaped chars `'\n'` etc.)
+- [x] strings (interpreted)
 - [t] arrays
 - [t] structs
-- [t] function literals
+- [x] function literals
 - [ ] nil
 
 # expressions
-- [t] function calls
-- [t] arithemtic
-- [t] logical operations
-- [t] string concatenation
-- [t] indexing (string, array, map)
-- [t] selector for structs
+- [x] function calls
+- [x] arithemtic
+- [x] logical operations
+- [x] string concatenation
+- [x] indexing (string, array, map)
+- [x] selector for structs
 - [fixme] conversions (`float(some_int)`)
 - [t-ish] adres operators
 
 # statements
-- [t] type declarations
-- [t] variable declarations
+- [x] type declarations
+- [x] variable declarations
 - [fixme] short variable declarations
-- [t] assignment
-- [t] return
-- [t] if
-- [t] single expression
-- [t] switch statement
-- [t] break
-- [t] continue
-- [t] for conditional
+- [x] assignment
+- [x] return
+- [x] if
+- [x] single expression
+- [x] switch statement
+- [x] break
+- [x] continue
+- [x] for conditional
 
 # functions
-- [t] block scopes
-- [t] function declarations
-- [t] can have all types as input and output
+- [x] block scopes
+- [x] function declarations
+- [x] can have all types as input and output
 - [fixme] multiple return values
 
 # built in
-- [ ] print
+- [x] print
 - [ ] len (array)
 - [ ] delete (map entry)
 - [ ] new (pointer)
@@ -73,3 +73,6 @@
 
 # Notes
 Go strings are not null terminated but by length of the array, `"t\000est"` prints `test` and has length `5`.
+
+*NOT IMPLEMENTED:* Variable declarations cant be done without a value even though the validator allows it.
+*NOT IMPLEMENTED:* Composit literals

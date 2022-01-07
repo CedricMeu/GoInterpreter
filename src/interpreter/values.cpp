@@ -21,22 +21,22 @@ Value *BoolValue::logicalNot()
 
 Value *BoolValue::logicalOr(Value *other)
 {
-    return new BoolValue{value || dynamic_cast<BoolValue *>(other)->value};
+    return new BoolValue{value || dynamic_cast<BoolValue *>(other->getValue())->value};
 }
 
 Value *BoolValue::logicalAnd(Value *other)
 {
-    return new BoolValue{value && dynamic_cast<BoolValue *>(other)->value};
+    return new BoolValue{value && dynamic_cast<BoolValue *>(other->getValue())->value};
 }
 
 Value *BoolValue::equal(Value *other)
 {
-    return new BoolValue{value == dynamic_cast<BoolValue *>(other)->value};
+    return new BoolValue{value == dynamic_cast<BoolValue *>(other->getValue())->value};
 }
 
 Value *BoolValue::notEqual(Value *other)
 {
-    return new BoolValue{value != dynamic_cast<BoolValue *>(other)->value};
+    return new BoolValue{value != dynamic_cast<BoolValue *>(other->getValue())->value};
 }
 
 IntValue::IntValue(long value)
@@ -65,82 +65,82 @@ Value *IntValue::bitwiseNot()
 
 Value *IntValue::equal(Value *other)
 {
-    return new BoolValue{value == dynamic_cast<IntValue *>(other)->value};
+    return new BoolValue{value == dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::notEqual(Value *other)
 {
-    return new BoolValue{value != dynamic_cast<IntValue *>(other)->value};
+    return new BoolValue{value != dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::lessThan(Value *other)
 {
-    return new BoolValue{value < dynamic_cast<IntValue *>(other)->value};
+    return new BoolValue{value < dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::greaterThan(Value *other)
 {
-    return new BoolValue{value > dynamic_cast<IntValue *>(other)->value};
+    return new BoolValue{value > dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::lessThanEqual(Value *other)
 {
-    return new BoolValue{value <= dynamic_cast<IntValue *>(other)->value};
+    return new BoolValue{value <= dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::greaterThanEqual(Value *other)
 {
-    return new BoolValue{value >= dynamic_cast<IntValue *>(other)->value};
+    return new BoolValue{value >= dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::shiftLeft(Value *other)
 {
-    return new IntValue{value << dynamic_cast<IntValue *>(other)->value};
+    return new IntValue{value << dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::shiftRight(Value *other)
 {
-    return new IntValue{value >> dynamic_cast<IntValue *>(other)->value};
+    return new IntValue{value >> dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::add(Value *other)
 {
-    return new IntValue{value + dynamic_cast<IntValue *>(other)->value};
+    return new IntValue{value + dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::subtract(Value *other)
 {
-    return new IntValue{value - dynamic_cast<IntValue *>(other)->value};
+    return new IntValue{value - dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::bitwiseOr(Value *other)
 {
-    return new IntValue{value | dynamic_cast<IntValue *>(other)->value};
+    return new IntValue{value | dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::bitwiseXOr(Value *other)
 {
-    return new IntValue{value ^ dynamic_cast<IntValue *>(other)->value};
+    return new IntValue{value ^ dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::bitwiseAnd(Value *other)
 {
-    return new IntValue{value & dynamic_cast<IntValue *>(other)->value};
+    return new IntValue{value & dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::multiply(Value *other)
 {
-    return new IntValue{value * dynamic_cast<IntValue *>(other)->value};
+    return new IntValue{value * dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::divide(Value *other)
 {
-    return new IntValue{value / dynamic_cast<IntValue *>(other)->value};
+    return new IntValue{value / dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Value *IntValue::modulo(Value *other)
 {
-    return new IntValue{value % dynamic_cast<IntValue *>(other)->value};
+    return new IntValue{value % dynamic_cast<IntValue *>(other->getValue())->value};
 }
 
 Float32Value::Float32Value(float value)
@@ -164,52 +164,52 @@ Value *Float32Value::negate()
 
 Value *Float32Value::equal(Value *other)
 {
-    return new BoolValue{value == dynamic_cast<Float32Value *>(other)->value};
+    return new BoolValue{value == dynamic_cast<Float32Value *>(other->getValue())->value};
 }
 
 Value *Float32Value::notEqual(Value *other)
 {
-    return new BoolValue{value != dynamic_cast<Float32Value *>(other)->value};
+    return new BoolValue{value != dynamic_cast<Float32Value *>(other->getValue())->value};
 }
 
 Value *Float32Value::lessThan(Value *other)
 {
-    return new BoolValue{value < dynamic_cast<Float32Value *>(other)->value};
+    return new BoolValue{value < dynamic_cast<Float32Value *>(other->getValue())->value};
 }
 
 Value *Float32Value::greaterThan(Value *other)
 {
-    return new BoolValue{value > dynamic_cast<Float32Value *>(other)->value};
+    return new BoolValue{value > dynamic_cast<Float32Value *>(other->getValue())->value};
 }
 
 Value *Float32Value::lessThanEqual(Value *other)
 {
-    return new BoolValue{value <= dynamic_cast<Float32Value *>(other)->value};
+    return new BoolValue{value <= dynamic_cast<Float32Value *>(other->getValue())->value};
 }
 
 Value *Float32Value::greaterThanEqual(Value *other)
 {
-    return new BoolValue{value >= dynamic_cast<Float32Value *>(other)->value};
+    return new BoolValue{value >= dynamic_cast<Float32Value *>(other->getValue())->value};
 }
 
 Value *Float32Value::add(Value *other)
 {
-    return new Float32Value{value + dynamic_cast<Float32Value *>(other)->value};
+    return new Float32Value{value + dynamic_cast<Float32Value *>(other->getValue())->value};
 }
 
 Value *Float32Value::subtract(Value *other)
 {
-    return new Float32Value{value - dynamic_cast<Float32Value *>(other)->value};
+    return new Float32Value{value - dynamic_cast<Float32Value *>(other->getValue())->value};
 }
 
 Value *Float32Value::multiply(Value *other)
 {
-    return new Float32Value{value * dynamic_cast<Float32Value *>(other)->value};
+    return new Float32Value{value * dynamic_cast<Float32Value *>(other->getValue())->value};
 }
 
 Value *Float32Value::divide(Value *other)
 {
-    return new Float32Value{value / dynamic_cast<Float32Value *>(other)->value};
+    return new Float32Value{value / dynamic_cast<Float32Value *>(other->getValue())->value};
 }
 
 RuneValue::RuneValue(char value)
@@ -223,52 +223,52 @@ char RuneValue::getChar()
 
 Value *RuneValue::equal(Value *other)
 {
-    return new BoolValue{value == dynamic_cast<RuneValue *>(other)->value};
+    return new BoolValue{value == dynamic_cast<RuneValue *>(other->getValue())->value};
 }
 
 Value *RuneValue::notEqual(Value *other)
 {
-    return new BoolValue{value != dynamic_cast<RuneValue *>(other)->value};
+    return new BoolValue{value != dynamic_cast<RuneValue *>(other->getValue())->value};
 }
 
 Value *RuneValue::lessThan(Value *other)
 {
-    return new BoolValue{value < dynamic_cast<RuneValue *>(other)->value};
+    return new BoolValue{value < dynamic_cast<RuneValue *>(other->getValue())->value};
 }
 
 Value *RuneValue::greaterThan(Value *other)
 {
-    return new BoolValue{value > dynamic_cast<RuneValue *>(other)->value};
+    return new BoolValue{value > dynamic_cast<RuneValue *>(other->getValue())->value};
 }
 
 Value *RuneValue::lessThanEqual(Value *other)
 {
-    return new BoolValue{value <= dynamic_cast<RuneValue *>(other)->value};
+    return new BoolValue{value <= dynamic_cast<RuneValue *>(other->getValue())->value};
 }
 
 Value *RuneValue::greaterThanEqual(Value *other)
 {
-    return new BoolValue{value >= dynamic_cast<RuneValue *>(other)->value};
+    return new BoolValue{value >= dynamic_cast<RuneValue *>(other->getValue())->value};
 }
 
 Value *RuneValue::add(Value *other)
 {
-    return new RuneValue{static_cast<char>( value + dynamic_cast<RuneValue *>(other)->value)};
+    return new RuneValue{static_cast<char>( value + dynamic_cast<RuneValue *>(other->getValue())->value)};
 }
 
 Value *RuneValue::subtract(Value *other)
 {
-    return new RuneValue{static_cast<char>( value - dynamic_cast<RuneValue *>(other)->value)};
+    return new RuneValue{static_cast<char>( value - dynamic_cast<RuneValue *>(other->getValue())->value)};
 }
 
 Value *RuneValue::multiply(Value *other)
 {
-    return new RuneValue{static_cast<char>( value * dynamic_cast<RuneValue *>(other)->value)};
+    return new RuneValue{static_cast<char>( value * dynamic_cast<RuneValue *>(other->getValue())->value)};
 }
 
 Value *RuneValue::divide(Value *other)
 {
-    return new RuneValue{static_cast<char>( value / dynamic_cast<RuneValue *>(other)->value)};
+    return new RuneValue{static_cast<char>( value / dynamic_cast<RuneValue *>(other->getValue())->value)};
 }
 
 StringValue::StringValue(char *value, long size)
@@ -313,14 +313,24 @@ long StringValue::compare(StringValue *lhs, StringValue *rhs)
 
 Value *StringValue::index(Value *index)
 {
-    // TODO: out of range
-    return new RuneValue{value[dynamic_cast<IntValue *>(index)->getInt()]};
+    auto indexValue = dynamic_cast<IntValue *>(index->getValue())->getInt();
+
+    if (indexValue >= size) {
+        throw std::runtime_error("Index out of bounds");
+    }
+
+    return new RuneValue{value[indexValue]};
 }
 
 void StringValue::setIndex(Value *index, Value *newValue)
 {
-    // TODO: out of range
-    value[dynamic_cast<IntValue *>(index)->getInt()] = dynamic_cast<RuneValue *>(newValue)->getChar();
+    auto indexValue = dynamic_cast<IntValue *>(index->getValue())->getInt();
+
+    if (indexValue >= size) {
+        throw std::runtime_error("Index out of bounds");
+    }
+
+    value[indexValue] = dynamic_cast<RuneValue *>(newValue->getValue())->getChar();
 }
 
 Value *StringValue::simpleSlice(Value *low, Value *high)
@@ -330,11 +340,11 @@ Value *StringValue::simpleSlice(Value *low, Value *high)
     auto newSize = size;
 
     if (low != nullptr) {
-        lowValue = dynamic_cast<IntValue *>(low)->getInt();
+        lowValue = dynamic_cast<IntValue *>(low->getValue())->getInt();
     }
 
     if (high != nullptr) {
-        newSize = dynamic_cast<IntValue *>(high)->getInt() - lowValue;
+        newSize = dynamic_cast<IntValue *>(high->getValue())->getInt() - lowValue;
     }
 
     auto newValue = new char[newSize];
@@ -352,11 +362,11 @@ Value *StringValue::fullSlice(Value *low, Value *high, Value *max)
     auto lowValue = 0;
 
     if (low != nullptr) {
-        lowValue = dynamic_cast<IntValue *>(low)->getInt();
+        lowValue = dynamic_cast<IntValue *>(low->getValue())->getInt();
     }
 
-    auto highSize = dynamic_cast<IntValue *>(high)->getInt() - lowValue;
-    auto maxSize = dynamic_cast<IntValue *>(max)->getInt();
+    auto highSize = dynamic_cast<IntValue *>(high->getValue())->getInt() - lowValue;
+    auto maxSize = dynamic_cast<IntValue *>(max->getValue())->getInt();
 
     auto newSize = highSize < maxSize ? highSize : maxSize;
 
@@ -373,43 +383,43 @@ Value *StringValue::fullSlice(Value *low, Value *high, Value *max)
 
 Value *StringValue::equal(Value *other)
 {
-    auto otherString = dynamic_cast<StringValue *>(other);
+    auto otherString = dynamic_cast<StringValue *>(other->getValue());
     return new BoolValue{compare(this, otherString) == 0};
 }
 
 Value *StringValue::notEqual(Value *other)
 {
-    auto otherString = dynamic_cast<StringValue *>(other);
+    auto otherString = dynamic_cast<StringValue *>(other->getValue());
     return new BoolValue{compare(this, otherString) != 0};
 }
 
 Value *StringValue::lessThan(Value *other)
 {
-    auto otherString = dynamic_cast<StringValue *>(other);
+    auto otherString = dynamic_cast<StringValue *>(other->getValue());
     return new BoolValue{compare(this, otherString) < 0};
 }
 
 Value *StringValue::greaterThan(Value *other)
 {
-    auto otherString = dynamic_cast<StringValue *>(other);
+    auto otherString = dynamic_cast<StringValue *>(other->getValue());
     return new BoolValue{compare(this, otherString) > 0};
 }
 
 Value *StringValue::lessThanEqual(Value *other)
 {
-    auto otherString = dynamic_cast<StringValue *>(other);
+    auto otherString = dynamic_cast<StringValue *>(other->getValue());
     return new BoolValue{compare(this, otherString) <= 0};
 }
 
 Value *StringValue::greaterThanEqual(Value *other)
 {
-    auto otherString = dynamic_cast<StringValue *>(other);
+    auto otherString = dynamic_cast<StringValue *>(other->getValue());
     return new BoolValue{compare(this, otherString) >= 0};
 }
 
 Value *StringValue::add(Value *other)
 {
-    auto otherString = dynamic_cast<StringValue *>(other);
+    auto otherString = dynamic_cast<StringValue *>(other->getValue());
     auto newValue = new char[this->size + otherString->size + 1];
 
     for (int i = 0; i < this->size; ++i) {
@@ -436,14 +446,24 @@ std::vector<Value *> ArrayValue::getArray()
 
 Value *ArrayValue::index(Value *index)
 {
-    // TODO: out of range
-    return values[dynamic_cast<IntValue *>(index)->getInt()];
+    auto indexValue = dynamic_cast<IntValue *>(index->getValue())->getInt();
+
+    if (indexValue >= values.size()) {
+        throw std::runtime_error("Index out of bounds");
+    }
+
+    return values[indexValue];
 }
 
 void ArrayValue::setIndex(Value *index, Value *newValue)
 {
-    // TODO: out of range
-    values[dynamic_cast<IntValue *>(index)->getInt()] = newValue;
+    auto indexValue = dynamic_cast<IntValue *>(index->getValue())->getInt();
+
+    if (indexValue >= values.size()) {
+        throw std::runtime_error("Index out of bounds");
+    }
+
+    values[indexValue] = newValue->getValue();
 }
 
 Value *ArrayValue::simpleSlice(Value *low, Value *high)
@@ -452,17 +472,17 @@ Value *ArrayValue::simpleSlice(Value *low, Value *high)
     long highValue = values.size();
 
     if (low != nullptr) {
-        lowValue = dynamic_cast<IntValue *>(low)->getInt();
+        lowValue = dynamic_cast<IntValue *>(low->getValue())->getInt();
     }
 
     if (high != nullptr) {
-        highValue = dynamic_cast<IntValue *>(high)->getInt();
+        highValue = dynamic_cast<IntValue *>(high->getValue())->getInt();
     }
 
     std::vector<Value *> newArray;
 
     for (int i = lowValue; i < highValue; ++i) {
-        newArray.push_back(values[i]);
+        newArray.push_back(values[i]->getValue());
     }
 
     return new SliceValue{newArray};
@@ -473,16 +493,16 @@ Value *ArrayValue::fullSlice(Value *low, Value *high, Value *max)
     long lowValue = 0;
 
     if (low != nullptr) {
-        lowValue = dynamic_cast<IntValue *>(low)->getInt();
+        lowValue = dynamic_cast<IntValue *>(low->getValue())->getInt();
     }
 
-    long highValue = dynamic_cast<IntValue *>(high)->getInt();
-    long maxValue = dynamic_cast<IntValue *>(max)->getInt();
+    long highValue = dynamic_cast<IntValue *>(high->getValue())->getInt();
+    long maxValue = dynamic_cast<IntValue *>(max->getValue())->getInt();
 
     std::vector<Value *> newArray;
 
     for (int i = lowValue; i < highValue && i-lowValue < maxValue; ++i) {
-        newArray.push_back(values[i]);
+        newArray.push_back(values[i]->getValue());
     }
 
     return new SliceValue{newArray};
@@ -490,7 +510,7 @@ Value *ArrayValue::fullSlice(Value *low, Value *high, Value *max)
 
 Value *ArrayValue::equal(Value *other)
 {
-    auto otherArray = dynamic_cast<ArrayValue *>(other);
+    auto otherArray = dynamic_cast<ArrayValue *>(other->getValue());
 
     if (values.size() != otherArray->values.size()) {
         return new BoolValue{false};
@@ -498,7 +518,7 @@ Value *ArrayValue::equal(Value *other)
 
     for (int i = 0; i < values.size(); i++)
     {
-        if (!dynamic_cast<BoolValue *>(dynamic_cast<Equal *>(values[i])->equal(otherArray->values[i]))->getBool()) {
+        if (!dynamic_cast<BoolValue *>(dynamic_cast<Equal *>(values[i]->getValue())->equal(otherArray->values[i]->getValue()))->getBool()) {
             return new BoolValue{false};
         }
     }
@@ -508,7 +528,7 @@ Value *ArrayValue::equal(Value *other)
 
 Value *ArrayValue::notEqual(Value *other)
 {
-    auto otherArray = dynamic_cast<ArrayValue *>(other);
+    auto otherArray = dynamic_cast<ArrayValue *>(other->getValue());
 
     if (values.size() != otherArray->values.size()) {
         return new BoolValue{true};
@@ -516,7 +536,7 @@ Value *ArrayValue::notEqual(Value *other)
 
     for (int i = 0; i < values.size(); i++)
     {
-        if (!dynamic_cast<BoolValue *>(dynamic_cast<Equal *>(values[i])->equal(otherArray->values[i]))->getBool()) {
+        if (!dynamic_cast<BoolValue *>(dynamic_cast<Equal *>(values[i]->getValue())->equal(otherArray->values[i]->getValue()))->getBool()) {
             return new BoolValue{true};
         }
     }
@@ -535,13 +555,24 @@ std::vector<Value *> SliceValue::getSlice()
 
 Value *SliceValue::index(Value *index)
 {
-    return values[dynamic_cast<IntValue *>(index)->getInt()];
+    auto indexValue = dynamic_cast<IntValue *>(index->getValue())->getInt();
+
+    if (indexValue >= values.size()) {
+        throw std::runtime_error("Index out of bounds");
+    }
+
+    return values[indexValue];
 }
 
 void SliceValue::setIndex(Value *index, Value *newValue)
 {
-    // TODO: out of range
-    values[dynamic_cast<IntValue *>(index)->getInt()] = newValue;
+    auto indexValue = dynamic_cast<IntValue *>(index->getValue())->getInt();
+
+    if (indexValue >= values.size()) {
+        throw std::runtime_error("Index out of bounds");
+    }
+
+    values[indexValue] = newValue;
 }
 
 Value *SliceValue::simpleSlice(Value *low, Value *high)
@@ -550,17 +581,17 @@ Value *SliceValue::simpleSlice(Value *low, Value *high)
     long highValue = values.size();
 
     if (low != nullptr) {
-        lowValue = dynamic_cast<IntValue *>(low)->getInt();
+        lowValue = dynamic_cast<IntValue *>(low->getValue())->getInt();
     }
 
     if (high != nullptr) {
-        highValue = dynamic_cast<IntValue *>(high)->getInt();
+        highValue = dynamic_cast<IntValue *>(high->getValue())->getInt();
     }
 
     std::vector<Value *> newArray;
 
     for (int i = lowValue; i < highValue; ++i) {
-        newArray.push_back(values[i]);
+        newArray.push_back(values[i]->getValue());
     }
 
     return new SliceValue{newArray};
@@ -571,16 +602,16 @@ Value *SliceValue::fullSlice(Value *low, Value *high, Value *max)
     long lowValue = 0;
 
     if (low != nullptr) {
-        lowValue = dynamic_cast<IntValue *>(low)->getInt();
+        lowValue = dynamic_cast<IntValue *>(low->getValue())->getInt();
     }
 
-    long highValue = dynamic_cast<IntValue *>(high)->getInt();
-    long maxValue = dynamic_cast<IntValue *>(max)->getInt();
+    long highValue = dynamic_cast<IntValue *>(high->getValue())->getInt();
+    long maxValue = dynamic_cast<IntValue *>(max->getValue())->getInt();
 
     std::vector<Value *> newArray;
 
     for (int i = lowValue; i < highValue && i-lowValue < maxValue; ++i) {
-        newArray.push_back(values[i]);
+        newArray.push_back(values[i]->getValue());
     }
 
     return new SliceValue{newArray};
@@ -588,7 +619,7 @@ Value *SliceValue::fullSlice(Value *low, Value *high, Value *max)
 
 Value *SliceValue::equal(Value *other)
 {
-    auto otherArray = dynamic_cast<SliceValue *>(other);
+    auto otherArray = dynamic_cast<SliceValue *>(other->getValue());
 
     if (values.size() != otherArray->values.size()) {
         return new BoolValue{false};
@@ -596,7 +627,7 @@ Value *SliceValue::equal(Value *other)
 
     for (int i = 0; i < values.size(); i++)
     {
-        if (!dynamic_cast<BoolValue *>(dynamic_cast<Equal *>(values[i])->equal(otherArray->values[i]))->getBool()) {
+        if (!dynamic_cast<BoolValue *>(dynamic_cast<Equal *>(values[i]->getValue())->equal(otherArray->values[i]->getValue()))->getBool()) {
             return new BoolValue{false};
         }
     }
@@ -606,7 +637,7 @@ Value *SliceValue::equal(Value *other)
 
 Value *SliceValue::notEqual(Value *other)
 {
-    auto otherArray = dynamic_cast<SliceValue *>(other);
+    auto otherArray = dynamic_cast<SliceValue *>(other->getValue());
 
     if (values.size() != otherArray->values.size()) {
         return new BoolValue{true};
@@ -614,7 +645,7 @@ Value *SliceValue::notEqual(Value *other)
 
     for (int i = 0; i < values.size(); i++)
     {
-        if (!dynamic_cast<BoolValue *>(dynamic_cast<Equal *>(values[i])->equal(otherArray->values[i]))->getBool()) {
+        if (!dynamic_cast<BoolValue *>(dynamic_cast<Equal *>(values[i]->getValue())->equal(otherArray->values[i]->getValue()))->getBool()) {
             return new BoolValue{true};
         }
     }
@@ -633,12 +664,12 @@ Value *StructValue::select(std::string id)
 
 void StructValue::setSelect(std::string id, Value *newValue)
 {
-    fields[id] = newValue;
+    fields[id] = newValue->getValue();
 }
 
 Value *StructValue::equal(Value *other)
 {
-    auto otherStruct = dynamic_cast<StructValue *>(other);
+    auto otherStruct = dynamic_cast<StructValue *>(other->getValue());
 
     std::vector<std::string> thisKeys{};
     std::vector<std::string> otherKeys{};
@@ -657,13 +688,13 @@ Value *StructValue::equal(Value *other)
     }
 
     return new BoolValue{std::equal(thisKeys.begin(), thisKeys.end(), otherKeys.begin()) && std::equal(thisValues.begin(), thisValues.end(), otherValues.begin(), [](Value *first, Value *second) {
-        return dynamic_cast<BoolValue *>(dynamic_cast<Equal *>(first)->equal(second))->getBool();
+        return dynamic_cast<BoolValue *>(dynamic_cast<Equal *>(first->getValue())->equal(second->getValue()))->getBool();
     })};
 }
 
 Value *StructValue::notEqual(Value *other)
 {
-    auto otherStruct = dynamic_cast<StructValue *>(other);
+    auto otherStruct = dynamic_cast<StructValue *>(other->getValue());
 
     std::vector<std::string> thisKeys{};
     std::vector<std::string> otherKeys{};
@@ -682,7 +713,7 @@ Value *StructValue::notEqual(Value *other)
     }
 
     return new BoolValue{!std::equal(thisKeys.begin(), thisKeys.end(), otherKeys.begin()) && std::equal(thisValues.begin(), thisValues.end(), otherValues.begin(), [](Value *first, Value *second) {
-        return dynamic_cast<BoolValue *>(dynamic_cast<Equal *>(first)->equal(second))->getBool();
+        return dynamic_cast<BoolValue *>(dynamic_cast<Equal *>(first->getValue())->equal(second->getValue()))->getBool();
     })};
 }
 
@@ -704,13 +735,12 @@ Value *MapValue::index(Value *index)
     for (const auto& field : fields) {
         auto fieldIndex = dynamic_cast<Equal *>(field.first);
 
-        if (dynamic_cast<BoolValue *>(fieldIndex->equal(index))->getBool()) {
+        if (dynamic_cast<BoolValue *>(fieldIndex->equal(index->getValue()))->getBool()) {
             return field.second;
         }
     }
-
-    return nullptr;
-    // TODO: out of range
+    
+    throw std::runtime_error("Index out of bounds");
 }
 
 void MapValue::setIndex(Value *index, Value *newValue)
@@ -718,11 +748,12 @@ void MapValue::setIndex(Value *index, Value *newValue)
     for (int i = 0; i < fields.size(); ++i) {
         auto fieldIndex = dynamic_cast<Equal *>(fields[i].first);
 
-        if (dynamic_cast<BoolValue *>(fieldIndex->equal(index))->getBool()) {
-            fields[i] = std::make_pair(fields[i].first, newValue);
+        if (dynamic_cast<BoolValue *>(fieldIndex->equal(index->getValue()))->getBool()) {
+            fields[i] = std::make_pair(fields[i].first, newValue->getValue());
         }
     }
-    // TODO: out of range
+
+    throw std::runtime_error("Index out of bounds");
 }
 
 ReferenceValue::ReferenceValue(const std::function<Value* ()> getter, const std::function<void (Value *)> setter)
@@ -744,12 +775,12 @@ Value *ReferenceValue::index(Value *index)
     return new ReferenceValue{
         [this, index]() {
             auto value = dynamic_cast<Index *>(this->getValue());
-            return value->index(index);
+            return value->index(index->getValue());
         },
         [this, index](Value *newValue) {
             auto value = dynamic_cast<Index *>(this->getValue());
 
-            value->setIndex(index, newValue);
+            value->setIndex(index->getValue(), newValue->getValue());
 
             setValue(dynamic_cast<Value *>(value));
         }
@@ -772,7 +803,7 @@ Value *ReferenceValue::select(std::string id)
         [this, id](Value * newValue) {
             auto value = dynamic_cast<Select *>(this->getValue());
 
-            value->setSelect(id, newValue);
+            value->setSelect(id, newValue->getValue());
 
             setValue(dynamic_cast<Value *>(value));
         }
@@ -788,13 +819,13 @@ void ReferenceValue::setSelect(std::string id, Value *newValue)
 Value *ReferenceValue::simpleSlice(Value *low, Value *high)
 {
     auto value = dynamic_cast<SimpleSlice *>(this->getValue());
-    return value->simpleSlice(low, high);
+    return value->simpleSlice(low->getValue(), high->getValue());
 }
 
 Value *ReferenceValue::fullSlice(Value *low, Value *high, Value *max)
 {
     auto value = dynamic_cast<FullSlice *>(this->getValue());
-    return value->fullSlice(low, high, max);
+    return value->fullSlice(low->getValue(), high->getValue(), max->getValue());
 }
 
 Value *ReferenceValue::call(std::vector<Value *> parameters)
@@ -842,107 +873,107 @@ Value *ReferenceValue::reference()
 Value *ReferenceValue::logicalOr(Value *other)
 {
     auto value = dynamic_cast<LogicalOr *>(this->getValue());
-    return value->logicalOr(other);
+    return value->logicalOr(other->getValue());
 }
 
 Value *ReferenceValue::logicalAnd(Value *other)
 {
     auto value = dynamic_cast<LogicalAnd *>(this->getValue());
-    return value->logicalAnd(other);
+    return value->logicalAnd(other->getValue());
 }
 
 Value *ReferenceValue::equal(Value *other)
 {
     auto value = dynamic_cast<Equal *>(this->getValue());
-    return value->equal(other);
+    return value->equal(other->getValue());
 }
 
 Value *ReferenceValue::notEqual(Value *other)
 {
     auto value = dynamic_cast<NotEqual *>(this->getValue());
-    return value->notEqual(other);
+    return value->notEqual(other->getValue());
 }
 
 Value *ReferenceValue::lessThan(Value *other)
 {
     auto value = dynamic_cast<LessThan *>(this->getValue());
-    return value->lessThan(other);
+    return value->lessThan(other->getValue());
 }
 
 Value *ReferenceValue::greaterThan(Value *other)
 {
     auto value = dynamic_cast<GreaterThan *>(this->getValue());
-    return value->greaterThan(other);
+    return value->greaterThan(other->getValue());
 }
 
 Value *ReferenceValue::lessThanEqual(Value *other)
 {
     auto value = dynamic_cast<LessThanEqual *>(this->getValue());
-    return value->lessThanEqual(other);
+    return value->lessThanEqual(other->getValue());
 }
 
 Value *ReferenceValue::greaterThanEqual(Value *other)
 {
     auto value = dynamic_cast<GreaterThanEqual *>(this->getValue());
-    return value->greaterThanEqual(other);
+    return value->greaterThanEqual(other->getValue());
 }
 
 Value *ReferenceValue::shiftLeft(Value *other)
 {
     auto value = dynamic_cast<ShiftLeft *>(this->getValue());
-    return value->shiftLeft(other);
+    return value->shiftLeft(other->getValue());
 }
 
 Value *ReferenceValue::shiftRight(Value *other)
 {
     auto value = dynamic_cast<ShiftRight *>(this->getValue());
-    return value->shiftRight(other);
+    return value->shiftRight(other->getValue());
 }
 
 Value *ReferenceValue::add(Value *other)
 {
     auto value = dynamic_cast<Add *>(this->getValue());
-    return value->add(other);
+    return value->add(other->getValue());
 }
 
 Value *ReferenceValue::subtract(Value *other)
 {
     auto value = dynamic_cast<Subtract *>(this->getValue());
-    return value->subtract(other);
+    return value->subtract(other->getValue());
 }
 
 Value *ReferenceValue::bitwiseOr(Value *other)
 {
     auto value = dynamic_cast<BitwiseOr *>(this->getValue());
-    return value->bitwiseOr(other);
+    return value->bitwiseOr(other->getValue());
 }
 
 Value *ReferenceValue::bitwiseXOr(Value *other)
 {
     auto value = dynamic_cast<BitwiseXOr *>(this->getValue());
-    return value->bitwiseXOr(other);
+    return value->bitwiseXOr(other->getValue());
 }
 
 Value *ReferenceValue::bitwiseAnd(Value *other)
 {
     auto value = dynamic_cast<BitwiseAnd *>(this->getValue());
-    return value->bitwiseAnd(other);
+    return value->bitwiseAnd(other->getValue());
 }
 
 Value *ReferenceValue::multiply(Value *other)
 {
     auto value = dynamic_cast<Multiply *>(this->getValue());
-    return value->multiply(other);
+    return value->multiply(other->getValue());
 }
 
 Value *ReferenceValue::divide(Value *other)
 {
     auto value = dynamic_cast<Divide *>(this->getValue());
-    return value->divide(other);
+    return value->divide(other->getValue());
 }
 
 Value *ReferenceValue::modulo(Value *other)
 {
     auto value = dynamic_cast<Modulo *>(this->getValue());
-    return value->modulo(other);
+    return value->modulo(other->getValue());
 }

@@ -510,7 +510,6 @@ void Validator::visitCompositLiteralExpression(std::vector<std::string> keys)
     std::reverse(expressionTypes.begin(), expressionTypes.end());
 
     Type *type = typeStack.pop();
-    referencableStack.pop();
     Type *baseType = type;
 
     if (!type->composable()) {
@@ -602,7 +601,7 @@ void Validator::visitCompositLiteralExpression(std::vector<std::string> keys)
 
         auto composedType = new StructType{fields};
 
-        if (baseType != composedType) {
+        if (!baseType->equals(*composedType)) {
             errors.push_back("Given type doesn't match composed type, either the fields are out of order, or incorrect/not all fields have been declared.");
             typeStack.push(type);
             referencableStack.push(false);

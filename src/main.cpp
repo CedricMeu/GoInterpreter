@@ -3,10 +3,15 @@
 
 #include "main.hpp"
 
-int main() {
-    yyin = fopen("/Users/cedricmeukens/Documents/UHasselt/Compilers/GoInterpreter/test/test.go", "r");
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        std::cout << "Usage: GoInterpreter <file>" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    yyin = fopen(argv[1], "r");
     if (yyin == NULL) {
-        std::cerr << "Cant open input file" << std::endl;   
+        std::cerr << "Cant open file: " << argv[1] << std::endl;   
         return EXIT_FAILURE;
     }
 
@@ -30,7 +35,10 @@ int main() {
     if (validator.getErrors().empty()) {
         Interpreter interpreter{};
         tree->accept(&interpreter);
+
+        return EXIT_SUCCESS;
+    } else {
+        return EXIT_FAILURE;
     }
 
-    return EXIT_SUCCESS;
 }

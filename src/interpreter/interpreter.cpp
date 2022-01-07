@@ -1,7 +1,7 @@
 #include "interpreter/interpreter.hpp"
 
 Interpreter::Interpreter()
-    : stack{}, symbolTable{}, returnsByCurrentFunction{}, functionClosed{}
+    : stack{}, switchStack{}, symbolTable{}, returnsByCurrentFunction{}, functionClosed{}, compositeLiteralType{}, brk{false}, cont{false}, ret{false}
 {
     symbolTable.addScope();
 
@@ -72,13 +72,19 @@ void Interpreter::visitStringType()
 {}
 
 void Interpreter::visitArrayType(long size)
-{}
+{
+    compositeLiteralType.push(CompositeLiteralType::Array);
+}
 
 void Interpreter::visitSliceType()
-{}
+{
+    compositeLiteralType.push(CompositeLiteralType::Slice);
+}
 
 void Interpreter::visitStructType(std::vector<std::string> fields)
-{}
+{
+    compositeLiteralType.push(CompositeLiteralType::Struct);
+}
 
 void Interpreter::visitPointerType()
 {}
@@ -105,13 +111,13 @@ void Interpreter::visitBlock(const std::vector<const std::function<void ()>> vis
 {
     for (const auto visitStatement : visitStatements) {
         visitStatement();
-        if (brk || cont) break;
+        if (brk || cont || ret) break;
     }
 }
 
 void Interpreter::visitFunctionDeclaration(std::string id, const std::function<void ()>& visitSignature, const std::function<void ()>& visitBody)
 {  
-    symbolTable.add(id, new FunctionValue{{}, [this, visitSignature, visitBody, id](auto closure, auto arguments) -> Value * {
+    symbolTable.add(id, new FunctionValue{{}, [this, visitSignature, visitBody](auto closure, auto arguments) -> Value * {
         // Remove current scope
         auto closed = functionClosed.pop();
         std::vector<std::map<std::string, Value *>> scopes;
@@ -191,8 +197,9 @@ void Interpreter::visitAssignmentStatement(const std::function<long ()>& visitLh
 void Interpreter::visitIfStatement(const std::function <void ()>& visitTrue, const std::function <void ()>& visitFalse)
 {
     auto condition = stack.pop();
+    auto value = condition->getValue();
 
-    if (dynamic_cast<BoolValue *>(condition->getValue())->getBool()) {
+    if (dynamic_cast<BoolValue *>(value)->getBool()) {
         visitTrue();
     } else {
         visitFalse();
@@ -200,16 +207,53 @@ void Interpreter::visitIfStatement(const std::function <void ()>& visitTrue, con
 }
 
 void Interpreter::visitSwitchStatement(const std::function<void ()>& visitExpression, const std::vector<const std::function<void ()>> visitClauses)
-{}
+{
+    visitExpression();
+    switchStack.push(stack.pop());
+    for (auto visitClause : visitClauses) {
+        visitClause();
+        if (brk || ret) {
+            brk = false;
+            break;
+        }
+    }
+    switchStack.pop();
+}
 
 void Interpreter::visitSwitchExpressionClause(const std::vector<const std::function<void ()>> visitExpressions, const std::vector<const std::function<void ()>> visitStatements)
-{}
+{
+    for (auto visitExpression : visitExpressions) {
+        visitExpression();
+        auto value = dynamic_cast<Equal *>(stack.pop()->getValue());
+
+        if (value->equal(switchStack.top()->getValue())) {
+            for (auto visitStatement : visitStatements) {
+                visitStatement();
+                if (cont || brk || ret) {
+                    break;
+                }
+            }
+
+            break;
+        }
+    }
+}
 
 void Interpreter::visitSwitchDefaultClause(const std::vector<const std::function<void ()>> visitStatements)
-{}
+{
+    for (auto visitStatement : visitStatements) {
+        visitStatement();
+        if (cont || brk || ret) {
+            break;
+        }
+    }
+}
 
 void Interpreter::visitReturnStatement(long size)
-{}
+{
+    ret = true;
+    stack.push(stack.pop()->getValue());
+}
 
 void Interpreter::visitBreakStatement()
 {
@@ -232,12 +276,10 @@ void Interpreter::visitForConditionStatement(const std::function<void ()>& visit
     bool conditionMet = dynamic_cast<BoolValue*>(stack.pop()->getValue())->getBool();
 
     while (conditionMet) {
-        cont = false;
-        brk = false;
         visitBody();
         cont = false;
 
-        if (brk) {
+        if (brk || ret) {
             brk = false;
             break;
         }
@@ -290,7 +332,33 @@ void Interpreter::visitIdentifierExpression(std::string id)
 
 void Interpreter::visitCompositLiteralExpression(std::vector<std::string> keys)
 {
-    // TODO:
+    auto type = compositeLiteralType.pop();
+    auto values = stack.pop(keys.size());
+    std::reverse(values.begin(), values.end());
+
+    std::map<std::string, Value *> _values;
+
+    for (int i = 0; i < values.size(); ++i) {
+        values[i] = values[i]->getValue(); // Filter references
+    }
+
+    switch (type)
+    {
+    case CompositeLiteralType::Struct:
+
+        for (int i = 0; i < keys.size(); ++i) {
+            _values[keys[i]] = values[i];
+        }
+
+        stack.push(new StructValue{_values});
+        break;
+    case CompositeLiteralType::Slice:
+        stack.push(new SliceValue{values});
+        break;
+    case CompositeLiteralType::Array:
+        stack.push(new ArrayValue{values});
+        break;
+    }
 }
 
 void Interpreter::VisitFunctionLiteralExpression(const std::function<void ()>& visitSignature, const std::function<void ()>& visitBody)
@@ -355,15 +423,15 @@ void Interpreter::visitSelectExpression(std::string id)
 
 void Interpreter::visitIndexExpression()
 {
-    auto index = stack.pop();
+    auto index = stack.pop()->getValue();
     auto value = dynamic_cast<Index *>(stack.pop());
     stack.push(value->index(index));
 }
 
 void Interpreter::visitSimpleSliceExpression(bool lowDeclared, bool highDeclared)
 {
-    Value *high = highDeclared ? stack.pop() : nullptr;
-    Value *low = lowDeclared ? stack.pop() : nullptr;
+    Value *high = highDeclared ? stack.pop()->getValue(): nullptr;
+    Value *low = lowDeclared ? stack.pop()->getValue() : nullptr;
 
     auto value = dynamic_cast<SimpleSlice *>(stack.pop());
     stack.push(value->simpleSlice(low, high));
@@ -371,9 +439,9 @@ void Interpreter::visitSimpleSliceExpression(bool lowDeclared, bool highDeclared
 
 void Interpreter::visitFullSliceExpression(bool lowDeclared)
 {
-    Value *max = stack.pop();
-    Value *high = stack.pop();
-    Value *low = lowDeclared ? stack.pop() : nullptr;
+    Value *max = stack.pop()->getValue();
+    Value *high = stack.pop()->getValue();
+    Value *low = lowDeclared ? stack.pop()->getValue() : nullptr;
 
     auto value = dynamic_cast<FullSlice *>(stack.pop());
     stack.push(value->fullSlice(low, high, max));
@@ -390,7 +458,9 @@ void Interpreter::visitCallExpression(long size)
 
     auto value = dynamic_cast<Call *>(stack.pop());
 
+    ret = false;
     auto result = value->call(arguments);
+    ret = false;
 
     if (result != nullptr) stack.push(result);
 }

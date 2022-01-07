@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <functional> 
+#include <stdexcept>
 
 #include "interpreter/operations.hpp"
 #include "utils/instanceof.hpp"

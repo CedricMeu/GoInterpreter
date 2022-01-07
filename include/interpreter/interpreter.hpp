@@ -96,14 +96,23 @@ public:
     void visitBinaryModuloExpression() override;
 
 private:
+    enum class CompositeLiteralType {
+        Struct,
+        Slice,
+        Array,
+    };
+
     Stack<Value *> stack;
+    Stack<Value *> switchStack;
     SymbolTable<Value *> symbolTable;
 
-    Stack<int> returnsByCurrentFunction;
+    Stack<long> returnsByCurrentFunction;
     Stack<bool> functionClosed;
+    Stack<CompositeLiteralType> compositeLiteralType;
 
     bool cont;
     bool brk;
+    bool ret;
 };
 
 #endif // GOINTERPRETER_INTERPRETER_INTERPRETER_HPP
