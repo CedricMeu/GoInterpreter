@@ -7,8 +7,8 @@ template<typename T>
 class Stack 
 {
 public:
-    Stack() = default;
-    ~Stack() = default;
+    Stack() : values{} {};
+    ~Stack() {};
 
     bool empty() const
     {
@@ -17,6 +17,8 @@ public:
 
     T pop()
     {
+        if (empty()) throw std::exception{};
+
         auto value = values.back();
         values.pop_back();
         return value;
@@ -24,6 +26,8 @@ public:
 
     T top()
     {
+        if (empty()) throw std::exception{};
+
         return values.back();
     }
 

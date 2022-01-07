@@ -9,6 +9,7 @@
 #include "lexing/lexer.hpp"
 #include "ast/ast.hpp"
 #include "validation/validator.hpp"
+#include "interpreter/interpreter.hpp"
 extern int yyparse();
 extern AST::Node *tree;
 

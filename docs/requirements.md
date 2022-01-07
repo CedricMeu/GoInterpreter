@@ -38,7 +38,7 @@
 - [t] indexing (string, array, map)
 - [t] selector for structs
 - [fixme] conversions (`float(some_int)`)
-- [ ] adres operators
+- [t-ish] adres operators
 
 # statements
 - [t] type declarations
@@ -52,13 +52,11 @@
 - [t] break
 - [t] continue
 - [t] for conditional
-- [ ] for range
 
 # functions
 - [t] block scopes
 - [t] function declarations
 - [t] can have all types as input and output
-- [ ] varargs (`...`)
 - [fixme] multiple return values
 
 # built in

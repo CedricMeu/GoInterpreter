@@ -6,7 +6,7 @@ AST::Block::Block(std::vector<Statement *> statements)
 
 AST::Block::~Block()
 {
-    for (const auto statement : this->statements)
+    for (const auto statement : statements)
     {
         delete statement;
     }

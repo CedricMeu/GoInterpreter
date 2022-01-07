@@ -19,9 +19,12 @@ public:
     void removeScope();
 
     bool contains(std::string& key) const;
-    T get(std::string& key) const;
-    void add(std::string& key, T value);
+    bool scopeContains(std::string& key) const;
+    T get(const std::string& key) const;
+    void add(const std::string& key, T value);
     std::vector<T> allValues();
+    std::map<std::string, T> getScope() const;
+    void addScope(std::map<std::string, T> scope);
 
 private:
     std::vector<std::map<std::string, T>> scopes;
@@ -58,7 +61,13 @@ bool SymbolTable<T>::contains(std::string& key) const
 }
 
 template<typename T>
-T SymbolTable<T>::get(std::string& key) const
+bool SymbolTable<T>::scopeContains(std::string& key) const
+{
+    return scopes.back().contains(key);
+}
+
+template<typename T>
+T SymbolTable<T>::get(const std::string& key) const
 {
     auto _scopes = this->scopes;
 
@@ -76,7 +85,7 @@ T SymbolTable<T>::get(std::string& key) const
 }
 
 template<typename T>
-void SymbolTable<T>::add(std::string& key, T value)
+void SymbolTable<T>::add(const std::string& key, T value)
 {
     this->scopes.back()[key] = value;
 }
@@ -95,6 +104,19 @@ std::vector<T> SymbolTable<T>::allValues()
     }
 
     return result;
+}
+
+
+template<typename T>
+std::map<std::string, T> SymbolTable<T>::getScope() const
+{
+    return scopes.back();
+}
+
+template<typename T>
+void SymbolTable<T>::addScope(std::map<std::string, T> scope)
+{
+    scopes.push_back(scope);
 }
 
 #endif // GOINTERPRETER_VALIDATION_SCOPE_HPP

@@ -42,7 +42,7 @@ public:
     void visitBlock(const std::vector<const std::function<void ()>> visitStatements) override;
 
     // Declarations
-        virtual void visitFunctionDeclaration(std::string id, const std::function<void ()>& visitSignature, const std::function<void ()>& visitBody) override;
+    void visitFunctionDeclaration(std::string id, const std::function<void ()>& visitSignature, const std::function<void ()>& visitBody) override;
     void visitTypeAliasDeclaration(std::string id) override;
     void visitTypeDefinitionDeclaration(std::string id) override;
     void visitVariableDeclaration(std::vector<std::string> ids, bool typeDeclared, long expression_count) override;
@@ -52,8 +52,8 @@ public:
     void visitAssignmentStatement(const std::function<long ()>& visitLhs, const std::function<long ()>& visitRhs) override;
     void visitIfStatement(const std::function <void ()>& visitTrue, const std::function <void ()>& visitFalse) override;
     void visitSwitchStatement(const std::function<void ()>& visitExpression, const std::vector<const std::function<void ()>> visitClauses) override;
-    virtual void visitSwitchExpressionClause(const std::vector<const std::function<void ()>> visitExpressions, const std::vector<const std::function<void ()>> visitStatements) override;
-    virtual void visitSwitchDefaultClause(const std::vector<const std::function<void ()>> visitStatements) override;
+    void visitSwitchExpressionClause(const std::vector<const std::function<void ()>> visitExpressions, const std::vector<const std::function<void ()>> visitStatements) override;
+    void visitSwitchDefaultClause(const std::vector<const std::function<void ()>> visitStatements) override;
     void visitReturnStatement(long size) override;
     void visitBreakStatement() override;
     void visitContinueStatement() override;
@@ -70,7 +70,7 @@ public:
     // Expressions - Rest
     void visitIdentifierExpression(std::string id) override;
     void visitCompositLiteralExpression(std::vector<std::string> keys) override;
-        virtual void VisitFunctionLiteralExpression(const std::function<void ()>& visitSignature, const std::function<void ()>& visitBody) override;
+    void VisitFunctionLiteralExpression(const std::function<void ()>& visitSignature, const std::function<void ()>& visitBody) override;
     void visitSelectExpression(std::string id) override;
     void visitIndexExpression() override;
     void visitSimpleSliceExpression(bool lowDeclared, bool highDeclared) override;

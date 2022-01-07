@@ -16,6 +16,15 @@ Validator::Validator()
 {
     this->typeDeclTable.addScope();
     this->varDeclTable.addScope();
+
+    std::string printInt = "printInt";
+    std::string printRune = "printRune";
+    std::string printFloat32 = "printFloat32";
+    std::string printString = "printString";
+    this->varDeclTable.add(printInt, new FunctionType{{std::make_pair("value", new IntType{})}, {}});
+    this->varDeclTable.add(printRune, new FunctionType{{std::make_pair("value", new RuneType{})}, {}});
+    this->varDeclTable.add(printFloat32, new FunctionType{{std::make_pair("value", new Float32Type{})}, {}});
+    this->varDeclTable.add(printString, new FunctionType{{std::make_pair("value", new StringType{})}, {}});
 }
 
 Validator::~Validator()
@@ -179,18 +188,6 @@ void Validator::visitBlock(const std::vector<const std::function<void ()>> visit
 
     typeDeclTable.removeScope();
     varDeclTable.removeScope();
-
-    std::vector<Type *> types{};
-
-    while (!typeStack.empty()) {
-        types.push_back(typeStack.pop());
-    }
-
-    std::reverse(types.begin(), types.end());
-
-    for (const auto type : types) {
-        std::cout << type->toString() << std::endl;
-    }
 }
 
 void Validator::visitFunctionDeclaration(std::string id, const std::function<void ()>& visitSignature, const std::function<void ()>& visitBody)
@@ -224,6 +221,8 @@ void Validator::visitFunctionDeclaration(std::string id, const std::function<voi
         if (!returns && signature->getReturns().size() > 0) {
             this->errors.push_back("Not all paths through function return.");
         }
+
+        currentFunction.pop();
     }));
 }
 
@@ -271,7 +270,7 @@ void Validator::visitVariableDeclaration(std::vector<std::string> ids, bool type
     }
 
     for (auto id : ids) {
-        if (varDeclTable.contains(id)) {
+        if (varDeclTable.scopeContains(id)) {
             errors.push_back("Duplicate declaration of \'" + id + "\' in this scope.");
         } else {
             varDeclTable.add(id, type);
@@ -281,9 +280,7 @@ void Validator::visitVariableDeclaration(std::vector<std::string> ids, bool type
 
 void Validator::visitExpressionStatement()
 {
-    // FIXME: function calls can return more than one type. THIS WILL BREAK EVERYTING IF YOU USE ONE OF THOSE
-    typeStack.pop(); // ommit
-    referencableStack.pop();
+    // FIXME: 
 }
 
 void Validator::visitAssignmentStatement(const std::function<long ()>& visitLhs, const std::function<long ()>& visitRhs)
@@ -405,7 +402,7 @@ void Validator::visitReturnStatement(long size)
         errors.push_back("Got " + std::to_string(size) + " expressions but current function has to return " + std::to_string(returns.size()) + " values.");
     }
 
-    for (int i = 0; i < size; ++i) {
+    for (int i = 0; i < returns.size(); ++i) {
         if (!returns[i].second->equals(*types[i])) {
             errors.push_back("The " + std::to_string(i + 1) + (i == 0 ? "st" : (i == 1 ? "nd" : "th")) + " element has type " + types[i]->toString() + ", but expected " + returns[i].second->toString() + " in the return statementd.");
         }
@@ -495,6 +492,7 @@ void Validator::visitIdentifierExpression(std::string id)
     if (!varDeclTable.contains(id)) {
         errors.push_back("Variable \'" + id + "\' does not exist.");
         typeStack.push(new UnresolvedType{});
+        referencableStack.push(true);
         return;
     }
     
@@ -621,7 +619,6 @@ void Validator::VisitFunctionLiteralExpression(const std::function<void ()>& vis
 {
     visitSignature();
     auto signature = dynamic_cast<FunctionType *>(typeStack.pop());
-    referencableStack.pop();
     currentFunction.push(signature);
     
     for (const auto param : signature->getParameters()) {
@@ -644,6 +641,8 @@ void Validator::VisitFunctionLiteralExpression(const std::function<void ()>& vis
     if (!returns && signature->getReturns().size() > 0) {
         this->errors.push_back("Not all paths through function return.");
     }
+
+    currentFunction.pop();
 
     typeStack.push(signature);
     referencableStack.push(false);
@@ -677,8 +676,9 @@ void Validator::visitSelectExpression(std::string id)
 void Validator::visitIndexExpression()
 {
     auto indexType = typeStack.pop();
-    auto referencable = referencableStack.pop();
+    auto indexReferencable = referencableStack.pop();
     auto expressionType = typeStack.pop();
+    auto expresionReferencable = referencableStack.pop();
 
     if (instanceof<ArrayType>(expressionType)) {
         if (!instanceof<IntType>(indexType)) {
@@ -686,28 +686,28 @@ void Validator::visitIndexExpression()
         }
 
         typeStack.push(dynamic_cast<ArrayType *>(expressionType)->elementType());
-        referencableStack.push(referencable);
+        referencableStack.push(expresionReferencable);
     } else if (instanceof<SliceType>(expressionType)) {
         if (!instanceof<IntType>(indexType)) {
             errors.push_back("Slices can only be indexed using Ints, not " + indexType->toString() + ".");
         }
 
         typeStack.push(dynamic_cast<SliceType *>(expressionType)->elementType());
-        referencableStack.push(referencable);
+        referencableStack.push(expresionReferencable);
     } else if (instanceof<StringType>(expressionType)) {
         if (!instanceof<IntType>(indexType)) {
             errors.push_back("Strings can only be indexed using Ints, not " + indexType->toString() + ".");
         }
 
         typeStack.push(dynamic_cast<SliceType *>(expressionType)->elementType());
-        referencableStack.push(referencable);
+        referencableStack.push(expresionReferencable);
     } else if (instanceof<MapType>(expressionType)) {
         if (indexType != dynamic_cast<MapType *>(expressionType)->keyType()) {
             errors.push_back(expressionType->toString() + " can only be indexed using " + dynamic_cast<MapType *>(expressionType)->keyType()->toString() + ", not " + indexType->toString() + ".");
         }
 
         typeStack.push(dynamic_cast<MapType *>(expressionType)->elementType());
-        referencableStack.push(referencable);
+        referencableStack.push(expresionReferencable);
     } else {
         errors.push_back("Indexing can not be used on " + expressionType->toString() + ".");
         typeStack.push(new UnresolvedType{});
@@ -894,8 +894,8 @@ void Validator::visitUnaryBitwiseNotExpression()
 {
     auto operand = typeStack.pop();
 
-    if (!instanceof<BoolType>(operand)) {
-            errors.push_back("Logical not can only be used on booleans, not on " + operand->toString() + ".");
+    if (!instanceof<IntType>(operand)) {
+            errors.push_back("Logical not can only be used on integers, not on " + operand->toString() + ".");
     }
 
     typeStack.push(operand);
@@ -924,7 +924,12 @@ void Validator::visitUnaryReferenceExpression()
     errors.push_back("Address operations are not supported.");
 
     auto operand = typeStack.pop();
-    referencableStack.pop();
+    auto referencable = referencableStack.pop();
+
+    if (!referencable) {
+        errors.push_back("Operand of reference operator has to be referencable.");
+    } 
+
     typeStack.push(new PointerType{operand});
     referencableStack.push(false);
 }
@@ -1004,6 +1009,7 @@ void Validator::visitBinaryNotEqualExpression()
     if (instanceof<UnresolvedType>(rhs) || instanceof<MapType>(rhs) || instanceof<FunctionType>(rhs)) {
         errors.push_back(rhs->toString() + " is not comparable.");
     }
+    // TODO: check if values in array are ordered/comparable
 
     if (!lhs->equals(*rhs)) {
         errors.push_back("Cannot compare " + lhs->toString() + " to " + rhs->toString() + ".");
@@ -1020,13 +1026,24 @@ void Validator::visitBinaryLessThanExpression()
     referencableStack.pop();
     referencableStack.pop();
 
-    if (instanceof<UnresolvedType>(lhs) || instanceof<MapType>(lhs) || instanceof<FunctionType>(lhs)) {
-        errors.push_back(lhs->toString() + " is not comparable.");
+    if (instanceof<UnresolvedType>(lhs) 
+    || instanceof<MapType>(lhs) 
+    || instanceof<FunctionType>(lhs) 
+    || instanceof<BoolType>(lhs)
+    || instanceof<PointerType>(lhs)
+    || instanceof<StructType>(lhs)) {
+        errors.push_back(lhs->toString() + " is not ordered.");
     }
 
-    if (instanceof<UnresolvedType>(rhs) || instanceof<MapType>(rhs) || instanceof<FunctionType>(rhs)) {
-        errors.push_back(rhs->toString() + " is not comparable.");
+    if (instanceof<UnresolvedType>(rhs) 
+    || instanceof<MapType>(rhs) 
+    || instanceof<FunctionType>(rhs) 
+    || instanceof<BoolType>(rhs)
+    || instanceof<PointerType>(rhs)
+    || instanceof<StructType>(rhs)) {
+        errors.push_back(rhs->toString() + " is not ordered.");
     }
+    // TODO: check if values in array are ordered/comparable
 
     if (!lhs->equals(*rhs)) {
         errors.push_back("Cannot compare " + lhs->toString() + " to " + rhs->toString() + ".");
@@ -1043,12 +1060,22 @@ void Validator::visitBinaryLessThanEqualExpression()
     referencableStack.pop();
     referencableStack.pop();
 
-    if (instanceof<UnresolvedType>(lhs) || instanceof<MapType>(lhs) || instanceof<FunctionType>(lhs)) {
-        errors.push_back(lhs->toString() + " is not comparable.");
+    if (instanceof<UnresolvedType>(lhs) 
+    || instanceof<MapType>(lhs) 
+    || instanceof<FunctionType>(lhs) 
+    || instanceof<BoolType>(lhs)
+    || instanceof<PointerType>(lhs)
+    || instanceof<StructType>(lhs)) {
+        errors.push_back(lhs->toString() + " is not ordered.");
     }
 
-    if (instanceof<UnresolvedType>(rhs) || instanceof<MapType>(rhs) || instanceof<FunctionType>(rhs)) {
-        errors.push_back(rhs->toString() + " is not comparable.");
+    if (instanceof<UnresolvedType>(rhs) 
+    || instanceof<MapType>(rhs) 
+    || instanceof<FunctionType>(rhs) 
+    || instanceof<BoolType>(rhs)
+    || instanceof<PointerType>(rhs)
+    || instanceof<StructType>(rhs)) {
+        errors.push_back(rhs->toString() + " is not ordered.");
     }
 
     if (!lhs->equals(*rhs)) {
@@ -1066,12 +1093,22 @@ void Validator::visitBinaryGreaterThanExpression()
     referencableStack.pop();
     referencableStack.pop();
 
-    if (instanceof<UnresolvedType>(lhs) || instanceof<MapType>(lhs) || instanceof<FunctionType>(lhs)) {
-        errors.push_back(lhs->toString() + " is not comparable.");
+    if (instanceof<UnresolvedType>(lhs) 
+    || instanceof<MapType>(lhs) 
+    || instanceof<FunctionType>(lhs) 
+    || instanceof<BoolType>(lhs)
+    || instanceof<PointerType>(lhs)
+    || instanceof<StructType>(lhs)) {
+        errors.push_back(lhs->toString() + " is not ordered.");
     }
 
-    if (instanceof<UnresolvedType>(rhs) || instanceof<MapType>(rhs) || instanceof<FunctionType>(rhs)) {
-        errors.push_back(rhs->toString() + " is not comparable.");
+    if (instanceof<UnresolvedType>(rhs) 
+    || instanceof<MapType>(rhs) 
+    || instanceof<FunctionType>(rhs) 
+    || instanceof<BoolType>(rhs)
+    || instanceof<PointerType>(rhs)
+    || instanceof<StructType>(rhs)) {
+        errors.push_back(rhs->toString() + " is not ordered.");
     }
 
     if (!lhs->equals(*rhs)) {
@@ -1089,12 +1126,22 @@ void Validator::visitBinaryGreaterThanEqualExpression()
     referencableStack.pop();
     referencableStack.pop();
 
-    if (instanceof<UnresolvedType>(lhs) || instanceof<MapType>(lhs) || instanceof<FunctionType>(lhs)) {
-        errors.push_back(lhs->toString() + " is not comparable.");
+    if (instanceof<UnresolvedType>(lhs) 
+    || instanceof<MapType>(lhs) 
+    || instanceof<FunctionType>(lhs) 
+    || instanceof<BoolType>(lhs)
+    || instanceof<PointerType>(lhs)
+    || instanceof<StructType>(lhs)) {
+        errors.push_back(lhs->toString() + " is not ordered.");
     }
 
-    if (instanceof<UnresolvedType>(rhs) || instanceof<MapType>(rhs) || instanceof<FunctionType>(rhs)) {
-        errors.push_back(rhs->toString() + " is not comparable.");
+    if (instanceof<UnresolvedType>(rhs) 
+    || instanceof<MapType>(rhs) 
+    || instanceof<FunctionType>(rhs) 
+    || instanceof<BoolType>(rhs)
+    || instanceof<PointerType>(rhs)
+    || instanceof<StructType>(rhs)) {
+        errors.push_back(rhs->toString() + " is not ordered.");
     }
 
     if (!lhs->equals(*rhs)) {
@@ -1150,12 +1197,12 @@ void Validator::visitBinaryAddExpression()
     referencableStack.pop();
     referencableStack.pop();
 
-    if (!instanceof<IntType>(lhs) && !instanceof<Float32Type>(lhs) && !instanceof<StringType>(lhs)) {
-        errors.push_back("Add expression can only be used on an integer, float32 or string, not on " + lhs->toString() + ".");
+    if (!instanceof<IntType>(lhs) && !instanceof<Float32Type>(lhs) && !instanceof<RuneType>(lhs) && !instanceof<StringType>(lhs)) {
+        errors.push_back("Add expression can only be used on an integer, float32, rune or string, not on " + lhs->toString() + ".");
     }
 
-    if (!instanceof<IntType>(rhs) && !instanceof<Float32Type>(rhs) && !instanceof<StringType>(rhs)) {
-        errors.push_back("Add expression can only be used on an integer, float32 or string, not on " + rhs->toString() + ".");
+    if (!instanceof<IntType>(rhs) && !instanceof<Float32Type>(rhs) && !instanceof<RuneType>(rhs) && !instanceof<StringType>(rhs)) {
+        errors.push_back("Add expression can only be used on an integer, float32, rune or string, not on " + rhs->toString() + ".");
     }
 
     if (!lhs->equals(*rhs)) {
@@ -1173,12 +1220,12 @@ void Validator::visitBinarySubtractExpression()
     referencableStack.pop();
     referencableStack.pop();
 
-    if (!instanceof<IntType>(lhs) && !instanceof<Float32Type>(lhs)) {
-        errors.push_back("Subtract expression can only be used on an integer or float32, not on " + lhs->toString() + ".");
+    if (!instanceof<IntType>(lhs) && !instanceof<Float32Type>(lhs) && !instanceof<RuneType>(lhs)) {
+        errors.push_back("Subtract expression can only be used on an integer, float32 or rune, not on " + lhs->toString() + ".");
     }
 
-    if (!instanceof<IntType>(rhs) && !instanceof<Float32Type>(rhs)) {
-        errors.push_back("Subtract expression can only be used on an integer or float32, not on " + rhs->toString() + ".");
+    if (!instanceof<IntType>(rhs) && !instanceof<Float32Type>(rhs) && !instanceof<RuneType>(rhs)) {
+        errors.push_back("Subtract expression can only be used on an integer, float32 or rune, not on " + rhs->toString() + ".");
     }
 
     if (!lhs->equals(*rhs)) {
@@ -1253,12 +1300,12 @@ void Validator::visitBinaryMultiplyExpression()
     referencableStack.pop();
     referencableStack.pop();
 
-    if (!instanceof<IntType>(lhs) && !instanceof<Float32Type>(lhs)) {
-        errors.push_back("Multiply expression can only be used on an integer or float32, not on " + lhs->toString() + ".");
+    if (!instanceof<IntType>(lhs) && !instanceof<Float32Type>(lhs) && !instanceof<RuneType>(lhs)) {
+        errors.push_back("Multiply expression can only be used on an integer, float32 or rune, not on " + lhs->toString() + ".");
     }
 
-    if (!instanceof<IntType>(rhs) && !instanceof<Float32Type>(rhs)) {
-        errors.push_back("Mulitply expression can only be used on an integer or float32, not on " + rhs->toString() + ".");
+    if (!instanceof<IntType>(rhs) && !instanceof<Float32Type>(rhs) && !instanceof<RuneType>(rhs)) {
+        errors.push_back("Mulitply expression can only be used on an integer, float32 or rune, not on " + rhs->toString() + ".");
     }
 
     if (!lhs->equals(*rhs)) {
@@ -1276,12 +1323,12 @@ void Validator::visitBinaryDivideExpression()
     referencableStack.pop();
     referencableStack.pop();
 
-    if (!instanceof<IntType>(lhs) && !instanceof<Float32Type>(lhs)) {
-        errors.push_back("Divide expression can only be used on an integer or float32, not on " + lhs->toString() + ".");
+    if (!instanceof<IntType>(lhs) && !instanceof<Float32Type>(lhs) && !instanceof<RuneType>(lhs)) {
+        errors.push_back("Divide expression can only be used on an integer, float32 or rune, not on " + lhs->toString() + ".");
     }
 
-    if (!instanceof<IntType>(rhs) && !instanceof<Float32Type>(rhs)) {
-        errors.push_back("Divide expression can only be used on an integer or float32, not on " + rhs->toString() + ".");
+    if (!instanceof<IntType>(rhs) && !instanceof<Float32Type>(rhs) && !instanceof<RuneType>(rhs)) {
+        errors.push_back("Divide expression can only be used on an integer, float32 or rune, not on " + rhs->toString() + ".");
     }
 
     if (!lhs->equals(*rhs)) {
