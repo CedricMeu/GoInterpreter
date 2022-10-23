@@ -188,9 +188,16 @@ void Interpreter::visitAssignmentStatement(const std::function<long ()>& visitLh
     auto rhsSize = visitRhs();
     auto rhs = stack.pop(rhsSize);
     std::reverse(rhs.begin(), rhs.end());
-    
+
+    std::vector<Value *> evaluatedRhs;
+    std::transform(
+        rhs.begin(), 
+        rhs.end(), 
+        std::inserter(evaluatedRhs, evaluatedRhs.end()), 
+        [](Value* value) { return value->getValue(); }
+    );
     for (int i = 0; i < lhsSize; ++i) {
-        dynamic_cast<ReferenceValue *>(lhs[i])->setValue(rhs[i]->getValue());
+        dynamic_cast<ReferenceValue *>(lhs[i])->setValue(evaluatedRhs[i]);
     }
 }
 
